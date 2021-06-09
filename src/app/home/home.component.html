@@ -1,0 +1,17 @@
+<div style="width: 100%">
+  <mat-toolbar color="primary">
+    <span style="font-size: 40px">Pathfinding Algorithm Visualizer</span>
+  </mat-toolbar>
+</div>
+<div style="padding: 20px" class="disable-select" appNoRightClick>
+  <mat-grid-list cols={{x}} rowHeight="1:1" gutterSize="3">
+    <mat-grid-tile style="border-radius: 3px"
+                   *ngFor="let tile of tiles; let index = index">
+      <div style="width: 100%; height: 100%;cursor: pointer"  [ngClass]="{selected: tile.selected, empty: !tile.selected}" (mouseenter)="mouseEnter($event, index)" (mousedown)="mouseDown($event, index)">
+      </div>
+
+    </mat-grid-tile>
+  </mat-grid-list>
+
+</div>
+

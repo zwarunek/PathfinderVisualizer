@@ -1,0 +1,31 @@
+@import '../../custom-theme.scss';
+
+$tile-color: #000000;
+
+.empty {
+  background-color: lighten($tile-color, 60%)
+}
+
+.selected {
+  background-color: lighten($tile-color, 40%)
+}
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  padding: 10px;
+}
+.grid-item {
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 3px;
+  margin: 2px;
+  padding: 20px;
+  font-size: 30px;
+  text-align: center;
+}
+.disable-select {
+  user-select: none; /* supported by Chrome and Opera */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+}

@@ -1,0 +1,14 @@
+@import '~@angular/material/theming';
+
+// taken from https://github.com/angular/components/blob/master/src/material/core/theming/prebuilt/purple-green.scss
+
+// Define a theme.
+$primary: mat-palette($mat-purple, 700, 500, 800);
+$accent:  mat-palette($mat-green, A200, A100, A400);
+
+$theme: mat-dark-theme((
+  color: (
+    primary: $primary,
+    accent: $accent
+  )
+));
