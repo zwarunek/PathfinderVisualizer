@@ -2,11 +2,19 @@
 
 $tile-color: #000000;
 
-.empty {
+.default {
   background-color: lighten($tile-color, 60%)
 }
 
-.selected {
+.start {
+  background-color: lighten($tile-color, 60%)
+}
+
+.end {
+  background-color: lighten($tile-color, 60%)
+}
+
+.selected{
   background-color: lighten($tile-color, 40%)
 }
 .grid-container {
@@ -28,4 +36,88 @@ $tile-color: #000000;
   -khtml-user-select: none; /* Konqueror HTML */
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* Internet Explorer/Edge */
+}
+
+.toolbar-list {
+  border: solid 1px rgba(0, 0, 0, 0);
+  width: 50px;
+  height: 50px;
+  background-color: darken(mat-color($primary), 10%);
+  border-radius: 4px;
+  overflow: hidden;
+  display: block;
+}
+
+.example-list {
+
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0);
+}
+
+.example-box {
+  width: 100%;
+  height: 100%;
+  border-bottom: solid 1px #ccc;
+  color: rgba(0, 0, 0, 0.00);
+  display: flex;
+  flex-direction: row;
+  border-radius: 2px;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  cursor: move;
+  font-size: 14px;
+}
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 4px;
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+  0 8px 10px 1px rgba(0, 0, 0, 0.14),
+  0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0;
+}
+
+.cdk-drag-animating {
+  transition: transform 0ms;
+}
+
+.example-box:last-child {
+  border: none;
+}
+
+//.example-list.cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
+//  tra: transform 0ms ;
+//}
+.grid {
+  display: grid;
+  grid-gap: 3px;
+}
+.grid-cell{
+  position: relative;
+  border-radius: 2px;
+  width: 100%;
+  padding-top: 100%;
+  cursor: pointer
+}
+.dragdrop-cell{
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 2px;
+  background-color: rgba(0,0,0,0);
+  width: 100%;
+  height: 100%;
+  cursor: pointer
+}
+.icon-background{
+  background-color: darken(mat-color($primary), 10%);
+  width: 26px;
+  height: 26px;
+  margin: auto;
+  border-radius: 10px;
 }

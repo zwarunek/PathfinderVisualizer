@@ -15,6 +15,7 @@ import {MatGridListModule} from '@angular/material/grid-list';
 import { NoRightClickDirective } from './no-right-click.directive';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 
+
 @NgModule({
   declarations: [
     AppComponent,
