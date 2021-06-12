@@ -14,6 +14,7 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatGridListModule} from '@angular/material/grid-list';
 import { NoRightClickDirective } from './no-right-click.directive';
 import {DragDropModule} from '@angular/cdk/drag-drop';
+import {MatInputModule} from '@angular/material/input';
 
 
 @NgModule({
@@ -33,7 +34,8 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
     MatMenuModule,
     MatToolbarModule,
     MatGridListModule,
-    DragDropModule
+    DragDropModule,
+    MatInputModule
   ],
   providers: [],
   bootstrap: [AppComponent]

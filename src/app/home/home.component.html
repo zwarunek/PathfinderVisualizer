@@ -1,37 +1,50 @@
 <div style="width: 100%">
   <mat-toolbar color="primary">
-    <span style="font-size: 40px">Pathfinding Algorithm Visualizer</span>
+    <span style="font-size: 40px;margin-right: 100px">Pathfinding Algorithm Visualizer</span>
     <div class="toolbar-list"
-         id="startContainer"
+         id="container-start"
          (drop)="drop($event)"
          (dragover)="allowDrop($event)">
-      <div class="example-box" id="start" draggable="true" (dragstart)="dragging=true; drag($event)" (dragend)="dragging=false">
-        <div class="icon-background">
-          <mat-icon aria-hidden="false" id="start-icon" color="accent" aria-label="Example home icon" style="position: relative; top: 1px; left: 1px">visibility</mat-icon>
-        </div>
+      <div class="example-box" id="start" #start draggable="true" (dragstart)="dragging=true; drag($event)"  (dragend)="dragging=false">
+          <mat-icon aria-hidden="false" id="start-icon" color="accent" aria-label="Example home icon" style="margin: auto">visibility</mat-icon>
       </div>
     </div>
     <div class="toolbar-list"
-                 id="endContainer"
+                 id="container-end"
                  (drop)="drop($event)"
                  (dragover)="allowDrop($event)">
-      <div class="example-box" id="end" draggable="true" (dragstart)="dragging=true; drag($event)" (dragend)="dragging=false">
-        <div class="icon-background">
-          <mat-icon aria-hidden="false" id="end-icon" color="accent" aria-label="Example home icon" style="position: relative; top: 1px; left: 1px">flag</mat-icon>
-        </div>
+      <div class="example-box" id="end" #end draggable="true" (dragstart)="dragging=true; drag($event)" (dragend)="dragging=false">
+          <mat-icon aria-hidden="false" id="end-icon" color="accent" aria-label="Example home icon" style="margin: auto">flag</mat-icon>
       </div>
     </div>
+    <button mat-button  (click)="fillLines()" style="margin-right: 20px">Connect</button>
+    <button mat-button (click)="resetLine()" style="margin-right: 20px">Reset</button>
+
   </mat-toolbar>
 </div>
 <div style="padding: 20px">
-  <div class="grid disable-select" [ngStyle]="{'grid-template-columns':' repeat(' + x + ', auto)'}" appNoRightClick>
-    <div class="grid-cell" *ngFor="let tile of tiles; let index = index"
-         [ngClass]="{selected: tile.type === 'selected', default: tile.type === 'default', start: tile.type === 'start', end: tile.type === 'end'}" (mousedown)="switchTile($event, index)" (mouseenter)="switchTile($event, index)">
-      <div class="dragdrop-cell" [attr.id]="'tile-' + index" style="width: 100%; height: 100%"
-           (drop)="drop($event)"
-           (dragover)="allowDrop($event)">
+  <div class="grid disable-select" appNoRightClick>
+    <div class="grid-row" *ngFor="let row of tiles; let y = index" [ngStyle]="{'grid-template-columns':' repeat(' + cols + ', auto)'}">
+      <div class="grid-cell" *ngFor="let tile of row; let x = index"
+           [ngClass]="{selected: tile.type === 'selected', default: tile.type === 'default', start: tile.type === 'start', end: tile.type === 'end'}" (mousedown)="switchTile($event, y, x)" (mouseenter)="switchTile($event, y, x)">
+        <div class="dragdrop-cell" [attr.id]="'tile-'+y+':'+x" style="width: 100%; height: 100%"
+             (drop)="drop($event)"
+             (dragover)="allowDrop($event)">
 
+        </div>
       </div>
     </div>
   </div>
+</div>
+<div>
+  <div style="z-index: 101" id="line" [ngStyle]="{'padding':'0px',
+  'margin':'0px',
+  'line-height':'1px',
+  'position':'absolute',
+  'background-color': line.color,
+  'left':line.left,
+  'top':line.top,
+  'height':line.height,
+  'width':line.width,
+  'transform':line.transform}" *ngFor="let line of lines; let i = index"></div>
 </div>

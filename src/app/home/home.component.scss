@@ -7,16 +7,23 @@ $tile-color: #000000;
 }
 
 .start {
-  background-color: lighten($tile-color, 60%)
+  background-color: mat-color($primary)
 }
 
 .end {
-  background-color: lighten($tile-color, 60%)
+  background-color: mat-color($primary)
 }
 
 .selected{
   background-color: lighten($tile-color, 40%)
 }
+.first {
+  background-color: lighten(mat-color($primary), 60%)
+}
+.searched {
+  background-color: lighten($tile-color, 60%)
+}
+
 .grid-container {
   display: grid;
   grid-template-columns: repeat(4, auto);
@@ -42,6 +49,7 @@ $tile-color: #000000;
   border: solid 1px rgba(0, 0, 0, 0);
   width: 50px;
   height: 50px;
+  margin-right: 20px;
   background-color: darken(mat-color($primary), 10%);
   border-radius: 4px;
   overflow: hidden;
@@ -90,20 +98,24 @@ $tile-color: #000000;
   border: none;
 }
 
-//.example-list.cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
-//  tra: transform 0ms ;
-//}
 .grid {
   display: grid;
-  grid-gap: 3px;
+  //grid-gap: 3px;
+}
+.grid-row {
+  display: grid;
+  //grid-gap: 3px;
 }
 .grid-cell{
   position: relative;
-  border-radius: 2px;
+  //border-radius: 2px;
+  border: solid 1px #303030;
   width: 100%;
   padding-top: 100%;
-  cursor: pointer
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
 }
+
 .dragdrop-cell{
   position: absolute;
   top: 0;
@@ -121,3 +133,103 @@ $tile-color: #000000;
   margin: auto;
   border-radius: 10px;
 }
+@keyframes selectedkf {
+  0%{
+    z-index: 100;
+    transform: matrix(1, 0, 0, 1, 0, 0);
+  }
+  50%{
+    transform: matrix(1.2, 0, 0, 1.2, 0, 0);
+    z-index: 100;
+  }
+  100%{
+    transform: matrix(1, 0, 0, 1, 0, 0);
+    z-index: 100;
+  }
+}
+@keyframes defaultkf {
+  0%{
+    z-index: 100;
+    transform: matrix(1, 0, 0, 1, 0, 0);
+  }
+  50%{
+    transform: matrix(1.2, 0, 0, 1.2, 0, 0);
+    z-index: 100;
+  }
+  100%{
+    transform: matrix(1, 0, 0, 1, 0, 0);
+    z-index: 100;
+  }
+}
+@keyframes startendkf {
+  0%{
+    z-index: 100;
+    transform: matrix(1, 0, 0, 1, 0, 0);
+  }
+  50%{
+    transform: matrix(1.2, 0, 0, 1.2, 0, 0);
+    z-index: 100;
+  }
+  100%{
+    transform: matrix(1, 0, 0, 1, 0, 0);
+    z-index: 100;
+  }
+}
+//.grid-cell:hover{
+//  animation: createBox .3s;
+//}
+.grid-cell.selected{
+  animation: selectedkf .3s;
+}
+.grid-cell.default{
+  animation: defaultkf .3s;
+}
+.grid-cell.start{
+  animation: startendkf .3s;
+}
+.grid-cell.end{
+  animation: startendkf .3s;
+}
+.example-form {
+  width: 70px;
+  font-size: 14px;
+}
+
+.example-full-width {
+  width: 70px;
+  font-size: 14px;
+}
+
+//0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+//1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
+//0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0,
+//0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0,
+//0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+//0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0,
+//0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0,
+//0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0,
+//0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1,
+//0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0,
+//0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,
+//0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1,
+//0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0,
+//
+//0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+//0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+//1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0,
+//1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0,
+//0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0,
+//0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0,
+//0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0,
+//0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0,
+//0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1,
+//0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1,
+//0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0,
+//0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0,
+//0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1,
+//0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0,
