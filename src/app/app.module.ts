@@ -15,6 +15,9 @@ import {MatGridListModule} from '@angular/material/grid-list';
 import { NoRightClickDirective } from './no-right-click.directive';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import {MatInputModule} from '@angular/material/input';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {FormsModule} from '@angular/forms';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
 
 
 @NgModule({
@@ -35,9 +38,13 @@ import {MatInputModule} from '@angular/material/input';
     MatToolbarModule,
     MatGridListModule,
     DragDropModule,
-    MatInputModule
+    MatInputModule,
+    MatCheckboxModule,
+    FormsModule,
+    MatButtonToggleModule
   ],
-  providers: [],
+  providers: [
+    ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

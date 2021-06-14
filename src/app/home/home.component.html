@@ -1,50 +1,38 @@
 <div style="width: 100%">
   <mat-toolbar color="primary">
-    <span style="font-size: 40px;margin-right: 100px">Pathfinding Algorithm Visualizer</span>
-    <div class="toolbar-list"
-         id="container-start"
-         (drop)="drop($event)"
-         (dragover)="allowDrop($event)">
-      <div class="example-box" id="start" #start draggable="true" (dragstart)="dragging=true; drag($event)"  (dragend)="dragging=false">
-          <mat-icon aria-hidden="false" id="start-icon" color="accent" aria-label="Example home icon" style="margin: auto">visibility</mat-icon>
-      </div>
-    </div>
-    <div class="toolbar-list"
-                 id="container-end"
-                 (drop)="drop($event)"
-                 (dragover)="allowDrop($event)">
-      <div class="example-box" id="end" #end draggable="true" (dragstart)="dragging=true; drag($event)" (dragend)="dragging=false">
-          <mat-icon aria-hidden="false" id="end-icon" color="accent" aria-label="Example home icon" style="margin: auto">flag</mat-icon>
-      </div>
-    </div>
-    <button mat-button  (click)="fillLines()" style="margin-right: 20px">Connect</button>
-    <button mat-button (click)="resetLine()" style="margin-right: 20px">Reset</button>
+    <span style="font-size: 20px;margin-right: 100px">Pathfinding Algorithm Visualizer</span>
+    <button mat-button [disabled]="inProgress" (click)="visualize(delay)" style="margin-right: 20px">Visualize</button>
+    <button mat-button [disabled]="inProgress" (click)="resetLine()" style="margin-right: 20px">Reset Path</button>
+    <button mat-button [disabled]="inProgress" (click)="resetTiles()" style="margin-right: 20px">Remove Walls</button>
+
+    <section style="margin-right: 20px">
+      <mat-checkbox [color]="'accent'" [(ngModel)]="diagonal" (change)="diagonalChange()">Diagonal</mat-checkbox>
+    </section>
+    <mat-button-toggle-group (change)="changeSpeed($event)" value="{{delay}}">
+      <mat-button-toggle color="primary" value="0">Instant</mat-button-toggle>
+      <mat-button-toggle color="primary" value="1">Fast</mat-button-toggle>
+      <mat-button-toggle color="primary" value="10">Medium</mat-button-toggle>
+      <mat-button-toggle color="primary" value="100">Slow</mat-button-toggle>
+    </mat-button-toggle-group>
 
   </mat-toolbar>
 </div>
-<div style="padding: 20px">
-  <div class="grid disable-select" appNoRightClick>
-    <div class="grid-row" *ngFor="let row of tiles; let y = index" [ngStyle]="{'grid-template-columns':' repeat(' + cols + ', auto)'}">
-      <div class="grid-cell" *ngFor="let tile of row; let x = index"
-           [ngClass]="{selected: tile.type === 'selected', default: tile.type === 'default', start: tile.type === 'start', end: tile.type === 'end'}" (mousedown)="switchTile($event, y, x)" (mouseenter)="switchTile($event, y, x)">
-        <div class="dragdrop-cell" [attr.id]="'tile-'+y+':'+x" style="width: 100%; height: 100%"
-             (drop)="drop($event)"
-             (dragover)="allowDrop($event)">
+<div class="disable-select" style="padding: 20px; " appNoRightClick>
+  <table style="border-spacing: 0;border-collapse: collapse;">
+    <tbody>
+      <tr *ngFor="let row of tiles; let y = index" style="background-color: #d4d4d4">
+        <td class="grid-cell" *ngFor="let tile of row; let x = index"  [attr.id]="'tile-'+y+':'+x"
+            [ngClass]="{wall: tile.type === 'wall', blank: tile.type === 'blank', start: tile.type === 'start', end: tile.type === 'end'}"
+            (mouseenter)="mouseEnter($event, y, x)"
+            (mousedown)="mouseDown($event, y, x)"
+            (mouseup)="mouseUp($event, y, x)"
+            (mouseleave)="mouseLeave($event, y, x)">
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<div>
-  <div style="z-index: 101" id="line" [ngStyle]="{'padding':'0px',
-  'margin':'0px',
-  'line-height':'1px',
-  'position':'absolute',
-  'background-color': line.color,
-  'left':line.left,
-  'top':line.top,
-  'height':line.height,
-  'width':line.width,
-  'transform':line.transform}" *ngFor="let line of lines; let i = index"></div>
-</div>
+<svg width="100%" height="100%" style="top: 0; left: 0; position:absolute;pointer-events: none">
+  <line [id]="lines" *ngFor="let line of lines" class="line"  [attr.x1]="line.x1" [attr.y1]="line.y1" [attr.x2]="line.x2" [attr.y2]="line.y2" stroke="yellow" stroke-width="4px" style="z-index: 1000"/>
+</svg>

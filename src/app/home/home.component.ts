@@ -1,10 +1,25 @@
 import {Component, HostListener, OnInit} from '@angular/core';
 import {newArray} from '@angular/compiler/src/util';
 import { KeyValueChanges, KeyValueDiffer, KeyValueDiffers } from '@angular/core';
+import {MatCheckboxChange} from '@angular/material/checkbox';
+import {Observable, timer} from 'rxjs';
+import {take} from 'rxjs/operators';
+import {MatButtonToggleChange} from '@angular/material/button-toggle';
 
 export interface Tile {
   type: any;
   distance: any;
+}
+export interface Line{
+  weight: number;
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+}
+export interface Coords {
+  row: number;
+  col: number;
 }
 @Component({
   selector: 'app-home',
@@ -13,33 +28,47 @@ export interface Tile {
 })
 export class HomeComponent implements OnInit {
 
-  dragging = false;
+  draggingWall = false;
+  draggingBlank = false;
+  draggingStart = false;
+  draggingEnd = false;
 
   lines: any[] = [];
+  inProgress = false;
+  finished = false;
+
+  delay = 1;
 
   startTile: {row: any, col: any};
   endTile: {row: any, col: any};
 
-  cols = 40;
-  rows = 15;
+  cols = 67;
+  rows = 25;
   numTiles = this.cols * this.rows;
-  colorDefault: any = 'lightblue';
-  colorSelected: any = 'darkgray';
   tiles: Tile[][];
-  tileDiffer: any;
   tileGraph: number[][];
-  LIST_IDS: any[] = [];
+  adjList: any[][] = [];
+  diagonal = false;
 
-
-  constructor(private differs: KeyValueDiffers) {
+// 12x12 12x52
+  constructor() {
     this.tiles = [];
     for (let i = 0; i < this.rows; i++) {
       this.tiles[i] = [];
       for (let j = 0; j < this.cols; j++) {
-        this.tiles[i][j] = {type: 'default', distance: 1};
+        this.tiles[i][j] = {type: 'blank', distance: 1};
       }
     }
+    this.tiles[12][12] = {type: 'start', distance: 1};
+    this.startTile = {row: 12, col: 12};
+    this.tiles[12][52] = {type: 'end', distance: 1};
+    this.endTile = {row: 12, col: 52};
     this.tileGraph = [];
+    this.setGraph();
+  }
+
+  ngOnInit(): void{
+
   }
 
   setGraph(): void {
@@ -53,107 +82,198 @@ export class HomeComponent implements OnInit {
     for (let r = 0; r < this.rows; r++){
       for (let c = 0; c < this.cols; c++){
         const i = r * this.cols + c;
-        if (c > 0){
-          this.tileGraph[i - 1][i] = this.tileGraph[i][i - 1] =
-            this.tiles[Math.floor((i - 1) / this.cols)][(i - 1) % this.cols].distance *
-            this.tiles[Math.floor(i / this.cols)][i % this.cols].distance;
-        }
-        if (r > 0){
-          this.tileGraph[i - this.cols][i] = this.tileGraph[i][i - this.cols] =
-            this.tiles[Math.floor((i - this.cols) / this.cols)][(i - this.cols) % this.cols].distance *
-            this.tiles[Math.floor(i / this.cols)][i % this.rows].distance;
-        }
-        if (i > this.cols && c > 0){
-          this.tileGraph[i - this.cols - 1][i] = this.tileGraph[i][i - this.cols - 1] =
-            this.tiles[Math.floor((i - this.cols - 1) / this.cols)][(i - this.cols - 1) % this.cols].distance *
-            this.tiles[Math.floor(i / this.cols)][i % this.cols].distance * Math.sqrt(2);
-        }
-        if (i > this.cols - 1 && c !== this.cols - 1){
-          this.tileGraph[i - this.cols + 1][i] = this.tileGraph[i][i - this.cols + 1] =
-            this.tiles[Math.floor((i - this.cols + 1) / this.cols)][(i - this.cols + 1) % this.cols].distance *
-            this.tiles[Math.floor(i / this.cols)][i % this.cols].distance * Math.sqrt(2);
-        }
+        this.addToGraph(i, c, r);
       }
     }
   }
 
-  ngOnInit() {
-    // this.tiles.subscribe(message => {
-    //   if (message !== this.myVar) {
-    //     this.myVar = message;
-    //     this.doSomething();
-    //   }
-    // });
-  }
-
-  switchTile(event: MouseEvent, i: any, j: any): void {
-    if (!this.dragging && this.tiles[i][j].type !== 'start' && this.tiles[i][j].type !== 'end') {
-      switch (event.buttons) {
-        case 1:
-          if (event.shiftKey) {
-            for (const row of this.tiles) {
-              for (const tile of row){
-                tile.type = 'selected';
-                tile.distance = 0;
-              }
-            }
-          } else {
-            this.tiles[i][j].type = 'selected';
-            this.tiles[i][j].distance = 0;
-          }
-          break;
-        case 2:
-          if (event.shiftKey) {
-            for (const row of this.tiles) {
-              for (const tile of row){
-                tile.type = 'default';
-                tile.distance = 1;
-              }
-            }
-          } else {
-            this.tiles[i][j].type = 'default';
-            this.tiles[i][j].distance = 1;
-          }
-          break;
+  removeFromGraph(i: number){
+    this.tileGraph[i] = new Array(this.numTiles).fill(0);
+    for (let row = 0; row < this.tileGraph.length; row++){
+      if (row !== i) {
+        this.tileGraph[row][i] = 0;
       }
     }
   }
-  drop(ev: DragEvent): void {
-    ev.preventDefault();
-    const data = ev.dataTransfer.getData('text');
-    const prev = ev.dataTransfer.getData('prev');
 
-    if ((ev.target as Element).parentElement.id !== data && (ev.target as Element).id !== data && !(ev.target as Element).id.startsWith('start') && !(ev.target as Element).id.startsWith('end') ) {
-
-      if ((ev.target as Element).id.startsWith('tile')){
-        const indices = (ev.target as Element).id.split('-')[1].split(':');
-        const tile = this.tiles[indices[0]][indices[1]];
-        if (data === 'start'){
-          this.startTile = {row: indices[0], col: indices[1]};
-        }
-        else if (data === 'end'){
-          this.endTile = {row: indices[0], col: indices[1]};
-        }
-        tile.type = data;
-        tile.distance = 1;
+  addToGraph(i: number, c: number, r: number): void {
+    if (c > 0){
+      this.tileGraph[i - 1][i] = this.tileGraph[i][i - 1] =
+        this.tiles[Math.floor((i - 1) / this.cols)][(i - 1) % this.cols].distance *
+        this.tiles[Math.floor(i / this.cols)][i % this.cols].distance;
+    }
+    if (r > 0){
+      this.tileGraph[i - this.cols][i] = this.tileGraph[i][i - this.cols] =
+        this.tiles[Math.floor((i - this.cols) / this.cols)][(i - this.cols) % this.cols].distance *
+        this.tiles[Math.floor(i / this.cols)][i % this.cols].distance;
+    }
+    if (this.diagonal) {
+      if (i > this.cols && c > 0) {
+        this.tileGraph[i - this.cols - 1][i] = this.tileGraph[i][i - this.cols - 1] =
+          this.tiles[Math.floor((i - this.cols - 1) / this.cols)][(i - this.cols - 1) % this.cols].distance *
+          this.tiles[Math.floor(i / this.cols)][i % this.cols].distance * 1;
       }
-      if (prev.startsWith('tile')) {
-        const prevIndices = prev.split('-')[1];
-        this.tiles[prevIndices.split(':')[0]][prevIndices.split(':')[1]].type = 'default';
+      if (i > this.cols - 1 && c !== this.cols - 1) {
+        this.tileGraph[i - this.cols + 1][i] = this.tileGraph[i][i - this.cols + 1] =
+          this.tiles[Math.floor((i - this.cols + 1) / this.cols)][(i - this.cols + 1) % this.cols].distance *
+          this.tiles[Math.floor(i / this.cols)][i % this.cols].distance * 1;
       }
-      (ev.target as Element).appendChild(document.getElementById(data));
     }
   }
 
-  allowDrop(ev: DragEvent): void {
-    ev.preventDefault();
+  addEdge(i: number, j: number){
+    this.tileGraph[i][j] = this.tileGraph[j][i] = 1;
   }
 
-  drag(ev: DragEvent): void {
-    ev.dataTransfer.setData('text', (ev.target as Element).id);
-    ev.dataTransfer.setData('prev', (ev.target as Element).parentElement.id);
+  findNeighbors(row: number, col: number): Coords[] {
+    const neighbors = [];
+    if (col + 1 < this.cols && this.tiles[row][col + 1].distance === 1) { // right
+      neighbors.push({row, col: col + 1});
+    }
+    if (col - 1 >= 0 && this.tiles[row][col - 1].distance === 1) { // left
+      neighbors.push({row, col: col - 1});
+    }
+    if (row + 1 < this.rows && this.tiles[row + 1][col].distance === 1) { // down
+      neighbors.push({row: (row + 1), col});
+    }
+    if (row - 1 >= 0 && this.tiles[row - 1][col].distance === 1) { // up
+      neighbors.push({row: (row - 1), col});
+    }
+    if (this.diagonal){
+      if (col + 1 < this.cols && row - 1 >= 0 && this.tiles[row - 1][col + 1].distance === 1) {
+        neighbors.push({row: (row - 1), col: col + 1});
+      }
+      if (col - 1 >= 0 && row - 1 >= 0 && this.tiles[row - 1][col - 1].distance === 1) {
+        neighbors.push({row: (row - 1), col: col - 1});
+      }
+      if (col + 1 < this.cols && row + 1 < this.rows && this.tiles[row + 1][col + 1].distance === 1) {
+        neighbors.push({row: (row + 1), col: col + 1});
+      }
+      if (col - 1 >= 0 && row + 1 < this.rows && this.tiles[row + 1][col - 1].distance === 1) {
+        neighbors.push({row: (row + 1), col: col - 1});
+      }
+    }
+    return neighbors;
+
   }
 
+  mouseEnter(e: MouseEvent, row: any, col: any) {
+    if (e.buttons === 0){
+      this.draggingStart = this.draggingEnd = this.draggingWall = this.draggingBlank = false;
+    }
+    else if (!this.draggingWall && e.buttons === 1) {
+      this.draggingWall = true;
+      this.draggingBlank = false;
+    }
+    else if (!this.draggingBlank && e.buttons === 2) {
+      this.draggingBlank = true;
+      this.draggingWall = false;
+    }
+
+    if (this.draggingStart && this.tiles[row][col].type !== 'end'){
+      this.startTile = {row, col};
+      if (this.tiles[row][col].type === 'wall'){
+        this.addToGraph(row * this.cols + col, col, row);
+      }
+      this.tiles[row][col].type = 'start';
+      this.tiles[row][col].distance = 1;
+      const neighbors = this.findNeighbors(row, col);
+      for (let i = 0; i < neighbors.length; i++) {
+        this.addEdge(parseInt(row, 10) * this.cols + parseInt(col, 10), neighbors[i].row * this.cols + neighbors[i].col);
+      }
+
+      if (this.finished){
+        this.visualize(0);
+      }
+    }
+    else if (this.draggingEnd && this.tiles[row][col].type !== 'start'){
+      this.endTile = {row, col};
+      if (this.tiles[row][col].type === 'wall'){
+        this.addToGraph(row * this.cols + col, col, row);
+      }
+      this.tiles[row][col].type = 'end';
+      this.tiles[row][col].distance = 1;
+      const neighbors = this.findNeighbors(row, col);
+      for (let i = 0; i < neighbors.length; i++) {
+        this.addEdge(parseInt(row, 10) * this.cols + parseInt(col, 10), neighbors[i].row * this.cols + neighbors[i].col);
+      }
+      if (this.finished){
+        this.visualize(0);
+      }
+    }
+    else if (this.draggingWall && this.tiles[row][col].type !== 'start' && this.tiles[row][col].type !== 'end'){
+      this.tiles[row][col].type = 'wall';
+      this.tiles[row][col].distance = 0;
+      this.removeFromGraph(row * this.cols + col);
+      if (this.finished){
+        this.visualize(0);
+      }
+    }
+    else if (this.draggingBlank && this.tiles[row][col].type !== 'start' && this.tiles[row][col].type !== 'end'){
+      this.tiles[row][col].type = 'blank';
+      this.tiles[row][col].distance = 1;
+      const neighbors = this.findNeighbors(row, col);
+      for (let i = 0; i < neighbors.length; i++) {
+        this.addEdge(parseInt(row, 10) * this.cols + parseInt(col, 10), neighbors[i].row * this.cols + neighbors[i].col);
+      }
+      if (this.finished){
+        this.visualize(0);
+      }
+    }
+  }
+
+  mouseDown(e: MouseEvent, row: any, col: any) {
+    if (this.tiles[row][col].type === 'start'){
+      this.draggingStart = true;
+    }
+    else if (this.tiles[row][col].type === 'end'){
+      this.draggingEnd = true;
+    }
+    else if (e.buttons === 1) {
+      this.draggingWall = true;
+      this.tiles[row][col].type = 'wall';
+      this.tiles[row][col].distance = 0;
+      this.removeFromGraph(row * this.cols + col);
+      if (this.finished){
+        this.visualize(0);
+      }
+    }
+    else if (e.buttons === 2) {
+      this.draggingBlank = true;
+      this.tiles[row][col].type = 'blank';
+      this.tiles[row][col].distance = 1;
+      const neighbors = this.findNeighbors(row, col);
+      for (let i = 0; i < neighbors.length; i++) {
+        this.addEdge(parseInt(row, 10) * this.cols + parseInt(col, 10), neighbors[i].row * this.cols + neighbors[i].col);
+      }
+      if (this.finished){
+        this.visualize(0);
+      }
+    }
+  }
+
+  mouseLeave(e: MouseEvent, row: any, col: any) {
+    // console.log((e.target as Element).id + ' -> ' + (e.relatedTarget as Element).id);
+
+    if (this.draggingStart && this.tileElementToTile((e.target as Element).id).type !== 'end'){
+      this.tiles[row][col].type = 'blank';
+      this.tiles[row][col].distance = 1;
+      document.getElementById('tile-' + row + ':' + col).style.animation = 'none';
+    }
+    if (this.draggingEnd && this.tileElementToTile((e.target as Element).id).type !== 'start'){
+      this.tiles[row][col].type = 'blank';
+      this.tiles[row][col].distance = 1;
+      document.getElementById('tile-' + row + ':' + col).style.animation = 'none';
+    }
+  }
+
+  mouseUp(e: MouseEvent, row: any, col: any) {
+    this.draggingStart = this.draggingEnd = this.draggingWall = this.draggingBlank = false;
+  }
+  tileElementToTile(id: any): Tile{
+    const indices = id.split('-')[1].split(':');
+    return this.tiles[indices[0]][indices[1]];
+  }
   getOffset( el ): any {
     const rect = el.getBoundingClientRect();
     return {
@@ -163,63 +283,58 @@ export class HomeComponent implements OnInit {
       height: rect.height || el.offsetHeight
     };
   }
-  connect(div1, div2, color, thickness): any { // draw a line connecting elements
+  connect(div1, div2): Line { // draw a line connecting elements
     div1 = document.getElementById(div1);
     div2 = document.getElementById(div2);
     const off1 = this.getOffset(div1);
     const off2 = this.getOffset(div2);
-    // bottom right
+
     const x1 = (off1.left + off1.width / 2);
     const y1 = (off1.top + off1.height / 2);
-    // top right
+
     const x2 = (off2.left + off2.width / 2);
     const y2 = (off2.top + off2.height / 2);
-    // distance
-    const length = Math.sqrt(((x2 - x1) * (x2 - x1)) + ((y2 - y1) * (y2 - y1)));
-    // center
-    const cx = ((x1 + x2) / 2) - (length / 2);
-    const cy = ((y1 + y2) / 2) - (thickness / 2);
-    // angle
-    const angle = Math.atan2((y1 - y2), (x1 - x2)) * (180 / Math.PI);
 
-    return {
-      color,
-      top: cy + 'px',
-      left: cx + 'px',
-      width: length + 'px',
-      height: thickness + 'px',
-      transform: 'rotate(' + angle + 'deg)'
-    };
+    const length = Math.sqrt(((x2 - x1) * (x2 - x1)) + ((y2 - y1) * (y2 - y1))) + 3;
 
-    // document.body.innerHTML += height;
+    return { weight: 1, x1, y1, x2, y2 };
+
   }
-  fillLines(): void {
+  visualize(delay: number): void {
+    // this.printMatrix();
+    this.inProgress = true;
+    // console.log('inside visualize');
     this.resetLine();
-    this.setGraph();
-    this.dijkstra(this.tileGraph);
-    // this.lines = [];
-    // const tilesHit: any[] = ['tile-0:3', 'tile-0:10', 'tile-4:10', 'tile-14:20'];
-    // for (let i = 0; i < tilesHit.length - 1; i++){
-    //   this.lines.push(this.connect(tilesHit[i], tilesHit[i + 1], 'yellow', '4'));
-    // }
-    // let str = '';
-    // for (let i = 0; i < this.tileGraph.length; i++){
-    //   // for (let j = 0; i < this.tileGraph.length; j++){
-    //     str = str + this.tileGraph[i] + '\n';
-    //   // }
-    // }
-    // console.log(str);
+    this.dijkstra(this.tileGraph, delay);
   }
 
   resetLine(): void {
     this.lines = [];
+    for (let i = 0; i < this.rows; i++) {
+      for (let j = 0; j < this.cols; j++) {
+        document.getElementById('tile-' + i + ':' + j).classList.remove('searched');
+      }
+    }
+    this.finished = false;
+  }
+  resetTiles(): void {
+    for (let i = 0; i < this.rows; i++) {
+      for (let j = 0; j < this.cols; j++) {
+        if (this.tiles[i][j].type === 'wall') {
+          this.tiles[i][j] = {type: 'blank', distance: 1};
+          this.addToGraph(i * this.cols + j, i, j);
+        }
+      }
+    }
+    if (this.finished) {
+      this.visualize(0);
+    }
   }
   minDistance(dist: number[], sptSet: boolean[]): any
   {
 
-    // Initialize min value
     let min = Number.MAX_VALUE;
-    // tslint:disable-next-line:variable-name
+
     let min_index = -1;
 
     for (let v = 0; v < this.numTiles; v++)
@@ -234,7 +349,7 @@ export class HomeComponent implements OnInit {
   }
   createPathList(p: number[], j: number, test: any[], i: number): any
   {
-    // Base Case : If j is source
+
     if (p[j] === - 1) {
       test.push('tile-' + Math.floor(j / this.cols) + ':' + j % this.cols);
       return test;
@@ -245,50 +360,43 @@ export class HomeComponent implements OnInit {
     return test;
   }
 
-  dijkstra(graph: number[][]): void
-  {
+  async dijkstra(graph: number[][], delay: number) {
     const src = (parseInt(this.startTile.row, 10) * this.cols) + (parseInt(this.startTile.col, 10));
     const target = (parseInt(this.endTile.row, 10) * this.cols) + (parseInt(this.endTile.col, 10));
     const dist = new Array(this.numTiles);
     const sptSet = new Array(this.numTiles);
     const p = new Array(this.numTiles);
 
-    // Initialize all distances as
-    // INFINITE and stpSet[] as false
-    for (let i = 0; i < this.numTiles; i++)
-    {
+    // console.log('inside dijkstra');
+    for (let i = 0; i < this.numTiles; i++) {
       p[src] = -1;
       dist[i] = Number.MAX_VALUE;
       sptSet[i] = false;
     }
 
-    // Distance of source vertex
-    // from itself is always 0
     dist[src] = 0;
 
-    // Find shortest path for all vertices
-    for (let count = 0; count < this.numTiles - 1; count++)
-    {
+    for (let i = 0; i < this.numTiles - 1; i++){
 
-      // Pick the minimum distance vertex
-      // from the set of vertices not yet
-      // processed. u is always equal to
-      // src in first iteration.
       const u = this.minDistance(dist, sptSet);
-
-      // Mark the picked vertex as processed
       sptSet[u] = true;
 
-      // Update dist value of the adjacent
-      // vertices of the picked vertex.
+      if (delay > 0){
+        await this.wait(delay);
+      }
+      if (this.tiles[Math.floor(u / this.cols)][u % this.cols].type !== 'start' &&
+        this.tiles[Math.floor(u / this.cols)][u % this.cols].type !== 'end' &&
+        this.tiles[Math.floor(u / this.cols)][u % this.cols].type !== 'wall'){
+        document.getElementById('tile-' + Math.floor(u / this.cols) + ':' + u % this.cols).classList.remove('blank');
+        document.getElementById('tile-' + Math.floor(u / this.cols) + ':' + u % this.cols).classList.add('searched');
+        document.getElementById('tile-' + Math.floor(u / this.cols) + ':' + u % this.cols).style.animation = '';
+        if (delay === 0){
+
+          document.getElementById('tile-' + Math.floor(u / this.cols) + ':' + u % this.cols).style.animation = 'none';
+        }
+      }
       for (let v = 0; v < this.numTiles; v++)
       {
-
-        // Update dist[v] only if is not in
-        // sptSet, there is an edge from u
-        // to v, and total weight of path
-        // from src to v through u is smaller
-        // than current value of dist[v]
         if (!sptSet[v] && graph[u][v] !== 0 &&
           dist[u] !== Number.MAX_VALUE &&
           dist[u] + graph[u][v] < dist[v])
@@ -297,20 +405,52 @@ export class HomeComponent implements OnInit {
           dist[v] = dist[u] + graph[u][v];
         }
       }
+      if (u === target){
+        break;
+      }
     }
+    // console.log('found path');
+
+    const array = this.createPathList(p, target, [], 0);
+    for (let i = 0; i < array.length - 1; i++) {
+      if (delay > 0) {
+        await this.wait(50);
+      }
+      this.lines.push(this.connect(array[i], array[i + 1]));
+    }
+    // console.log('finished drawing');
+    this.inProgress = false;
+    this.finished = true;
+    // Print the constructed distance array
+  }
+  wait(time: number) {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve('');
+      }, time);
+    });
+  }
+
+  diagonalChange(): void {
+    this.setGraph();
+    if (this.finished){
+      this.visualize(0);
+    }
+    else {
+      this.resetLine();
+    }
+  }
+
+  changeSpeed(e: MatButtonToggleChange) {
+    this.delay = parseInt(e.value, 10);
+  }
+  printMatrix(){
     let str = '';
     for (let i = 0; i < this.tileGraph.length; i++){
       // for (let j = 0; i < this.tileGraph.length; j++){
-        str = str + this.tileGraph[i] + '\n';
+      str = str + this.tileGraph[i] + '\n';
       // }
     }
     console.log(str);
-    // Print the constructed distance array
-    const array = this.createPathList(p, target, [], 0);
-    // const tilesHit: any[] = ['tile-0:3', 'tile-0:10', 'tile-4:10', 'tile-14:20'];
-    console.log(array);
-    for (let i = 0; i < array.length - 1; i++){
-      this.lines.push(this.connect(array[i], array[i + 1], 'yellow', '4'));
-    }
   }
 }

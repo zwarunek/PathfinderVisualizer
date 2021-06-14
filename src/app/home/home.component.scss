@@ -1,27 +1,45 @@
-@import '../../custom-theme.scss';
+@import "src/custom-theme.scss";
 
 $tile-color: #000000;
+@mixin my-theme($my-theme) {
+  // Extract whichever individual palettes you need from the theme.
+  $primary: map-get($my-theme, primary);
+  $accent: map-get($my-theme, accent);
 
-.default {
-  background-color: lighten($tile-color, 60%)
+  .mat-tab-label-active{
+    .mat-tab-icon {
+      background-color: mat-color($my-primary);
+    }
+  }
+}
+
+.mat-button-toggle {
+  background-color: mat-color($my-primary);
+  color: mat-color($my-primary, defaultContrast);
+}
+
+.mat-button-toggle.mat-button-toggle-checked {
+  background-color: mat-color($my-accent);
+  color: mat-color($my-accent, defaultContrast);
+}
+.mat-button-toggle-button {
+  color: #000000;
+}
+
+.blank {
+  background-color: #d4d4d4;
 }
 
 .start {
-  background-color: mat-color($primary)
+  background-color: #32cd32;
 }
 
 .end {
-  background-color: mat-color($primary)
+  background-color: orangered;
 }
 
-.selected{
-  background-color: lighten($tile-color, 40%)
-}
-.first {
-  background-color: lighten(mat-color($primary), 60%)
-}
-.searched {
-  background-color: lighten($tile-color, 60%)
+.wall{
+  background-color: darken(mat-color($my-primary), 30%);
 }
 
 .grid-container {
@@ -31,7 +49,6 @@ $tile-color: #000000;
 }
 .grid-item {
   background-color: rgba(255, 255, 255, 0.8);
-  border-radius: 3px;
   margin: 2px;
   padding: 20px;
   font-size: 30px;
@@ -43,17 +60,6 @@ $tile-color: #000000;
   -khtml-user-select: none; /* Konqueror HTML */
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* Internet Explorer/Edge */
-}
-
-.toolbar-list {
-  border: solid 1px rgba(0, 0, 0, 0);
-  width: 50px;
-  height: 50px;
-  margin-right: 20px;
-  background-color: darken(mat-color($primary), 10%);
-  border-radius: 4px;
-  overflow: hidden;
-  display: block;
 }
 
 .example-list {
@@ -107,13 +113,9 @@ $tile-color: #000000;
   //grid-gap: 3px;
 }
 .grid-cell{
-  position: relative;
-  //border-radius: 2px;
-  border: solid 1px #303030;
-  width: 100%;
-  padding-top: 100%;
-  cursor: pointer;
-  transition: 0.3s ease-in-out;
+  width: 25px;
+  height: 25px;
+  border: 1px solid #303030;
 }
 
 .dragdrop-cell{
@@ -126,38 +128,29 @@ $tile-color: #000000;
   height: 100%;
   cursor: pointer
 }
-.icon-background{
-  background-color: darken(mat-color($primary), 10%);
-  width: 26px;
-  height: 26px;
-  margin: auto;
-  border-radius: 10px;
-}
-@keyframes selectedkf {
+@keyframes wallkf {
   0%{
     z-index: 100;
-    transform: matrix(1, 0, 0, 1, 0, 0);
+    transform: matrix(.1, 0, 0, .1, 0, 0);
   }
-  50%{
-    transform: matrix(1.2, 0, 0, 1.2, 0, 0);
+  80%{
     z-index: 100;
+    transform: matrix(1.2, 0, 0, 1.2, 0, 0);
   }
   100%{
     transform: matrix(1, 0, 0, 1, 0, 0);
-    z-index: 100;
+    z-index: 100
   }
 }
-@keyframes defaultkf {
+@keyframes blankkf {
   0%{
     z-index: 100;
+    background-color: #340c40;
     transform: matrix(1, 0, 0, 1, 0, 0);
-  }
-  50%{
-    transform: matrix(1.2, 0, 0, 1.2, 0, 0);
-    z-index: 100;
   }
   100%{
-    transform: matrix(1, 0, 0, 1, 0, 0);
+    transform: matrix(.1, 0, 0, .1, 0, 0);
+    background-color: #340c40;
     z-index: 100;
   }
 }
@@ -167,7 +160,7 @@ $tile-color: #000000;
     transform: matrix(1, 0, 0, 1, 0, 0);
   }
   50%{
-    transform: matrix(1.2, 0, 0, 1.2, 0, 0);
+    //transform: matrix(1.2, 0, 0, 1.2, 0, 0);
     z-index: 100;
   }
   100%{
@@ -178,17 +171,15 @@ $tile-color: #000000;
 //.grid-cell:hover{
 //  animation: createBox .3s;
 //}
-.grid-cell.selected{
-  animation: selectedkf .3s;
+.grid-cell.wall{
+  animation: wallkf .4s;
 }
-.grid-cell.default{
-  animation: defaultkf .3s;
+.grid-cell.blank{
+  animation: blankkf .3s;
 }
 .grid-cell.start{
-  animation: startendkf .3s;
 }
 .grid-cell.end{
-  animation: startendkf .3s;
 }
 .example-form {
   width: 70px;
@@ -199,37 +190,43 @@ $tile-color: #000000;
   width: 70px;
   font-size: 14px;
 }
+@keyframes pathfinding {
+  0%{
+    transform: matrix(.1, 0, 0, .1, 0, 0);
+    background-color: midnightblue;
+    //border-radius: 100%;
+  }
+  40%{
+    transform: matrix(1, 0, 0, 1, 0, 0);
+    background-color: aqua;
+    //border-radius: 0;
+  }
+  100%{
+    transform: matrix(1, 0, 0, 1, 0, 0);
+    background-color: lightseagreen;
+  }
+}
+.searched {
+  z-index: 100;
+  animation: pathfinding 3s;
+  background-color: lightseagreen;
+}
 
-//0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-//1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
-//0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0,
-//0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0,
-//0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0,
-//0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0,
-//0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0,
-//0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0,
-//0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1,
-//0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0,
-//0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,
-//0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1,
-//0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0,
-//
-//0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-//0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-//1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0,
-//1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0,
-//0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0,
-//0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0,
-//0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0,
-//0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0,
-//0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1,
-//0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1,
-//0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0,
-//0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0,
-//0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1,
-//0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0,
+//.line{
+//  animation: addLine .3s;
+//}
+
+@keyframes addLine {
+  0%{
+    //z-index: 100;
+    stroke:rgba(255,255,0, 0)
+  }
+  50%{
+    //z-index: 100;
+    stroke:rgba(255,255,0, .5)
+  }
+  100%{
+    //z-index: 100;
+    stroke:rgba(255,255,0, 1)
+  }
+}
