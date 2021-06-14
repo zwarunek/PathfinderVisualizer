@@ -111,18 +111,18 @@ export class HomeComponent implements OnInit {
       if (i > this.cols && c > 0) {
         this.tileGraph[i - this.cols - 1][i] = this.tileGraph[i][i - this.cols - 1] =
           this.tiles[Math.floor((i - this.cols - 1) / this.cols)][(i - this.cols - 1) % this.cols].distance *
-          this.tiles[Math.floor(i / this.cols)][i % this.cols].distance * 1;
+          this.tiles[Math.floor(i / this.cols)][i % this.cols].distance * Math.sqrt(2);
       }
       if (i > this.cols - 1 && c !== this.cols - 1) {
         this.tileGraph[i - this.cols + 1][i] = this.tileGraph[i][i - this.cols + 1] =
           this.tiles[Math.floor((i - this.cols + 1) / this.cols)][(i - this.cols + 1) % this.cols].distance *
-          this.tiles[Math.floor(i / this.cols)][i % this.cols].distance * 1;
+          this.tiles[Math.floor(i / this.cols)][i % this.cols].distance * Math.sqrt(2);
       }
     }
   }
 
-  addEdge(i: number, j: number){
-    this.tileGraph[i][j] = this.tileGraph[j][i] = 1;
+  addEdge(i: number, j: number, distance: number){
+    this.tileGraph[i][j] = this.tileGraph[j][i] = distance;
   }
 
   findNeighbors(row: number, col: number): Coords[] {
@@ -179,7 +179,9 @@ export class HomeComponent implements OnInit {
       this.tiles[row][col].distance = 1;
       const neighbors = this.findNeighbors(row, col);
       for (let i = 0; i < neighbors.length; i++) {
-        this.addEdge(parseInt(row, 10) * this.cols + parseInt(col, 10), neighbors[i].row * this.cols + neighbors[i].col);
+        this.addEdge(parseInt(row, 10) * this.cols + parseInt(col, 10),
+          neighbors[i].row * this.cols + neighbors[i].col,
+          neighbors[i].col !== col && neighbors[i].row !== row ? Math.sqrt(2) : 1);
       }
 
       if (this.finished){
@@ -195,7 +197,9 @@ export class HomeComponent implements OnInit {
       this.tiles[row][col].distance = 1;
       const neighbors = this.findNeighbors(row, col);
       for (let i = 0; i < neighbors.length; i++) {
-        this.addEdge(parseInt(row, 10) * this.cols + parseInt(col, 10), neighbors[i].row * this.cols + neighbors[i].col);
+        this.addEdge(parseInt(row, 10) * this.cols + parseInt(col, 10),
+          neighbors[i].row * this.cols + neighbors[i].col,
+          neighbors[i].col !== col && neighbors[i].row !== row ? Math.sqrt(2) : 1);
       }
       if (this.finished){
         this.visualize(0);
@@ -214,7 +218,9 @@ export class HomeComponent implements OnInit {
       this.tiles[row][col].distance = 1;
       const neighbors = this.findNeighbors(row, col);
       for (let i = 0; i < neighbors.length; i++) {
-        this.addEdge(parseInt(row, 10) * this.cols + parseInt(col, 10), neighbors[i].row * this.cols + neighbors[i].col);
+        this.addEdge(parseInt(row, 10) * this.cols + parseInt(col, 10),
+          neighbors[i].row * this.cols + neighbors[i].col,
+          neighbors[i].col !== col && neighbors[i].row !== row ? Math.sqrt(2) : 1);
       }
       if (this.finished){
         this.visualize(0);
@@ -244,7 +250,9 @@ export class HomeComponent implements OnInit {
       this.tiles[row][col].distance = 1;
       const neighbors = this.findNeighbors(row, col);
       for (let i = 0; i < neighbors.length; i++) {
-        this.addEdge(parseInt(row, 10) * this.cols + parseInt(col, 10), neighbors[i].row * this.cols + neighbors[i].col);
+        this.addEdge(parseInt(row, 10) * this.cols + parseInt(col, 10),
+          neighbors[i].row * this.cols + neighbors[i].col,
+          neighbors[i].col !== col && neighbors[i].row !== row ? Math.sqrt(2) : 1);
       }
       if (this.finished){
         this.visualize(0);
@@ -318,11 +326,16 @@ export class HomeComponent implements OnInit {
     this.finished = false;
   }
   resetTiles(): void {
-    for (let i = 0; i < this.rows; i++) {
-      for (let j = 0; j < this.cols; j++) {
-        if (this.tiles[i][j].type === 'wall') {
-          this.tiles[i][j] = {type: 'blank', distance: 1};
-          this.addToGraph(i * this.cols + j, i, j);
+    for (let row = 0; row < this.rows; row++) {
+      for (let col = 0; col < this.cols; col++) {
+        if (this.tiles[row][col].type === 'wall') {
+          this.tiles[row][col] = {type: 'blank', distance: 1};
+          const neighbors = this.findNeighbors(row, col);
+          for (let i = 0; i < neighbors.length; i++) {
+            this.addEdge(row * this.cols + col,
+              neighbors[i].row * this.cols + neighbors[i].col,
+              neighbors[i].col !== col && neighbors[i].row !== row ? Math.sqrt(2) : 1);
+          }
         }
       }
     }
@@ -433,6 +446,7 @@ export class HomeComponent implements OnInit {
 
   diagonalChange(): void {
     this.setGraph();
+    this.printMatrix()
     if (this.finished){
       this.visualize(0);
     }

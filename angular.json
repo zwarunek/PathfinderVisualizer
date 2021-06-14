@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/PathfinderVisualizer",
+            "outputPath": "C:/Users/zacha/Documents/Node Projects/PathfinderVisualizer/dist/PathfinderVisualizer",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
