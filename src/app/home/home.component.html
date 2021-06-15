@@ -6,14 +6,15 @@
     <button mat-button [disabled]="inProgress" (click)="resetTiles()" style="margin-right: 20px">Remove Walls</button>
 
     <section style="margin-right: 20px">
-      <mat-checkbox [color]="'accent'" [(ngModel)]="diagonal" (change)="diagonalChange()">Diagonal</mat-checkbox>
+      <mat-checkbox [color]="'accent'" [(ngModel)]="diagonal" (change)="diagonalChange()" [disabled]="inProgress">Diagonal</mat-checkbox>
     </section>
-    <mat-button-toggle-group (change)="changeSpeed($event)" value="{{delay}}">
-      <mat-button-toggle color="primary" value="0">Instant</mat-button-toggle>
-      <mat-button-toggle color="primary" value="1">Fast</mat-button-toggle>
-      <mat-button-toggle color="primary" value="10">Medium</mat-button-toggle>
-      <mat-button-toggle color="primary" value="100">Slow</mat-button-toggle>
+    <mat-button-toggle-group (change)="changeSpeed($event)" value="{{delay}}" [disabled]="inProgress" style="margin-right: 20px">
+      <mat-button-toggle value="0">Instant</mat-button-toggle>
+      <mat-button-toggle value="1">Fast</mat-button-toggle>
+      <mat-button-toggle value="10">Medium</mat-button-toggle>
+      <mat-button-toggle value="100">Slow</mat-button-toggle>
     </mat-button-toggle-group>
+    <button mat-button [disabled]="finished" (click)="cancel()" style="margin-right: 20px">Cancel</button>
 
   </mat-toolbar>
 </div>

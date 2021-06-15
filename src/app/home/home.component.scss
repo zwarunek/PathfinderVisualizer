@@ -20,7 +20,12 @@ $tile-color: #000000;
 
 .mat-button-toggle.mat-button-toggle-checked {
   background-color: mat-color($my-accent);
-  color: mat-color($my-accent, defaultContrast);
+}
+.mat-button-toggle.mat-button-toggle-disabled {
+  background-color: darken(mat-color($my-primary), 10%);
+}
+.mat-button-toggle.mat-button-toggle-checked.mat-button-toggle-disabled {
+  background-color: darken(mat-color($my-accent), 20%);
 }
 .mat-button-toggle-button {
   color: #000000;
@@ -39,7 +44,7 @@ $tile-color: #000000;
 }
 
 .wall{
-  background-color: darken(mat-color($my-primary), 30%);
+  background-color: darken(mat-color($my-primary), 20%);
 }
 
 .grid-container {
@@ -48,7 +53,7 @@ $tile-color: #000000;
   padding: 10px;
 }
 .grid-item {
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgb(0, 0, 0);
   margin: 2px;
   padding: 20px;
   font-size: 30px;
@@ -60,48 +65,6 @@ $tile-color: #000000;
   -khtml-user-select: none; /* Konqueror HTML */
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* Internet Explorer/Edge */
-}
-
-.example-list {
-
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0);
-}
-
-.example-box {
-  width: 100%;
-  height: 100%;
-  border-bottom: solid 1px #ccc;
-  color: rgba(0, 0, 0, 0.00);
-  display: flex;
-  flex-direction: row;
-  border-radius: 2px;
-  align-items: center;
-  justify-content: space-between;
-  box-sizing: border-box;
-  cursor: move;
-  font-size: 14px;
-}
-
-.cdk-drag-preview {
-  box-sizing: border-box;
-  border-radius: 4px;
-  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
-  0 8px 10px 1px rgba(0, 0, 0, 0.14),
-  0 3px 14px 2px rgba(0, 0, 0, 0.12);
-}
-
-.cdk-drag-placeholder {
-  opacity: 0;
-}
-
-.cdk-drag-animating {
-  transition: transform 0ms;
-}
-
-.example-box:last-child {
-  border: none;
 }
 
 .grid {
@@ -145,12 +108,12 @@ $tile-color: #000000;
 @keyframes blankkf {
   0%{
     z-index: 100;
-    background-color: #340c40;
+    background-color: darken(mat-color($my-primary), 20%);
     transform: matrix(1, 0, 0, 1, 0, 0);
   }
   100%{
     transform: matrix(.1, 0, 0, .1, 0, 0);
-    background-color: #340c40;
+    background-color: darken(mat-color($my-primary), 20%);
     z-index: 100;
   }
 }
@@ -168,9 +131,6 @@ $tile-color: #000000;
     z-index: 100;
   }
 }
-//.grid-cell:hover{
-//  animation: createBox .3s;
-//}
 .grid-cell.wall{
   animation: wallkf .4s;
 }
@@ -192,49 +152,24 @@ $tile-color: #000000;
 }
 @keyframes pathfinding {
   0%{
-    transform: scale(.1) translate(-1px, -1px) ;
-    //border-radius: 100%;
-    background-color: midnightblue;
-    //border-radius: 100%;
+    transform: scale(.1) translate(-1px, -1px);
+    background-color: darken(mat-color($my-accent), 50%);
   }
   10%{
     transform:  scale(.3) translate(-1px, -1px);
-    background-color: midnightblue;
-    //border-radius: 100%;
-    //border-radius: 100%;
+    background-color: darken(mat-color($my-accent), 40%);
   }
   40%{
-    transform: scale(1) translate(-1px, -1px);
-    //border-radius: 0;
-    background-color: aqua;
-    //border-radius: 0;
+    transform: scale(1.1) translate(-1px, -1px);
+    background-color: lighten(mat-color($my-accent), 20%);
   }
   100%{
     transform: scale(1) translate(-1px, -1px);
-    background-color: lightseagreen;
+    background-color: darken(mat-color($my-accent), 10%);
   }
 }
 .searched {
   z-index: 100;
-  animation: pathfinding 3s;
-  background-color: lightseagreen;
-}
-
-//.line{
-//  animation: addLine .3s;
-//}
-
-@keyframes addLine {
-  0%{
-    //z-index: 100;
-    stroke:rgba(255,255,0, 0)
-  }
-  50%{
-    //z-index: 100;
-    stroke:rgba(255,255,0, .5)
-  }
-  100%{
-    //z-index: 100;
-    stroke:rgba(255,255,0, 1)
-  }
+  animation: pathfinding 10s;
+  background-color: darken(mat-color($my-accent), 10%);
 }

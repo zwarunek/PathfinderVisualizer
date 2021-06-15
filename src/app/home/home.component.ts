@@ -36,6 +36,7 @@ export class HomeComponent implements OnInit {
   lines: any[] = [];
   inProgress = false;
   finished = false;
+  noPath = false;
 
   delay = 1;
 
@@ -51,6 +52,7 @@ export class HomeComponent implements OnInit {
   diagonal = false;
 
 // 12x12 12x52
+  grid = true;
   constructor() {
     this.tiles = [];
     for (let i = 0; i < this.rows; i++) {
@@ -158,6 +160,9 @@ export class HomeComponent implements OnInit {
   }
 
   mouseEnter(e: MouseEvent, row: any, col: any) {
+    if (this.inProgress){
+      return;
+    }
     if (e.buttons === 0){
       this.draggingStart = this.draggingEnd = this.draggingWall = this.draggingBlank = false;
     }
@@ -229,6 +234,9 @@ export class HomeComponent implements OnInit {
   }
 
   mouseDown(e: MouseEvent, row: any, col: any) {
+    if (this.inProgress){
+      return;
+    }
     if (this.tiles[row][col].type === 'start'){
       this.draggingStart = true;
     }
@@ -324,6 +332,7 @@ export class HomeComponent implements OnInit {
       }
     }
     this.finished = false;
+    this.noPath = false;
   }
   resetTiles(): void {
     for (let row = 0; row < this.rows; row++) {
@@ -352,7 +361,7 @@ export class HomeComponent implements OnInit {
 
     for (let v = 0; v < this.numTiles; v++)
     {
-      if (sptSet[v] === false && dist[v] <= min)
+      if (sptSet[v] === false && dist[v] < min)
       {
         min = dist[v];
         min_index = v;
@@ -374,6 +383,7 @@ export class HomeComponent implements OnInit {
   }
 
   async dijkstra(graph: number[][], delay: number) {
+    // console.log(this.finished)
     const src = (parseInt(this.startTile.row, 10) * this.cols) + (parseInt(this.startTile.col, 10));
     const target = (parseInt(this.endTile.row, 10) * this.cols) + (parseInt(this.endTile.col, 10));
     const dist = new Array(this.numTiles);
@@ -387,11 +397,20 @@ export class HomeComponent implements OnInit {
       sptSet[i] = false;
     }
 
-    dist[src] = 0;
+    dist[src] = 1;
 
     for (let i = 0; i < this.numTiles - 1; i++){
+      if (!this.inProgress){
+        return;
+      }
 
       const u = this.minDistance(dist, sptSet);
+      if (u === -1){
+        this.finished = true;
+        this.inProgress = false;
+        this.noPath = true;
+        return;
+      }
       sptSet[u] = true;
 
       if (delay > 0){
@@ -466,5 +485,10 @@ export class HomeComponent implements OnInit {
       // }
     }
     console.log(str);
+  }
+
+  cancel() {
+    this.inProgress = false;
+    this.noPath = true;
   }
 }
