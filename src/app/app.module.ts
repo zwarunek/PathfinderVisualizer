@@ -18,6 +18,7 @@ import {MatInputModule} from '@angular/material/input';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {FormsModule} from '@angular/forms';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
+import {MatSelectModule} from '@angular/material/select';
 
 
 @NgModule({
@@ -41,7 +42,8 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
     MatInputModule,
     MatCheckboxModule,
     FormsModule,
-    MatButtonToggleModule
+    MatButtonToggleModule,
+    MatSelectModule
   ],
   providers: [
     ],

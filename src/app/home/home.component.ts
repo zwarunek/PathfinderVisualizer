@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {MatButtonToggleChange} from '@angular/material/button-toggle';
 // @ts-ignore
 import data from '../../assets/boards.json';
+import {element} from 'protractor';
 
 export interface Tile {
   type: any;
@@ -29,13 +30,14 @@ export class HomeComponent implements OnInit {
   draggingBlank = false;
   draggingStart = false;
   draggingEnd = false;
+  boardsJson = data;
 
   lines: any[] = [];
   inProgress = false;
   finished = false;
   noPath = false;
 
-  delay = 1;
+  delay = 5;
 
   startTile: {row: any, col: any};
   endTile: {row: any, col: any};
@@ -50,6 +52,7 @@ export class HomeComponent implements OnInit {
 
 // 12x12 12x52
   grid = true;
+  selectedBoard: any;
   constructor() {
     this.tiles = [];
     for (let i = 0; i < this.rows; i++) {
@@ -67,6 +70,7 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void{
+    // this.changeSpeed('5');
   }
 
   setGraph(): void {
@@ -419,12 +423,14 @@ export class HomeComponent implements OnInit {
       if (this.tiles[Math.floor(u / this.cols)][u % this.cols].type !== 'start' &&
         this.tiles[Math.floor(u / this.cols)][u % this.cols].type !== 'end' &&
         this.tiles[Math.floor(u / this.cols)][u % this.cols].type !== 'wall'){
-        document.getElementById('tile-' + Math.floor(u / this.cols) + ':' + u % this.cols).classList.remove('blank');
-        document.getElementById('tile-' + Math.floor(u / this.cols) + ':' + u % this.cols).classList.add('searched');
-        document.getElementById('tile-' + Math.floor(u / this.cols) + ':' + u % this.cols).style.animation = '';
+        const tile = document.getElementById('tile-' + Math.floor(u / this.cols) + ':' + u % this.cols);
+        tile.classList.remove('blank');
+        tile.classList.add('searched');
+        tile.style.animation = '';
+        tile.style.transition = '';
         if (delay === 0){
-
-          document.getElementById('tile-' + Math.floor(u / this.cols) + ':' + u % this.cols).style.animation = 'none';
+          tile.style.transition = 'none';
+          tile.style.animation = 'none';
         }
       }
       for (let v = 0; v < this.numTiles; v++)
@@ -468,8 +474,14 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  changeSpeed(e: MatButtonToggleChange) {
-    this.delay = parseInt(e.value, 10);
+  changeSpeed(delay: any) {
+    this.delay = parseInt(delay, 10);
+    for (let i = 0; i < this.rows; i++) {
+      for (let j = 0; j < this.cols; j++) {
+        const tile = document.getElementById('tile-' + i + ':' + j);
+        tile.style.animation = 'none';
+      }
+    }
   }
   printMatrix(){
     let str = '';
@@ -498,12 +510,16 @@ export class HomeComponent implements OnInit {
   }
 
   async loadBoard() {
-    const json = data[1].walls;
+    console.log(this.selectedBoard);
+    this.resetTiles();
+    const json = data[this.selectedBoard].walls;
     for (let i = 0; i < json.length; i++){
+      if(this.tiles[json[i][0]][json[i][1]].type !== 'start' && this.tiles[json[i][0]][json[i][1]].type !== 'end')
       this.tiles[json[i][0]][json[i][1]].type = 'wall';
       this.tiles[json[i][0]][json[i][1]].distance = 0;
       this.removeFromGraph(json[i][0] * this.cols + json[i][1]);
-      await this.sleep(10);
+      await this.sleep(1);
     }
+
   }
 }

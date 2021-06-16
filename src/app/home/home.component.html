@@ -8,14 +8,20 @@
     <section style="margin-right: 20px">
       <mat-checkbox [color]="'accent'" [(ngModel)]="diagonal" (change)="diagonalChange()" [disabled]="inProgress">Diagonal</mat-checkbox>
     </section>
-    <mat-button-toggle-group (change)="changeSpeed($event)" value="{{delay}}" [disabled]="inProgress" style="margin-right: 20px">
+    <mat-button-toggle-group (change)="changeSpeed($event.value)" value="{{delay}}" [disabled]="inProgress" style="margin-right: 20px">
       <mat-button-toggle value="0">Instant</mat-button-toggle>
       <mat-button-toggle value="1">Fast</mat-button-toggle>
-      <mat-button-toggle value="10">Medium</mat-button-toggle>
-      <mat-button-toggle value="100">Slow</mat-button-toggle>
+      <mat-button-toggle value="5">Medium</mat-button-toggle>
+      <mat-button-toggle value="25">Slow</mat-button-toggle>
     </mat-button-toggle-group>
-    <button mat-button [disabled]="finished" (click)="cancel()" style="margin-right: 20px">Cancel</button>
-    <button mat-button [disabled]="finished" (click)="loadBoard()" style="margin-right: 20px">Load Board</button>
+    <mat-form-field appearance="fill" style="font-size: 15px">
+      <mat-label>Select an option</mat-label>
+      <mat-select [(value)]="selectedBoard"  (selectionChange)="loadBoard()">
+        <mat-option>None</mat-option>
+        <mat-option *ngFor="let board of boardsJson; let i = index" value="{{i}}">Board {{i+1}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button mat-button [disabled]="!inProgress" (click)="cancel()" style="margin-left: auto; font-size: 20px">Cancel</button>
 
   </mat-toolbar>
 </div>
@@ -24,7 +30,7 @@
     <tbody>
       <tr *ngFor="let row of tiles; let y = index" style="background-color: #d4d4d4">
         <td class="grid-cell" *ngFor="let tile of row; let x = index"  [attr.id]="'tile-'+y+':'+x"
-            [ngClass]="{wall: tile.type === 'wall', blank: tile.type === 'blank', start: tile.type === 'start', end: tile.type === 'end', searched: tile.type === 'searched'}"
+            [ngClass]="{wall: tile.type === 'wall', blank: tile.type === 'blank', start: tile.type === 'start', end: tile.type === 'end', fast: delay === 1, medium: delay === 5, slow: delay === 25}"
             (mouseenter)="mouseEnter($event, y, x)"
             (mousedown)="mouseDown($event, y, x)"
             (mouseup)="mouseUp($event, y, x)"

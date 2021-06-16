@@ -1,6 +1,8 @@
 @import "src/custom-theme.scss";
 
 $tile-color: #000000;
+$background: #d4d4d4;
+
 @mixin my-theme($my-theme) {
   // Extract whichever individual palettes you need from the theme.
   $primary: map-get($my-theme, primary);
@@ -32,7 +34,7 @@ $tile-color: #000000;
 }
 
 .blank {
-  background-color: #d4d4d4;
+  background-color: $background;
 }
 
 .start {
@@ -94,14 +96,14 @@ $tile-color: #000000;
 @keyframes wallkf {
   0%{
     z-index: 100;
-    transform: matrix(.1, 0, 0, .1, 0, 0);
+    transform: matrix(.1, 0, 0, .1, 0, 0) translate(-1px, -1px);
   }
   80%{
     z-index: 100;
-    transform: matrix(1.2, 0, 0, 1.2, 0, 0);
+    transform: matrix(1.2, 0, 0, 1.2, 0, 0) translate(-1px, -1px);
   }
   100%{
-    transform: matrix(1, 0, 0, 1, 0, 0);
+    transform: matrix(1, 0, 0, 1, 0, 0) translate(-1px, -1px);
     z-index: 100
   }
 }
@@ -114,20 +116,6 @@ $tile-color: #000000;
   100%{
     transform: matrix(.1, 0, 0, .1, 0, 0);
     background-color: darken(mat-color($my-primary), 20%);
-    z-index: 100;
-  }
-}
-@keyframes startendkf {
-  0%{
-    z-index: 100;
-    transform: matrix(1, 0, 0, 1, 0, 0);
-  }
-  50%{
-    //transform: matrix(1.2, 0, 0, 1.2, 0, 0);
-    z-index: 100;
-  }
-  100%{
-    transform: matrix(1, 0, 0, 1, 0, 0);
     z-index: 100;
   }
 }
@@ -152,24 +140,37 @@ $tile-color: #000000;
 }
 @keyframes pathfinding {
   0%{
-    transform: scale(.1) translate(-1px, -1px);
-    background-color: darken(mat-color($my-accent), 50%);
+    background-color: yellow;
   }
-  10%{
+  2%{
+    background-color: $background;
+  }
+  5%{
     transform:  scale(.3) translate(-1px, -1px);
     background-color: darken(mat-color($my-accent), 40%);
-  }
-  40%{
-    transform: scale(1.1) translate(-1px, -1px);
-    background-color: lighten(mat-color($my-accent), 20%);
   }
   100%{
     transform: scale(1) translate(-1px, -1px);
     background-color: darken(mat-color($my-accent), 10%);
   }
-}
+}@keyframes pathfindingFast {
+   0%{
+     background-color: darken(mat-color($my-accent), 30%);
+   }
+   80%{
+     background-color: darken(mat-color($my-accent), 10%);
+   }
+ }
 .searched {
   z-index: 100;
-  animation: pathfinding 10s;
   background-color: darken(mat-color($my-accent), 10%);
+}
+.searched.fast {
+  animation: pathfindingFast 1s;
+}
+.searched.medium {
+  animation: pathfinding 1s;
+}
+.searched.slow {
+  animation: pathfinding 5s;
 }
