@@ -1,9 +1,4 @@
-import {Component, HostListener, OnInit} from '@angular/core';
-import {newArray} from '@angular/compiler/src/util';
-import { KeyValueChanges, KeyValueDiffer, KeyValueDiffers } from '@angular/core';
-import {MatCheckboxChange} from '@angular/material/checkbox';
-import {Observable, timer} from 'rxjs';
-import {take} from 'rxjs/operators';
+import {Component, OnInit} from '@angular/core';
 import {MatButtonToggleChange} from '@angular/material/button-toggle';
 
 export interface Tile {
@@ -70,7 +65,6 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void{
-
   }
 
   setGraph(): void {
@@ -271,6 +265,9 @@ export class HomeComponent implements OnInit {
   mouseLeave(e: MouseEvent, row: any, col: any) {
     // console.log((e.target as Element).id + ' -> ' + (e.relatedTarget as Element).id);
 
+    if (this.inProgress){
+      return;
+    }
     if (this.draggingStart && this.tileElementToTile((e.target as Element).id).type !== 'end'){
       this.tiles[row][col].type = 'blank';
       this.tiles[row][col].distance = 1;
@@ -465,7 +462,6 @@ export class HomeComponent implements OnInit {
 
   diagonalChange(): void {
     this.setGraph();
-    this.printMatrix()
     if (this.finished){
       this.visualize(0);
     }
