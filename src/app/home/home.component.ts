@@ -1,5 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {MatButtonToggleChange} from '@angular/material/button-toggle';
+// @ts-ignore
+import data from '../../assets/boards.json';
 
 export interface Tile {
   type: any;
@@ -315,6 +317,7 @@ export class HomeComponent implements OnInit {
   }
   visualize(delay: number): void {
     // this.printMatrix();
+    this.printBoard();
     this.inProgress = true;
     // console.log('inside visualize');
     this.resetLine();
@@ -379,7 +382,7 @@ export class HomeComponent implements OnInit {
     return test;
   }
 
-  async dijkstra(graph: number[][], delay: number) {
+  async dijkstra(graph: number[][], delay: number): Promise<void> {
     // console.log(this.finished)
     const src = (parseInt(this.startTile.row, 10) * this.cols) + (parseInt(this.startTile.col, 10));
     const target = (parseInt(this.endTile.row, 10) * this.cols) + (parseInt(this.endTile.col, 10));
@@ -411,7 +414,7 @@ export class HomeComponent implements OnInit {
       sptSet[u] = true;
 
       if (delay > 0){
-        await this.wait(delay);
+        await this.sleep(delay);
       }
       if (this.tiles[Math.floor(u / this.cols)][u % this.cols].type !== 'start' &&
         this.tiles[Math.floor(u / this.cols)][u % this.cols].type !== 'end' &&
@@ -438,12 +441,11 @@ export class HomeComponent implements OnInit {
         break;
       }
     }
-    // console.log('found path');
 
     const array = this.createPathList(p, target, [], 0);
     for (let i = 0; i < array.length - 1; i++) {
       if (delay > 0) {
-        await this.wait(50);
+        await this.sleep(10);
       }
       this.lines.push(this.connect(array[i], array[i + 1]));
     }
@@ -452,12 +454,8 @@ export class HomeComponent implements OnInit {
     this.finished = true;
     // Print the constructed distance array
   }
-  wait(time: number) {
-    return new Promise(resolve => {
-      setTimeout(() => {
-        resolve('');
-      }, time);
-    });
+  sleep(ms: number): any {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   diagonalChange(): void {
@@ -486,5 +484,26 @@ export class HomeComponent implements OnInit {
   cancel() {
     this.inProgress = false;
     this.noPath = true;
+  }
+  printBoard(){
+    let str = '';
+    for (let row = 0; row < this.rows; row++){
+      for (let col = 0; col < this.cols; col++){
+        if (this.tiles[row][col].type === 'wall'){
+          str = str.concat('[' + row + ',' + col + ']\n');
+        }
+      }
+    }
+    console.log(str);
+  }
+
+  async loadBoard() {
+    const json = data[1].walls;
+    for (let i = 0; i < json.length; i++){
+      this.tiles[json[i][0]][json[i][1]].type = 'wall';
+      this.tiles[json[i][0]][json[i][1]].distance = 0;
+      this.removeFromGraph(json[i][0] * this.cols + json[i][1]);
+      await this.sleep(10);
+    }
   }
 }
