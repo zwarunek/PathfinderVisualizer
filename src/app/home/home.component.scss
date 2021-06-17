@@ -48,6 +48,10 @@ $background: #d4d4d4;
 .wall{
   background-color: darken(mat-color($my-primary), 20%);
 }
+.mat-form-field-wrapper{
+  margin-bottom: 0;
+}
+
 
 .grid-container {
   display: grid;
@@ -97,10 +101,6 @@ $background: #d4d4d4;
   0%{
     z-index: 100;
     transform: matrix(.1, 0, 0, .1, 0, 0) translate(-1px, -1px);
-  }
-  80%{
-    z-index: 100;
-    transform: matrix(1.2, 0, 0, 1.2, 0, 0) translate(-1px, -1px);
   }
   100%{
     transform: matrix(1, 0, 0, 1, 0, 0) translate(-1px, -1px);
@@ -173,4 +173,7 @@ $background: #d4d4d4;
 }
 .searched.slow {
   animation: pathfinding 5s;
+}
+.searched.wall {
+  background-color: darken(mat-color($my-primary), 20%);
 }
