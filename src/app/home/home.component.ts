@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {MatButtonToggleChange} from '@angular/material/button-toggle';
 // @ts-ignore
 import data from '../../assets/boards.json';
-import {element} from 'protractor';
-import {JsonObject} from '@angular/compiler-cli/ngcc/src/packages/entry_point';
+import {AlgorithmsService} from '../Services/algorithms.service';
+import {global} from '@angular/compiler/src/util';
+import {Globals} from '../globals';
 
 export interface Tile {
   type: any;
@@ -35,9 +35,9 @@ export class HomeComponent implements OnInit {
   boardLoading = false;
 
   lines: any[] = [];
-  inProgress = false;
-  finished = false;
-  noPath = false;
+  // inProgress = false;
+  // finished = false;
+  // noPath = false;
 
   delay = 5;
 
@@ -56,7 +56,7 @@ export class HomeComponent implements OnInit {
 // 12x12 12x52
   grid = true;
   selectedBoard: any;
-  constructor() {
+  constructor(public globals: Globals, private algorithms: AlgorithmsService) {
     this.tiles = [];
     for (let i = 0; i < this.rows; i++) {
       this.tiles[i] = [];
@@ -162,7 +162,7 @@ export class HomeComponent implements OnInit {
   }
 
   mouseEnter(e: MouseEvent, row: any, col: any) {
-    if (this.inProgress){
+    if (this.globals.inProgress){
       return;
     }
     if (e.buttons === 0){
@@ -191,7 +191,7 @@ export class HomeComponent implements OnInit {
           neighbors[i].col !== col && neighbors[i].row !== row ? Math.sqrt(2) : 1);
       }
 
-      if (this.finished){
+      if (this.globals.finished){
         this.visualize(0);
       }
     }
@@ -208,7 +208,7 @@ export class HomeComponent implements OnInit {
           neighbors[i].row * this.cols + neighbors[i].col,
           neighbors[i].col !== col && neighbors[i].row !== row ? Math.sqrt(2) : 1);
       }
-      if (this.finished){
+      if (this.globals.finished){
         this.visualize(0);
       }
     }
@@ -217,7 +217,7 @@ export class HomeComponent implements OnInit {
       this.tiles[row][col].type = 'wall';
       this.tiles[row][col].distance = 0;
       this.removeFromGraph(row * this.cols + col);
-      if (this.finished){
+      if (this.globals.finished){
         this.visualize(0);
       }
     }
@@ -230,14 +230,14 @@ export class HomeComponent implements OnInit {
           neighbors[i].row * this.cols + neighbors[i].col,
           neighbors[i].col !== col && neighbors[i].row !== row ? Math.sqrt(2) : 1);
       }
-      if (this.finished){
+      if (this.globals.finished){
         this.visualize(0);
       }
     }
   }
 
   mouseDown(e: MouseEvent, row: any, col: any) {
-    if (this.inProgress){
+    if (this.globals.inProgress){
       return;
     }
     if (this.tiles[row][col].type === 'start'){
@@ -252,7 +252,7 @@ export class HomeComponent implements OnInit {
       this.tiles[row][col].type = 'wall';
       this.tiles[row][col].distance = 0;
       this.removeFromGraph(row * this.cols + col);
-      if (this.finished){
+      if (this.globals.finished){
         this.visualize(0);
       }
     }
@@ -266,7 +266,7 @@ export class HomeComponent implements OnInit {
           neighbors[i].row * this.cols + neighbors[i].col,
           neighbors[i].col !== col && neighbors[i].row !== row ? Math.sqrt(2) : 1);
       }
-      if (this.finished){
+      if (this.globals.finished){
         this.visualize(0);
       }
     }
@@ -275,7 +275,7 @@ export class HomeComponent implements OnInit {
   mouseLeave(e: MouseEvent, row: any, col: any) {
     // console.log((e.target as Element).id + ' -> ' + (e.relatedTarget as Element).id);
 
-    if (this.inProgress){
+    if (this.globals.inProgress){
       return;
     }
     if (this.draggingStart && this.tileElementToTile((e.target as Element).id).type !== 'end'){
@@ -326,26 +326,39 @@ export class HomeComponent implements OnInit {
   visualize(delay: number): void {
     // this.printMatrix();
     // this.printBoard();
-    this.inProgress = true;
+    this.globals.inProgress = true;
     // console.log('inside visualize');
     this.resetLine();
-    this.dijkstra(this.tileGraph, delay);
+    const path = this.algorithms.runPathfindingAlgorithm('dijkstra', this.tileGraph,
+      parseInt(this.startTile.row, 10) * this.cols + parseInt(this.startTile.col, 10),
+      parseInt(this.endTile.row, 10) * this.cols + parseInt(this.endTile.col, 10),
+      this.numTiles);
+    this.displayPath(path, delay).then(() => {
+      this.globals.inProgress = false;
+      this.globals.finished = true;
+    });
+    // this.dijkstra(this.tileGraph, delay);
   }
 
   resetLine(): void {
     this.lines = [];
     for (let i = 0; i < this.rows; i++) {
       for (let j = 0; j < this.cols; j++) {
-        document.getElementById('tile-' + i + ':' + j).classList.remove('searched');
+        const tile = document.getElementById('tile-' + i + ':' + j);
+        tile.style.animation = 'none';
+        tile.classList.remove('searched');
+        tile.style.animation = '';
       }
     }
-    this.finished = false;
-    this.noPath = false;
+    this.globals.finished = false;
+    this.globals.noPath = false;
   }
   resetTiles(): void {
     for (let row = 0; row < this.rows; row++) {
       for (let col = 0; col < this.cols; col++) {
         if (this.tiles[row][col].type === 'wall') {
+          const tile = document.getElementById('tile-' + row + ':' + col);
+          tile.style.animation = 'none';
           this.tiles[row][col] = {type: 'blank', distance: 1};
           const neighbors = this.findNeighbors(row, col);
           for (let i = 0; i < neighbors.length; i++) {
@@ -353,116 +366,39 @@ export class HomeComponent implements OnInit {
               neighbors[i].row * this.cols + neighbors[i].col,
               neighbors[i].col !== col && neighbors[i].row !== row ? Math.sqrt(2) : 1);
           }
+          tile.style.animation = '';
         }
       }
     }
-    if (this.finished) {
+    if (this.globals.finished) {
       this.visualize(0);
     }
   }
-  minDistance(dist: number[], sptSet: boolean[]): any
-  {
-
-    let min = Number.MAX_VALUE;
-
-    let min_index = -1;
-
-    for (let v = 0; v < this.numTiles; v++)
-    {
-      if (sptSet[v] === false && dist[v] < min)
-      {
-        min = dist[v];
-        min_index = v;
-      }
-    }
-    return min_index;
-  }
-  createPathList(p: number[], j: number, test: any[], i: number): any
-  {
-
-    if (p[j] === - 1) {
-      test.push('tile-' + Math.floor(j / this.cols) + ':' + j % this.cols);
-      return test;
-    }
-
-    test = this.createPathList(p, p[j], test, i++);
-    test.push('tile-' + Math.floor(j / this.cols) + ':' + j % this.cols);
-    return test;
-  }
-
-  async dijkstra(graph: number[][], delay: number): Promise<void> {
-    // console.log(this.finished)
-    const src = (parseInt(this.startTile.row, 10) * this.cols) + (parseInt(this.startTile.col, 10));
-    const target = (parseInt(this.endTile.row, 10) * this.cols) + (parseInt(this.endTile.col, 10));
-    const dist = new Array(this.numTiles);
-    const sptSet = new Array(this.numTiles);
-    const p = new Array(this.numTiles);
-
-    // console.log('inside dijkstra');
-    for (let i = 0; i < this.numTiles; i++) {
-      p[src] = -1;
-      dist[i] = Number.MAX_VALUE;
-      sptSet[i] = false;
-    }
-
-    dist[src] = 1;
-
-    for (let i = 0; i < this.numTiles - 1; i++){
-      if (!this.inProgress){
+  async displayPath(path: {path, steps}, delay: number): Promise<void>{
+    for (let i = 0; i < path.steps.length; i++){
+      if (this.globals.inProgress === false){
         return;
       }
 
-      const u = this.minDistance(dist, sptSet);
-      if (u === -1){
-        this.finished = true;
-        this.inProgress = false;
-        this.noPath = true;
-        return;
-      }
-      sptSet[u] = true;
-
-      if (delay > 0){
-        await this.sleep(delay);
-      }
-      if (this.tiles[Math.floor(u / this.cols)][u % this.cols].type !== 'start' &&
-        this.tiles[Math.floor(u / this.cols)][u % this.cols].type !== 'end' &&
-        this.tiles[Math.floor(u / this.cols)][u % this.cols].type !== 'wall'){
-        const tile = document.getElementById('tile-' + Math.floor(u / this.cols) + ':' + u % this.cols);
-        tile.classList.remove('blank');
-        tile.classList.add('searched');
-        tile.style.animation = '';
-        tile.style.transition = '';
-        if (delay === 0){
-          tile.style.transition = 'none';
-          tile.style.animation = 'none';
+      const tile = {row: Math.floor(path.steps[i] / this.cols), col:  path.steps[i] % this.cols};
+      if (this.tiles[tile.row][tile.col].type !== 'start' &&
+        this.tiles[tile.row]  [tile.col].type !== 'end' &&
+        this.tiles[tile.row]  [tile.col].type !== 'wall') {
+        const tileElement = document.getElementById('tile-' + tile.row + ':' + tile.col);
+        tileElement.classList.remove('blank');
+        tileElement.classList.add('searched');
+        if (delay > 0){
+          await this.sleep(delay);
         }
-      }
-      for (let v = 0; v < this.numTiles; v++)
-      {
-        if (!sptSet[v] && graph[u][v] !== 0 &&
-          dist[u] !== Number.MAX_VALUE &&
-          dist[u] + graph[u][v] < dist[v])
-        {
-          p[v] = u;
-          dist[v] = dist[u] + graph[u][v];
-        }
-      }
-      if (u === target){
-        break;
       }
     }
-
-    const array = this.createPathList(p, target, [], 0);
-    for (let i = 0; i < array.length - 1; i++) {
+    for (let i = 0; i < path.path.length - 1; i++) {
       if (delay > 0) {
         await this.sleep(10);
       }
-      this.lines.push(this.connect(array[i], array[i + 1]));
+      this.lines.push(this.connect('tile-' + Math.floor(path.path[i] / this.cols) + ':' + path.path[i] % this.cols,
+        'tile-' + Math.floor(path.path[i + 1] / this.cols) + ':' + path.path[i + 1] % this.cols));
     }
-    // console.log('finished drawing');
-    this.inProgress = false;
-    this.finished = true;
-    // Print the constructed distance array
   }
   sleep(ms: number): any {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -470,7 +406,7 @@ export class HomeComponent implements OnInit {
 
   diagonalChange(): void {
     this.setGraph();
-    if (this.finished){
+    if (this.globals.finished){
       this.visualize(0);
     }
     else {
@@ -479,7 +415,7 @@ export class HomeComponent implements OnInit {
   }
 
   changeSpeed(delay: any) {
-    this.resetLine()
+    this.resetLine();
     this.delay = parseInt(delay, 10);
     // for (let i = 0; i < this.rows; i++) {
     //   for (let j = 0; j < this.cols; j++) {
@@ -499,8 +435,8 @@ export class HomeComponent implements OnInit {
   }
 
   cancel() {
-    this.inProgress = false;
-    this.noPath = true;
+    this.globals.inProgress = false;
+    this.globals.noPath = true;
   }
   // printBoard(){
   //   let str = '';

@@ -19,6 +19,7 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
 import {FormsModule} from '@angular/forms';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatSelectModule} from '@angular/material/select';
+import {Globals} from './globals';
 
 
 @NgModule({
@@ -46,6 +47,7 @@ import {MatSelectModule} from '@angular/material/select';
     MatSelectModule
   ],
   providers: [
+    Globals
     ],
   bootstrap: [AppComponent]
 })

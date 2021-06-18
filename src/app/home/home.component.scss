@@ -120,10 +120,10 @@ $background: #d4d4d4;
   }
 }
 .grid-cell.wall{
-  animation: wallkf .4s;
+  //animation: wallkf .4s;
 }
 .grid-cell.blank{
-  animation: blankkf .3s;
+  //animation: blankkf .3s;
 }
 .grid-cell.start{
 }
@@ -165,14 +165,17 @@ $background: #d4d4d4;
   z-index: 100;
   background-color: darken(mat-color($my-accent), 10%);
 }
+//.searched.instant {
+//  animation: pathfindingFast 1s;
+//}
 .searched.fast {
-  animation: pathfindingFast 1s;
+  //animation: pathfindingFast 1s;
 }
 .searched.medium {
-  animation: pathfinding 1s;
+  //animation: pathfinding 1s;
 }
 .searched.slow {
-  animation: pathfinding 5s;
+  //animation: pathfinding 5s;
 }
 .searched.wall {
   background-color: darken(mat-color($my-primary), 20%);
