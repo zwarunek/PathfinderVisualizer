@@ -1,28 +1,28 @@
 <div style="width: 100%">
   <mat-toolbar color="primary">
     <span style="font-size: 20px;margin-right: 100px">Pathfinding Algorithm Visualizer</span>
-    <button mat-button [disabled]="globals.inProgress || boardLoading" (click)="visualize(delay)" style="margin-right: 20px">Visualize</button>
-    <button mat-button [disabled]="globals.inProgress || boardLoading" (click)="resetLine()" style="margin-right: 20px">Reset Path</button>
-    <button mat-button [disabled]="globals.inProgress || boardLoading" (click)="resetTiles()" style="margin-right: 20px">Remove Walls</button>
+    <button mat-raised-button color="primary" [disabled]="globals.inProgress || boardLoading" (click)="visualize(delay)" style="margin-right: 20px">Visualize</button>
+    <button mat-raised-button color="primary" [disabled]="globals.inProgress || boardLoading" (click)="resetLine()" style="margin-right: 20px">Reset Path</button>
+    <button mat-raised-button color="primary" [disabled]="globals.inProgress || boardLoading" (click)="resetTiles()" style="margin-right: 20px">Remove Walls</button>
 
     <section style="margin-right: 20px;font-size: 15px">
       <mat-checkbox [color]="'accent'" [(ngModel)]="diagonal" (change)="diagonalChange()" [disabled]="globals.inProgress || boardLoading">Diagonal</mat-checkbox>
     </section>
-    <mat-button-toggle-group (change)="changeSpeed($event.value)" value="{{delay}}" [disabled]="globals.inProgress || boardLoading" style="margin-right: 20px;font-size: 15px">
+    <mat-button-toggle-group appearance="legacy" (change)="changeSpeed($event.value)" value="{{delay}}" [disabled]="globals.inProgress || boardLoading" style="margin-right: 20px;font-size: 15px">
       <mat-button-toggle value="0">Instant</mat-button-toggle>
       <mat-button-toggle value="1">Fast</mat-button-toggle>
       <mat-button-toggle value="5">Medium</mat-button-toggle>
       <mat-button-toggle value="25">Slow</mat-button-toggle>
     </mat-button-toggle-group>
-<!--    <mat-form-field appearance="fill" style="font-size: 10px; margin-top: 15px">-->
-<!--      <mat-label style="font-size: 15px">Select an option</mat-label>-->
-<!--      <mat-select [(value)]="selectedBoard"  (selectionChange)="loadBoard()" [disabled]="boardLoading || inProgress" style="font-size: 15px;">-->
-<!--        <mat-option>None</mat-option>-->
-<!--        <mat-option *ngFor="let board of boardsJson; let i = index" value="{{i}}">Board {{i+1}}</mat-option>-->
-<!--      </mat-select>-->
-<!--    </mat-form-field>-->
-    <button mat-button (click)="loadBoard()" [disabled]="boardLoading || globals.inProgress">Create Maze</button>
-    <button mat-button [disabled]="!globals.inProgress" (click)="cancel()" style="margin-left: auto; font-size: 20px">Cancel</button>
+    <mat-form-field appearance="fill" style="font-size: 10px; margin-top: 15px">
+      <mat-label style="font-size: 15px">Select Board</mat-label>
+      <mat-select [(value)]="selectedBoard"   [disabled]="boardLoading || globals.inProgress" style="font-size: 15px;">
+        <mat-option>None</mat-option>
+        <mat-option (click)="loadBoard()" *ngFor="let board of boards; let i = index" value="{{board}}">{{board}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+<!--    <button mat-raised-button color="primary" (click)="loadBoard()" [disabled]="boardLoading || globals.inProgress">Create Maze</button>-->
+    <button mat-raised-button color="primary" [disabled]="!globals.inProgress" (click)="cancel()" style="margin-left: auto; font-size: 20px">Cancel</button>
 
   </mat-toolbar>
 </div>
@@ -34,7 +34,7 @@
             [ngClass]="{wall: tile.type === 'wall', blank: tile.type === 'blank', start: tile.type === 'start', end: tile.type === 'end', fast: delay === 1, medium: delay === 5, slow: delay === 25, instant: delay === 0}"
             (mouseenter)="mouseEnter($event, y, x)"
             (mousedown)="mouseDown($event, y, x)"
-            (mouseup)="mouseUp($event, y, x)"
+            (mouseup)="mouseUp()"
             (mouseleave)="mouseLeave($event, y, x)">
         </td>
       </tr>
@@ -45,3 +45,7 @@
 <svg width="100%" height="100%" style="top: 0; left: 0; position:absolute;pointer-events: none">
   <line [id]="lines" *ngFor="let line of lines" class="line"  [attr.x1]="line.x1" [attr.y1]="line.y1" [attr.x2]="line.x2" [attr.y2]="line.y2" stroke="yellow" stroke-width="6px" stroke-linecap="round" style="z-index: 900"/>
 </svg>
+<!--<div style="width: 50px; height: 50px">-->
+<!--  <div style="color: #6C6;width: 100%; height: 100%; font-size: 50px">&#x2B22;</div>-->
+<!--</div>-->
+<!--https://jtauber.github.io/articles/css-hexagon.html-->

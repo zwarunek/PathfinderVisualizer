@@ -1,6 +1,4 @@
 import { Injectable } from '@angular/core';
-import {AlgorithmsService} from '../algorithms.service';
-import {HomeComponent} from '../../home/home.component';
 import {Globals} from '../../globals';
 
 @Injectable({
@@ -10,8 +8,7 @@ export class DijkstraService {
 
   constructor(private globals: Globals) { }
 
-  pathFind(parent: AlgorithmsService,
-           graph: number[][],
+  pathFind(graph: number[][],
            src: number,
            target: number,
            numTiles: number): {path, steps} {
@@ -64,17 +61,17 @@ export class DijkstraService {
 
     let min = Number.MAX_VALUE;
 
-    let min_index = -1;
+    let minIndex = -1;
 
     for (let v = 0; v < numTiles; v++)
     {
       if (sptSet[v] === false && dist[v] < min)
       {
         min = dist[v];
-        min_index = v;
+        minIndex = v;
       }
     }
-    return min_index;
+    return minIndex;
   }
   createPathList(p: number[], j: number, test: any[], i: number): any
   {

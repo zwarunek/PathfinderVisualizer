@@ -1,9 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-// @ts-ignore
-import data from '../../assets/boards.json';
 import {AlgorithmsService} from '../Services/algorithms.service';
-import {global} from '@angular/compiler/src/util';
 import {Globals} from '../globals';
+import {BoardsService} from '../Services/boards.service';
 
 export interface Tile {
   type: any;
@@ -31,7 +29,7 @@ export class HomeComponent implements OnInit {
   draggingBlank = false;
   draggingStart = false;
   draggingEnd = false;
-  boardsJson = data;
+  boards: any[];
   boardLoading = false;
 
   lines: any[] = [];
@@ -56,7 +54,7 @@ export class HomeComponent implements OnInit {
 // 12x12 12x52
   grid = true;
   selectedBoard: any;
-  constructor(public globals: Globals, private algorithms: AlgorithmsService) {
+  constructor(public globals: Globals, private algorithms: AlgorithmsService, private boardService: BoardsService) {
     this.tiles = [];
     for (let i = 0; i < this.rows; i++) {
       this.tiles[i] = [];
@@ -70,6 +68,8 @@ export class HomeComponent implements OnInit {
     this.endTile = {row: Math.floor(this.rows / 2) - 1, col: this.cols - Math.floor(this.cols / 6)};
     this.tileGraph = [];
     this.setGraph();
+
+    this.boards = ['Recursive Maze'];
   }
 
   ngOnInit(): void{
@@ -91,7 +91,7 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  removeFromGraph(i: number){
+  removeFromGraph(i: number): void{
     this.tileGraph[i] = new Array(this.numTiles).fill(0);
     for (let row = 0; row < this.tileGraph.length; row++){
       if (row !== i) {
@@ -125,7 +125,7 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  addEdge(i: number, j: number, distance: number){
+  addEdge(i: number, j: number, distance: number): void{
     this.tileGraph[i][j] = this.tileGraph[j][i] = distance;
   }
 
@@ -161,7 +161,7 @@ export class HomeComponent implements OnInit {
 
   }
 
-  mouseEnter(e: MouseEvent, row: any, col: any) {
+  mouseEnter(e: MouseEvent, row: any, col: any): void {
     if (this.globals.inProgress){
       return;
     }
@@ -182,61 +182,26 @@ export class HomeComponent implements OnInit {
       if (this.tiles[row][col].type === 'wall'){
         this.addToGraph(row * this.cols + col, col, row);
       }
-      this.tiles[row][col].type = 'start';
-      this.tiles[row][col].distance = 1;
-      const neighbors = this.findNeighbors(row, col);
-      for (let i = 0; i < neighbors.length; i++) {
-        this.addEdge(parseInt(row, 10) * this.cols + parseInt(col, 10),
-          neighbors[i].row * this.cols + neighbors[i].col,
-          neighbors[i].col !== col && neighbors[i].row !== row ? Math.sqrt(2) : 1);
-      }
 
-      if (this.globals.finished){
-        this.visualize(0);
-      }
+      this.setNonWall('start', row, col);
     }
     else if (this.draggingEnd && this.tiles[row][col].type !== 'start'){
       this.endTile = {row, col};
       if (this.tiles[row][col].type === 'wall'){
         this.addToGraph(row * this.cols + col, col, row);
       }
-      this.tiles[row][col].type = 'end';
-      this.tiles[row][col].distance = 1;
-      const neighbors = this.findNeighbors(row, col);
-      for (let i = 0; i < neighbors.length; i++) {
-        this.addEdge(parseInt(row, 10) * this.cols + parseInt(col, 10),
-          neighbors[i].row * this.cols + neighbors[i].col,
-          neighbors[i].col !== col && neighbors[i].row !== row ? Math.sqrt(2) : 1);
-      }
-      if (this.globals.finished){
-        this.visualize(0);
-      }
+
+      this.setNonWall('end', row, col);
     }
     else if (this.draggingWall && this.tiles[row][col].type !== 'start' && this.tiles[row][col].type !== 'end'){
-      // this.temp.push([row, col]);
-      this.tiles[row][col].type = 'wall';
-      this.tiles[row][col].distance = 0;
-      this.removeFromGraph(row * this.cols + col);
-      if (this.globals.finished){
-        this.visualize(0);
-      }
+      this.setWall(row, col);
     }
     else if (this.draggingBlank && this.tiles[row][col].type !== 'start' && this.tiles[row][col].type !== 'end'){
-      this.tiles[row][col].type = 'blank';
-      this.tiles[row][col].distance = 1;
-      const neighbors = this.findNeighbors(row, col);
-      for (let i = 0; i < neighbors.length; i++) {
-        this.addEdge(parseInt(row, 10) * this.cols + parseInt(col, 10),
-          neighbors[i].row * this.cols + neighbors[i].col,
-          neighbors[i].col !== col && neighbors[i].row !== row ? Math.sqrt(2) : 1);
-      }
-      if (this.globals.finished){
-        this.visualize(0);
-      }
+      this.setNonWall('blank', row, col);
     }
   }
 
-  mouseDown(e: MouseEvent, row: any, col: any) {
+  mouseDown(e: MouseEvent, row: any, col: any): void {
     if (this.globals.inProgress){
       return;
     }
@@ -248,32 +213,15 @@ export class HomeComponent implements OnInit {
     }
     else if (e.buttons === 1) {
       this.draggingWall = true;
-      // this.temp.push([row, col]);
-      this.tiles[row][col].type = 'wall';
-      this.tiles[row][col].distance = 0;
-      this.removeFromGraph(row * this.cols + col);
-      if (this.globals.finished){
-        this.visualize(0);
-      }
+      this.setWall(row, col);
     }
     else if (e.buttons === 2) {
       this.draggingBlank = true;
-      this.tiles[row][col].type = 'blank';
-      this.tiles[row][col].distance = 1;
-      const neighbors = this.findNeighbors(row, col);
-      for (let i = 0; i < neighbors.length; i++) {
-        this.addEdge(parseInt(row, 10) * this.cols + parseInt(col, 10),
-          neighbors[i].row * this.cols + neighbors[i].col,
-          neighbors[i].col !== col && neighbors[i].row !== row ? Math.sqrt(2) : 1);
-      }
-      if (this.globals.finished){
-        this.visualize(0);
-      }
+      this.setNonWall('blank', row, col);
     }
   }
 
-  mouseLeave(e: MouseEvent, row: any, col: any) {
-    // console.log((e.target as Element).id + ' -> ' + (e.relatedTarget as Element).id);
+  mouseLeave(e: MouseEvent, row: any, col: any): void {
 
     if (this.globals.inProgress){
       return;
@@ -289,10 +237,32 @@ export class HomeComponent implements OnInit {
       document.getElementById('tile-' + row + ':' + col).style.animation = 'none';
     }
   }
-
-  mouseUp(e: MouseEvent, row: any, col: any) {
+  mouseUp(): void {
     this.draggingStart = this.draggingEnd = this.draggingWall = this.draggingBlank = false;
   }
+
+  setWall(row, col): void{
+    this.tiles[row][col].type = 'wall';
+    this.tiles[row][col].distance = 0;
+    this.removeFromGraph(row * this.cols + col);
+    if (this.globals.finished){
+      this.visualize(0);
+    }
+  }
+  setNonWall(type: any, row, col): void{
+    this.tiles[row][col].type = type;
+    this.tiles[row][col].distance = 1;
+    const neighbors = this.findNeighbors(row, col);
+    for (const neighbor of neighbors) {
+      this.addEdge(parseInt(row, 10) * this.cols + parseInt(col, 10),
+        neighbor.row * this.cols + neighbor.col,
+        neighbor.col !== col && neighbor.row !== row ? Math.sqrt(2) : 1);
+    }
+    if (this.globals.finished){
+      this.visualize(0);
+    }
+  }
+
   tileElementToTile(id: any): Tile{
     const indices = id.split('-')[1].split(':');
     return this.tiles[indices[0]][indices[1]];
@@ -318,16 +288,11 @@ export class HomeComponent implements OnInit {
     const x2 = (off2.left + off2.width / 2);
     const y2 = (off2.top + off2.height / 2);
 
-    const length = Math.sqrt(((x2 - x1) * (x2 - x1)) + ((y2 - y1) * (y2 - y1))) + 3;
-
     return { weight: 1, x1, y1, x2, y2 };
 
   }
   visualize(delay: number): void {
-    // this.printMatrix();
-    // this.printBoard();
     this.globals.inProgress = true;
-    // console.log('inside visualize');
     this.resetLine();
     const path = this.algorithms.runPathfindingAlgorithm('dijkstra', this.tileGraph,
       parseInt(this.startTile.row, 10) * this.cols + parseInt(this.startTile.col, 10),
@@ -361,10 +326,10 @@ export class HomeComponent implements OnInit {
           tile.style.animation = 'none';
           this.tiles[row][col] = {type: 'blank', distance: 1};
           const neighbors = this.findNeighbors(row, col);
-          for (let i = 0; i < neighbors.length; i++) {
+          for (const neighbor of neighbors) {
             this.addEdge(row * this.cols + col,
-              neighbors[i].row * this.cols + neighbors[i].col,
-              neighbors[i].col !== col && neighbors[i].row !== row ? Math.sqrt(2) : 1);
+              neighbor.row * this.cols + neighbor.col,
+              neighbor.col !== col && neighbor.row !== row ? Math.sqrt(2) : 1);
           }
           tile.style.animation = '';
         }
@@ -375,12 +340,12 @@ export class HomeComponent implements OnInit {
     }
   }
   async displayPath(path: {path, steps}, delay: number): Promise<void>{
-    for (let i = 0; i < path.steps.length; i++){
+    for (const step of path.steps){
       if (this.globals.inProgress === false){
         return;
       }
 
-      const tile = {row: Math.floor(path.steps[i] / this.cols), col:  path.steps[i] % this.cols};
+      const tile = {row: Math.floor(step / this.cols), col:  step % this.cols};
       if (this.tiles[tile.row][tile.col].type !== 'start' &&
         this.tiles[tile.row]  [tile.col].type !== 'end' &&
         this.tiles[tile.row]  [tile.col].type !== 'wall') {
@@ -414,7 +379,7 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  changeSpeed(delay: any) {
+  changeSpeed(delay: any): void {
     this.resetLine();
     this.delay = parseInt(delay, 10);
     // for (let i = 0; i < this.rows; i++) {
@@ -424,169 +389,38 @@ export class HomeComponent implements OnInit {
     //   }
     // }
   }
-  printMatrix(){
+  printMatrix(): void {
     let str = '';
-    for (let i = 0; i < this.tileGraph.length; i++){
-      // for (let j = 0; i < this.tileGraph.length; j++){
-      str = str + this.tileGraph[i] + '\n';
-      // }
+    for (const vertex of this.tileGraph){
+      str = str + vertex + '\n';
     }
     console.log(str);
   }
 
-  cancel() {
+  cancel(): void {
     this.globals.inProgress = false;
     this.globals.noPath = true;
   }
-  // printBoard(){
-  //   let str = '';
-  //   for (let i = 0; i < this.temp.length; i++){
-  //     str = str.concat('[' + this.temp[i][0] + ',' + this.temp[i][1] + ']\n');
-  //   }
-  //   console.log(str);
-  // }
 
-  async loadBoard() {
+  async loadBoard(): Promise<void> {
     this.boardLoading = true;
-    this.selectedBoard = '1';
+    this.resetLine();
     this.resetTiles();
     if (this.selectedBoard === undefined){
       this.boardLoading = false;
       return;
     }
-    if (this.selectedBoard === '1'){
-      this.genNewBoard();
-    }
-    const json = data[this.selectedBoard].walls;
-    for (let i = 0; i < json.length; i++){
-      // console.log(this.tiles, json[i][0], json[i][1]);
-      if (this.tiles[json[i][0]][json[i][1]].type !== 'start' && this.tiles[json[i][0]][json[i][1]].type !== 'end') {
-        this.tiles[json[i][0]][json[i][1]].type = 'wall';
-        this.tiles[json[i][0]][json[i][1]].distance = 0;
-        this.removeFromGraph(json[i][0] * this.cols + json[i][1]);
+    const walls = this.boardService.generateBoard(this.selectedBoard, this.rows, this.cols);
+
+    for (const wall of walls){
+      if (this.tiles[wall[0]][wall[1]].type !== 'start' && this.tiles[wall[0]][wall[1]].type !== 'end') {
+        this.tiles[wall[0]][wall[1]].type = 'wall';
+        this.tiles[wall[0]][wall[1]].distance = 0;
+        this.removeFromGraph(wall[0] * this.cols + wall[1]);
         await this.sleep(1);
       }
     }
     this.boardLoading = false;
 
-  }
-  // genSection(newBoard: any, cols: number, rowInput: number, colInput: number, hole: number): void{
-  //   this.genRow(newBoard, rowInput, 1, cols, hole);
-  // }
-  genRow(newBoard, rowStart, rowEnd,  colStart, colEnd, prevHole): number{
-    // if (rowEnd - rowStart < 2){
-    //   return;
-    // }
-    const cols = 3;
-    // console.log(colStart, colEnd)
-    const hole = [this.getNewHole(colStart, colEnd)];
-    const rowNum = this.genRowCol(rowStart, rowEnd - 1, prevHole);
-    for (let col = colStart; col <= colEnd; col++){
-      if (!hole.includes(col)){
-        newBoard.push([rowNum, col]);
-      }
-    }
-    const lowerColBounds = [colStart, colEnd];
-    const upperColBounds = [colStart, colEnd];
-    const lowerHole: any[] = [];
-    const upperHole: any[] = [];
-
-    for (let i = 0; i < cols; i++){
-      // console.log(colStart, colEnd - 2, lowerColBounds.concat(hole), this.hasRoom(lowerColBounds.concat(hole), colStart, colEnd - 2));
-      if (this.hasRoom(lowerColBounds.concat(hole), colStart, colEnd)){
-        lowerColBounds.push(this.genRowCol(colStart, colEnd, lowerColBounds.concat(hole)));
-      }
-      // console.log(colStart, colEnd - 2, upperColBounds.concat(hole), this.hasRoom(upperColBounds.concat(hole), colStart, colEnd - 2));
-      if (this.hasRoom(upperColBounds.concat(hole), colStart, colEnd)){
-        upperColBounds.push(this.genRowCol(colStart, colEnd, upperColBounds.concat(hole)));
-      }
-    }
-
-    lowerColBounds.sort((a, b) => {
-      return a - b;
-    });
-    upperColBounds.sort((a, b) => {
-      return a - b;
-    });
-    // console.log(lowerColBounds.length)
-    if (rowEnd - rowNum > 2) {
-      for (let i = 0; i < upperColBounds.length - 2; i++) {
-        lowerHole.push(this.genCol(newBoard, rowNum + 1, rowEnd, lowerColBounds[i + 1]));
-      }
-      for (let i = 0; i < lowerColBounds.length - 1; i++){
-        this.genRow(newBoard, rowNum + 1, rowEnd, lowerColBounds[i], lowerColBounds[i + 1], [lowerHole[i]]);
-      }
-    }
-    if (rowNum - rowStart > 2) {
-      for (let i = 0; i < upperColBounds.length - 2; i++) {
-        upperHole.push(this.genCol(newBoard, rowStart, rowNum - 1, upperColBounds[i + 1]));
-      }
-      for (let i = 0; i < upperColBounds.length - 1; i++){
-        this.genRow(newBoard, rowStart, rowNum - 1, upperColBounds[i], upperColBounds[i + 1], [upperHole[i]]);
-      }
-    }
-    // for (let i = 0; i < cols; i++) {
-    //   if (rowNum - rowStart >= 2 && upperColBounds.length === cols + 2) {
-    //     upperHole.push(this.genCol(newBoard, rowStart, rowNum, upperColBounds[i + 1]));
-    //   }
-    // }
-    return rowNum;
-  }
-  genCol(newBoard, rowStart, rowEnd, colNum): number{
-
-    // console.log(rowStart, rowEnd)
-    const hole = this.getNewHole(rowStart, rowEnd);
-
-    for (let row = rowStart; row <= rowEnd; row++){
-      if (row !== hole){
-        newBoard.push([row, colNum]);
-      }
-    }
-    // for (let i = 0; i < 1; i++) {
-    // if (colEnd - colNum >= 2){
-    //   hole.push(this.genRow(newBoard, rowStart, rowEnd, colNum + 1, colEnd, hole));
-    // }
-    // }
-    return hole;
-  }
-  genNewBoard(): void {
-    const newBoard = [];
-    for (let row = 0; row < this.rows; row++){
-      for (let col = 0; col < this.cols; col++){
-        if (row === 0 || row === this.rows - 1 || col === 0 || col === this.cols - 1){
-          newBoard.push([row, col]);
-        }
-      }
-    }
-    this.genRow(newBoard, 1, this.rows - 2, 1,  this.cols - 2, [this.startTile.row]);
-    // tslint:disable-next-line:max-line-length
-    this.boardsJson[1].walls = newBoard;
-  }
-  genRowCol(min, max, hole: any[]): number {
-    const num = this.randomInt(min, max);
-    if (num % 2 === 0 && !hole.includes(num)){
-      return num;
-    }
-    return this.genRowCol(min, max, hole);
-  }
-  getNewHole(min, max): number{
-    const num = this.randomInt(min, max);
-    if (num % 2 === 1){
-      return num;
-    }
-    return this.getNewHole(min, max);
-  }
-  randomInt(min, max): number{
-    return Math.floor(Math.random() * (max - min + 1) + min);
-  }
-
-  // low/high exclusive
-  private hasRoom(list: any[], low: number, high: number) {
-    for (let i = low + 1; i < high; i ++){
-      if (!list.includes(i) && (i % 2) === 0){
-        return true;
-      }
-    }
-    return false;
   }
 }

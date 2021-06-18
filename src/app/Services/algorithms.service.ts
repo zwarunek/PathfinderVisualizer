@@ -16,7 +16,7 @@ export class AlgorithmsService {
                           numTiles: number): any {
     switch (algorithm){
       case 'dijkstra':
-        return this.dijkstra.pathFind(this, graph, src, target, numTiles);
+        return this.dijkstra.pathFind(graph, src, target, numTiles);
     }
   }
 }
