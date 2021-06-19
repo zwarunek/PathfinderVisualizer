@@ -2,6 +2,9 @@
 
 $tile-color: #000000;
 $background: #d4d4d4;
+$wall-color: darken(mat-color($my-primary), 20%);
+$start-color: #32cd32;
+$end-color: orangered;
 
 @mixin my-theme($my-theme) {
   // Extract whichever individual palettes you need from the theme.
@@ -43,37 +46,20 @@ $background: #d4d4d4;
   color: #000000;
 }
 
-.blank {
+.blank.grid-cell {
   background-color: $background;
 }
 
-.start {
-  background-color: #32cd32;
+.start.grid-cell {
+  background-color: $start-color;
 }
 
-.end {
-  background-color: orangered;
+.end.grid-cell {
+  background-color: $end-color;
 }
 
-.wall{
-  background-color: darken(mat-color($my-primary), 20%);
-}
-.mat-form-field-wrapper{
-  margin-bottom: 0;
-}
-
-
-.grid-container {
-  display: grid;
-  grid-template-columns: repeat(4, auto);
-  padding: 10px;
-}
-.grid-item {
-  background-color: rgb(0, 0, 0);
-  margin: 2px;
-  padding: 20px;
-  font-size: 30px;
-  text-align: center;
+.wall.grid-cell{
+  background-color: $wall-color;
 }
 .disable-select {
   user-select: none; /* supported by Chrome and Opera */
@@ -85,11 +71,9 @@ $background: #d4d4d4;
 
 .grid {
   display: grid;
-  //grid-gap: 3px;
 }
 .grid-row {
   display: grid;
-  //grid-gap: 3px;
 }
 .grid-cell{
   width: 25px;
@@ -130,25 +114,12 @@ $background: #d4d4d4;
   }
 }
 .grid-cell.wall{
-  //animation: wallkf .4s;
+  animation: wallkf .3s;
 }
 .grid-cell.blank{
-  //animation: blankkf .3s;
+  animation: blankkf .3s;
 }
-.grid-cell.start{
-}
-.grid-cell.end{
-}
-.example-form {
-  width: 70px;
-  font-size: 14px;
-}
-
-.example-full-width {
-  width: 70px;
-  font-size: 14px;
-}
-@keyframes pathfinding {
+@keyframes pathfindingGridCell {
   0%{
     background-color: yellow;
   }
@@ -163,30 +134,204 @@ $background: #d4d4d4;
     transform: scale(1) translate(-1px, -1px);
     background-color: darken(mat-color($my-accent), 10%);
   }
-}@keyframes pathfindingFast {
-   0%{
-     background-color: darken(mat-color($my-accent), 30%);
-   }
-   80%{
-     background-color: darken(mat-color($my-accent), 10%);
-   }
- }
-.searched {
+}
+@keyframes pathfindingFastGridCell {
+  0%{
+    background-color: darken(mat-color($my-accent), 30%);
+  }
+  80%{
+    background-color: darken(mat-color($my-accent), 10%);
+  }
+}
+.searched.grid-cell {
   z-index: 100;
   background-color: darken(mat-color($my-accent), 10%);
 }
-//.searched.instant {
-//  animation: pathfindingFast 1s;
-//}
-.searched.fast {
-  //animation: pathfindingFast 1s;
+.grid-cell.searched.fast {
+  animation: pathfindingFastGridCell 1s;
 }
-.searched.medium {
-  //animation: pathfinding 1s;
+.grid-cell.searched.medium {
+  animation: pathfindingGridCell 1s;
 }
-.searched.slow {
-  //animation: pathfinding 5s;
+.grid-cell.searched.slow {
+  animation: pathfindingGridCell 3s;
 }
-.searched.wall {
+.searched.wall.grid-cell {
   background-color: darken(mat-color($my-primary), 20%);
 }
+
+
+.hex {
+  float: left;
+  margin-right: -8px;//negative width/2 - 1
+  margin-bottom: -14px;//negative height/2 - 1
+}
+.hex .left {
+  float: left;
+  width: 0;
+  border-right: 9px solid $background;//width/2
+  border-top: 15px solid transparent;//height/2
+  border-bottom: 15px solid transparent;//height/2
+}
+.hex .middle {
+  float: left;
+  width: 18px;
+  height: 30px;
+  background: $background;
+}
+.hex .right {
+  float: left;
+  width: 0;
+  border-left: 9px solid $background;//width/2
+  border-top: 15px solid transparent;//height/2
+  border-bottom: 15px solid transparent;//height/2
+}
+.hex-row {
+  clear: left;
+}
+.hex.even {//height/2 + 1
+  margin-top: 16px;
+}
+
+.hex-background.even {//height/2 + 1
+  margin-top: 16px;
+}
+.hex.wall .middle {
+  background-color: $wall-color;
+}
+.hex.wall .left {
+  border-right-color: $wall-color;
+}
+.hex.wall .right {
+  border-left-color: $wall-color;
+}
+
+.hex.blank .middle {
+  background-color: $background;
+}
+.hex.blank .left {
+  border-right-color: $background;
+}
+.hex.blank .right {
+  border-left-color: $background;
+}
+
+.hex.start .middle {
+  background-color: $start-color;
+}
+.hex.start .left {
+  border-right-color: $start-color;
+}
+.hex.start .right {
+  border-left-color: $start-color;
+}
+
+.hex.end .middle {
+  background-color: $end-color;
+}
+.hex.end .left {
+  border-right-color: $end-color;
+}
+.hex.end .right {
+  border-left-color: $end-color;
+}
+
+.hex.searched .middle {
+  background-color: darken(mat-color($my-accent), 10%);
+}
+.hex.searched .left {
+  border-right-color: darken(mat-color($my-accent), 10%);
+}
+.hex.searched .right {
+  border-left-color: darken(mat-color($my-accent), 10%);
+}
+
+
+.hex-background {
+  float: left;
+  margin-right: -8px;//negative width/2 - 1
+  margin-bottom: -14px;//negative height/2 - 1
+}
+.hex-background .left {
+  float: left;
+  width: 0;
+  border-right: 9px solid $background;//width/2
+  border-top: 15px solid transparent;//height/2
+  border-bottom: 15px solid transparent;//height/2
+}
+.hex-background .middle {
+  float: left;
+  width: 18px;
+  height: 30px;
+  background: $background;
+}
+.hex-background .right {
+  float: left;
+  width: 0;
+  border-left: 9px solid $background;//width/2
+  border-top: 15px solid transparent;//height/2
+  border-bottom: 15px solid transparent;//height/2
+}
+@keyframes middlePathfindingHex {
+  0%{
+    background-color: darken(mat-color($my-accent), 30%);
+  }
+  80%{
+    background-color: darken(mat-color($my-accent), 10%);
+  }
+}
+@keyframes leftPathfindingHex {
+  0%{
+    border-right-color: darken(mat-color($my-accent), 30%);
+  }
+  80%{
+    border-right-color: darken(mat-color($my-accent), 10%);
+  }
+}
+@keyframes rightPathfindingHex {
+  0%{
+    border-left-color: darken(mat-color($my-accent), 30%);
+  }
+  80%{
+    border-left-color: darken(mat-color($my-accent), 10%);
+  }
+}
+
+.hex.searched.fast .middle {
+  animation: middlePathfindingHex 1s;
+}
+.hex.medium.searched .middle {
+  animation: middlePathfindingHex 2s;
+}
+.hex.searched.slow .middle {
+  animation: middlePathfindingHex 3s;
+}
+
+.hex.searched.fast .left {
+  animation: leftPathfindingHex 1s;
+}
+.hex.medium.searched .left {
+  animation: leftPathfindingHex 2s;
+}
+.hex.searched.slow .left {
+  animation: leftPathfindingHex 3s;
+}
+
+.hex.searched.fast .right {
+  animation: rightPathfindingHex 1s;
+}
+.hex.medium.searched .right {
+  animation: rightPathfindingHex 2s;
+}
+.hex.searched.slow .right {
+  animation: rightPathfindingHex 3s;
+}
+
+.hex.wall *{
+  transition: .5s;
+}
+
+.hex.blank *{
+  transition: .5s;
+}
+

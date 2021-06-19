@@ -28,15 +28,13 @@ export class DijkstraService {
 
     for (let i = 0; i < numTiles - 1; i++) {
       if (!this.globals.inProgress) {
-        return undefined;
+        return {path: undefined, steps: display};
       }
 
       const u = this.minDistance(dist, sptSet, numTiles);
       if (u === -1) {
-        this.globals.finished = true;
-        this.globals.inProgress = false;
         this.globals.noPath = true;
-        return undefined;
+        return {path: undefined, steps: display};
       }
       sptSet[u] = true;
       display.push(u);

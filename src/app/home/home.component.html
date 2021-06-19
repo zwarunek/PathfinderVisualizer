@@ -1,51 +1,103 @@
 <div style="width: 100%">
   <mat-toolbar color="primary">
-    <span style="font-size: 20px;margin-right: 100px">Pathfinding Algorithm Visualizer</span>
-    <button mat-raised-button color="primary" [disabled]="globals.inProgress || boardLoading" (click)="visualize(delay)" style="margin-right: 20px">Visualize</button>
-    <button mat-raised-button color="primary" [disabled]="globals.inProgress || boardLoading" (click)="resetLine()" style="margin-right: 20px">Reset Path</button>
-    <button mat-raised-button color="primary" [disabled]="globals.inProgress || boardLoading" (click)="resetTiles()" style="margin-right: 20px">Remove Walls</button>
+    <section style="margin-right: 20px;font-size: 15px">
+      <span style="font-size: 20px;margin-right: 100px">Pathfinding Algorithm Visualizer</span>
+    </section>
 
     <section style="margin-right: 20px;font-size: 15px">
+      <button mat-raised-button color="primary" [disabled]="globals.inProgress || boardLoading" (click)="visualize(delay)">Visualize</button>
+    </section>
+
+    <section style="margin-right: 20px;font-size: 15px">
+      <button mat-raised-button color="primary" [disabled]="globals.inProgress || boardLoading" (click)="resetLine()">Reset Path</button>
+    </section>
+
+    <section style="margin-right: 20px;font-size: 15px">
+      <button mat-raised-button color="primary" [disabled]="globals.inProgress || boardLoading" (click)="resetTiles()">Remove Walls</button>
+    </section>
+
+    <section style="margin-right: 20px;font-size: 15px" *ngIf="boardType === 'square'">
       <mat-checkbox [color]="'accent'" [(ngModel)]="diagonal" (change)="diagonalChange()" [disabled]="globals.inProgress || boardLoading">Diagonal</mat-checkbox>
     </section>
-    <mat-button-toggle-group appearance="legacy" (change)="changeSpeed($event.value)" value="{{delay}}" [disabled]="globals.inProgress || boardLoading" style="margin-right: 20px;font-size: 15px">
-      <mat-button-toggle value="0">Instant</mat-button-toggle>
-      <mat-button-toggle value="1">Fast</mat-button-toggle>
-      <mat-button-toggle value="5">Medium</mat-button-toggle>
-      <mat-button-toggle value="25">Slow</mat-button-toggle>
-    </mat-button-toggle-group>
-    <mat-form-field appearance="fill" style="font-size: 10px; margin-top: 15px">
-      <mat-label style="font-size: 15px">Select Board</mat-label>
-      <mat-select [(value)]="selectedBoard"   [disabled]="boardLoading || globals.inProgress" style="font-size: 15px;">
-        <mat-option>None</mat-option>
-        <mat-option (click)="loadBoard()" *ngFor="let board of boards; let i = index" value="{{board}}">{{board}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-<!--    <button mat-raised-button color="primary" (click)="loadBoard()" [disabled]="boardLoading || globals.inProgress">Create Maze</button>-->
-    <button mat-raised-button color="primary" [disabled]="!globals.inProgress" (click)="cancel()" style="margin-left: auto; font-size: 20px">Cancel</button>
+
+    <section style="margin-right: 20px;font-size: 15px">
+      <mat-button-toggle-group appearance="legacy" (change)="changeSpeed($event.value)" value="{{delay}}" [disabled]="globals.inProgress || boardLoading" style="font-size: 15px">
+        <mat-button-toggle value="0">Instant</mat-button-toggle>
+        <mat-button-toggle value="1">Fast</mat-button-toggle>
+        <mat-button-toggle value="5">Medium</mat-button-toggle>
+        <mat-button-toggle value="25">Slow</mat-button-toggle>
+      </mat-button-toggle-group>
+    </section>
+
+    <section style="margin-right: 20px; padding-top: 15px">
+      <mat-form-field appearance="fill" style="font-size: 10px">
+        <mat-label style="font-size: 15px">Select Board</mat-label>
+        <mat-select [(value)]="selectedBoard"   [disabled]="boardLoading || globals.inProgress" style="font-size: 15px;">
+          <mat-option>None</mat-option>
+          <mat-option (click)="loadBoard()" *ngFor="let board of boards; let i = index" value="{{board}}">{{board}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </section>
+
+    <section style="margin-right: 20px;font-size: 15px; margin-left: auto">
+      <button mat-raised-button color="primary" [disabled]="!globals.inProgress" (click)="cancel()">Cancel</button>
+    </section>
 
   </mat-toolbar>
 </div>
-<div class="disable-select" style="padding: 20px; " appNoRightClick>
+
+<div class="disable-select" style="padding: 20px; " appNoRightClick *ngIf="boardType === 'square'">
   <table style="border-spacing: 0;border-collapse: collapse;">
     <tbody>
-      <tr *ngFor="let row of tiles; let y = index" style="background-color: #d4d4d4">
-        <td class="grid-cell" *ngFor="let tile of row; let x = index"  [attr.id]="'tile-'+y+':'+x"
-            [ngClass]="{wall: tile.type === 'wall', blank: tile.type === 'blank', start: tile.type === 'start', end: tile.type === 'end', fast: delay === 1, medium: delay === 5, slow: delay === 25, instant: delay === 0}"
-            (mouseenter)="mouseEnter($event, y, x)"
-            (mousedown)="mouseDown($event, y, x)"
-            (mouseup)="mouseUp()"
-            (mouseleave)="mouseLeave($event, y, x)">
-        </td>
-      </tr>
+    <tr *ngFor="let row of tiles; let y = index" style="background-color: #d4d4d4">
+      <td class="grid-cell" *ngFor="let tile of row; let x = index"  [attr.id]="'tile-'+y+':'+x"
+          [ngClass]="{wall: tile.type === 'wall', blank: tile.type === 'blank', start: tile.type === 'start', end: tile.type === 'end', fast: delay === 1, medium: delay === 5, slow: delay === 25, instant: delay === 0}"
+          (mouseenter)="mouseEnter($event, y, x)"
+          (mousedown)="mouseDown($event, y, x)"
+          (mouseup)="mouseUp()"
+          (mouseleave)="mouseLeave($event, y, x)">
+      </td>
+    </tr>
     </tbody>
   </table>
 </div>
-
-<svg width="100%" height="100%" style="top: 0; left: 0; position:absolute;pointer-events: none">
+<div class="disable-select" style="width: 100%" [ngStyle]="{}" appNoRightClick *ngIf="boardType === 'hex'" >
+  <div #topDiv style="display: block; position: relative; z-index: 5">
+    <div class="" style="display: table; padding-top: 20px; margin: 0 auto">
+      <div class="hex-row" *ngFor="let row of tiles; let y = index" style="display: block">
+        <div class="hex" *ngFor="let tile of row; let x = index" [attr.id]="'tile-'+y+':'+x" style="display: block; position: relative"
+             [ngClass]="{even: (x%2)===1,wall: tile.type === 'wall', blank: tile.type === 'blank', start: tile.type === 'start', end: tile.type === 'end', fast: delay === 1, medium: delay === 5, slow: delay === 25, instant: delay === 0}"
+             (mouseenter)="mouseEnter($event, y, x)"
+             (mousedown)="mouseDown($event, y, x)"
+             (mouseup)="mouseUp()"
+             (mouseleave)="mouseLeave($event, y, x)">
+          <div class="left">
+          </div>
+          <div class="middle">
+          </div>
+          <div class="right">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="display: block; position: relative;" [ngStyle]="{top: '-' + (rows * 31 + 45) + 'px'}">
+    <div class="" style="display: table; padding-top: 20px; margin: 0 auto">
+      <div class="hex-row" *ngFor="let row of tiles; let x = index" style="display: block">
+        <div class="hex-background" *ngFor="let tile of row; let x = index" style="z-index: -5"
+             [ngClass]="{even: (x%2)===1}">
+          <div class="left">
+          </div>
+          <div class="middle">
+          </div>
+          <div class="right">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<svg width="100%" height="100%" style="z-index: 10; top: 0; left: 0; position:absolute;pointer-events: none">
   <line [id]="lines" *ngFor="let line of lines" class="line"  [attr.x1]="line.x1" [attr.y1]="line.y1" [attr.x2]="line.x2" [attr.y2]="line.y2" stroke="yellow" stroke-width="6px" stroke-linecap="round" style="z-index: 900"/>
 </svg>
-<!--<div style="width: 50px; height: 50px">-->
-<!--  <div style="color: #6C6;width: 100%; height: 100%; font-size: 50px">&#x2B22;</div>-->
-<!--</div>-->
 <!--https://jtauber.github.io/articles/css-hexagon.html-->

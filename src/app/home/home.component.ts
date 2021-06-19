@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {AlgorithmsService} from '../Services/algorithms.service';
 import {Globals} from '../globals';
 import {BoardsService} from '../Services/boards.service';
+import {ActivatedRoute} from '@angular/router';
 
 export interface Tile {
   type: any;
@@ -32,6 +33,7 @@ export class HomeComponent implements OnInit {
   boards: any[];
   boardLoading = false;
 
+
   lines: any[] = [];
   // inProgress = false;
   // finished = false;
@@ -42,9 +44,9 @@ export class HomeComponent implements OnInit {
   startTile: {row: any, col: any};
   endTile: {row: any, col: any};
 
-  cols = Math.floor((window.innerWidth - 40) / 28) - (Math.floor((window.innerWidth - 40) / 28) % 2 === 1 ? 0 : 1);
-  rows = Math.floor((window.innerHeight - 104) / 28) - (Math.floor((window.innerHeight - 104) / 28) % 2 === 1 ? 0 : 1);
-  numTiles = this.cols * this.rows;
+  cols: number;
+  rows: number;
+  numTiles: number;
   tiles: Tile[][];
   tileGraph: number[][];
   adjList: any[][] = [];
@@ -54,7 +56,26 @@ export class HomeComponent implements OnInit {
 // 12x12 12x52
   grid = true;
   selectedBoard: any;
-  constructor(public globals: Globals, private algorithms: AlgorithmsService, private boardService: BoardsService) {
+  boardType: any;
+
+  constructor(public globals: Globals, private algorithms: AlgorithmsService, private boardService: BoardsService, private route: ActivatedRoute) {
+  }
+
+  ngOnInit(): void{
+    this.boardType = this.route.snapshot.paramMap.get('boardType');
+    if (this.boardType === 'square') {
+      this.cols = Math.floor((window.innerWidth - 40) / 28) - (Math.floor((window.innerWidth - 40) / 28) % 2 === 1 ? 0 : 1);
+      this.rows = Math.floor((window.innerHeight - 104) / 28) - (Math.floor((window.innerHeight - 104) / 28) % 2 === 1 ? 0 : 1);
+    }
+    else if (this.boardType === 'hex'){
+      this.cols = Math.floor((window.innerWidth - 40) / 29) - (Math.floor((window.innerWidth - 40) / 29) % 2 === 1 ? 0 : 1);
+      this.rows = Math.floor((window.innerHeight - 104) / 31) - (Math.floor((window.innerHeight - 104) / 31) % 2 === 1 ? 0 : 1);
+    }
+
+    // this.rows = 5;
+    // this.cols = 5;
+    this.numTiles = this.rows * this.cols;
+
     this.tiles = [];
     for (let i = 0; i < this.rows; i++) {
       this.tiles[i] = [];
@@ -70,9 +91,6 @@ export class HomeComponent implements OnInit {
     this.setGraph();
 
     this.boards = ['Recursive Maze'];
-  }
-
-  ngOnInit(): void{
   }
 
   setGraph(): void {
@@ -123,13 +141,25 @@ export class HomeComponent implements OnInit {
           this.tiles[Math.floor(i / this.cols)][i % this.cols].distance * Math.sqrt(2);
       }
     }
+    if (this.boardType === 'hex') {
+      if (i > this.cols && c > 0 && c % 2 !== 1) {
+        this.tileGraph[i - this.cols - 1][i] = this.tileGraph[i][i - this.cols - 1] =
+          this.tiles[Math.floor((i - this.cols - 1) / this.cols)][(i - this.cols - 1) % this.cols].distance *
+          this.tiles[Math.floor(i / this.cols)][i % this.cols].distance;
+      }
+      if (i > this.cols - 1 && c !== this.cols - 1 && c % 2 !== 1) {
+        this.tileGraph[i - this.cols + 1][i] = this.tileGraph[i][i - this.cols + 1] =
+          this.tiles[Math.floor((i - this.cols + 1) / this.cols)][(i - this.cols + 1) % this.cols].distance *
+          this.tiles[Math.floor(i / this.cols)][i % this.cols].distance;
+      }
+    }
   }
 
   addEdge(i: number, j: number, distance: number): void{
     this.tileGraph[i][j] = this.tileGraph[j][i] = distance;
   }
 
-  findNeighbors(row: number, col: number): Coords[] {
+  findNeighborsSquare(row: number, col: number): Coords[] {
     const neighbors = [];
     if (col + 1 < this.cols && this.tiles[row][col + 1].distance === 1) { // right
       neighbors.push({row, col: col + 1});
@@ -157,6 +187,29 @@ export class HomeComponent implements OnInit {
         neighbors.push({row: (row + 1), col: col - 1});
       }
     }
+    return neighbors;
+
+  }findNeighborsHex(row: number, col: number): Coords[] {
+    const neighbors = [];
+    if (col + 1 < this.cols && this.tiles[row][col + 1].distance === 1) { // right
+      neighbors.push({row, col: col + 1});
+    }
+    if (col - 1 >= 0 && this.tiles[row][col - 1].distance === 1) { // left
+      neighbors.push({row, col: col - 1});
+    }
+    if (col + 1 < this.cols && ((col % 2) === 0 ? row + 1 < this.rows : row - 1 >= 0) && this.tiles[row][col + 1].distance === 1) { // right
+      neighbors.push({row: row + ((col % 2) === 0 ? 1 : -1), col: col + 1});
+    }
+    if (col - 1 >= 0 && ((col % 2) === 0 ? row + 1 < this.rows : row - 1 >= 0) && this.tiles[row][col - 1].distance === 1) { // left
+      neighbors.push({row: row + ((col % 2) === 0 ? 1 : -1), col: col - 1});
+    }
+    if (row + 1 < this.rows && this.tiles[row + 1][col].distance === 1) { // down
+      neighbors.push({row: (row + 1), col});
+    }
+    if (row - 1 >= 0 && this.tiles[row - 1][col].distance === 1) { // up
+      neighbors.push({row: (row - 1), col});
+    }
+
     return neighbors;
 
   }
@@ -252,7 +305,13 @@ export class HomeComponent implements OnInit {
   setNonWall(type: any, row, col): void{
     this.tiles[row][col].type = type;
     this.tiles[row][col].distance = 1;
-    const neighbors = this.findNeighbors(row, col);
+    let neighbors;
+    if (this.boardType === 'square'){
+      neighbors = this.findNeighborsSquare(row, col);
+    }
+    else if (this.boardType === 'hex'){
+      neighbors = this.findNeighborsHex(row, col);
+    }
     for (const neighbor of neighbors) {
       this.addEdge(parseInt(row, 10) * this.cols + parseInt(col, 10),
         neighbor.row * this.cols + neighbor.col,
@@ -298,6 +357,7 @@ export class HomeComponent implements OnInit {
       parseInt(this.startTile.row, 10) * this.cols + parseInt(this.startTile.col, 10),
       parseInt(this.endTile.row, 10) * this.cols + parseInt(this.endTile.col, 10),
       this.numTiles);
+    console.log(path.steps);
     this.displayPath(path, delay).then(() => {
       this.globals.inProgress = false;
       this.globals.finished = true;
@@ -325,7 +385,7 @@ export class HomeComponent implements OnInit {
           const tile = document.getElementById('tile-' + row + ':' + col);
           tile.style.animation = 'none';
           this.tiles[row][col] = {type: 'blank', distance: 1};
-          const neighbors = this.findNeighbors(row, col);
+          const neighbors = this.findNeighborsSquare(row, col);
           for (const neighbor of neighbors) {
             this.addEdge(row * this.cols + col,
               neighbor.row * this.cols + neighbor.col,
@@ -357,12 +417,14 @@ export class HomeComponent implements OnInit {
         }
       }
     }
-    for (let i = 0; i < path.path.length - 1; i++) {
-      if (delay > 0) {
-        await this.sleep(10);
+    if (!this.globals.noPath){
+      for (let i = 0; i < path.path.length - 1; i++) {
+        if (delay > 0) {
+          await this.sleep(10);
+        }
+        this.lines.push(this.connect('tile-' + Math.floor(path.path[i] / this.cols) + ':' + path.path[i] % this.cols,
+          'tile-' + Math.floor(path.path[i + 1] / this.cols) + ':' + path.path[i + 1] % this.cols));
       }
-      this.lines.push(this.connect('tile-' + Math.floor(path.path[i] / this.cols) + ':' + path.path[i] % this.cols,
-        'tile-' + Math.floor(path.path[i + 1] / this.cols) + ':' + path.path[i + 1] % this.cols));
     }
   }
   sleep(ms: number): any {
@@ -424,3 +486,29 @@ export class HomeComponent implements OnInit {
 
   }
 }
+// 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+// 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+// 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+// 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+// 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+// 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+// 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+// 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+// 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+// 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+// 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+// 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0,
+// 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
+// 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0,
+// 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0,
+// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0,
+// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0,
+// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1,
+// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1,
+// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0,
+// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0,
+// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0,
+// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1,
+// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0,
+
