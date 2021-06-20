@@ -242,21 +242,23 @@ export class HomeComponent implements OnInit {
 
     if (this.draggingStart && JSON.stringify(this.endTile) !== JSON.stringify({row, col})){
       this.startTile = {row, col};
-      // this.setNonWall('start', row, col, false);
+      this.setNonWall('blank', row, col, false);
 
     }
     else if (this.draggingEnd && JSON.stringify(this.startTile) !== JSON.stringify({row, col})){
       this.endTile = {row, col};
-      // this.setNonWall('end', row, col, false);
+      this.setNonWall('blank', row, col, false);
 
     }
-    else if (this.draggingWall && JSON.stringify(this.startTile) !== JSON.stringify({row, col}) && JSON.stringify(this.endTile) !== JSON.stringify({row, col})){
+    else if (this.draggingWall && JSON.stringify(this.startTile) !== JSON.stringify({row, col}) &&
+                                  JSON.stringify(this.endTile) !== JSON.stringify({row, col})){
 
       if (this.tiles[row][col].type !== 'wall') {
         this.setWall(row, col, !this.globals.finished);
       }
     }
-    else if (this.draggingBlank && JSON.stringify(this.startTile) !== JSON.stringify({row, col}) && JSON.stringify(this.endTile) !== JSON.stringify({row, col})){
+    else if (this.draggingBlank && JSON.stringify(this.startTile) !== JSON.stringify({row, col}) &&
+                                   JSON.stringify(this.endTile) !== JSON.stringify({row, col})){
       if (this.tiles[row][col].type !== 'blank') {
         this.setNonWall('blank', row, col, true);
       }
