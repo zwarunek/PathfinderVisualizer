@@ -4,6 +4,6 @@ import { Injectable } from '@angular/core';
 export class Globals {
   finished = false;
   inProgress = false;
-  noPath = false;
+  pathExists = false;
 
 }

@@ -20,6 +20,7 @@ import {FormsModule} from '@angular/forms';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatSelectModule} from '@angular/material/select';
 import {Globals} from './globals';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 
 @NgModule({
@@ -44,7 +45,8 @@ import {Globals} from './globals';
     MatCheckboxModule,
     FormsModule,
     MatButtonToggleModule,
-    MatSelectModule
+    MatSelectModule,
+    MatSnackBarModule
   ],
   providers: [
     Globals

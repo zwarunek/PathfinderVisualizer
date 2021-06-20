@@ -33,7 +33,6 @@ export class DijkstraService {
 
       const u = this.minDistance(dist, sptSet, numTiles);
       if (u === -1) {
-        this.globals.noPath = true;
         return {path: undefined, steps: display};
       }
       sptSet[u] = true;

@@ -3,6 +3,8 @@ import {AlgorithmsService} from '../Services/algorithms.service';
 import {Globals} from '../globals';
 import {BoardsService} from '../Services/boards.service';
 import {ActivatedRoute} from '@angular/router';
+import {MatSnackBar, MatSnackBarRef} from '@angular/material/snack-bar';
+import {TimeInterval} from 'rxjs/internal-compatibility';
 
 export interface Tile {
   type: any;
@@ -39,7 +41,8 @@ export class HomeComponent implements OnInit {
   // finished = false;
   // noPath = false;
 
-  delay = 5;
+  delay = 20;
+  statsSnackbar: MatSnackBarRef<any>;
 
   startTile: {row: any, col: any};
   endTile: {row: any, col: any};
@@ -58,7 +61,7 @@ export class HomeComponent implements OnInit {
   selectedBoard: any;
   boardType: any;
 
-  constructor(public globals: Globals, private algorithms: AlgorithmsService, private boardService: BoardsService, private route: ActivatedRoute) {
+  constructor(public globals: Globals, private algorithms: AlgorithmsService, private boardService: BoardsService, private route: ActivatedRoute, private snackBar: MatSnackBar) {
   }
 
   ngOnInit(): void{
@@ -83,9 +86,9 @@ export class HomeComponent implements OnInit {
         this.tiles[i][j] = {type: 'blank', distance: 1};
       }
     }
-    this.tiles[Math.floor(this.rows / 2) - 1][Math.floor(this.cols / 6)] = {type: 'start', distance: 1};
+    // this.tiles[Math.floor(this.rows / 2) - 1][Math.floor(this.cols / 6)] = {type: 'start', distance: 1};
     this.startTile = {row: Math.floor(this.rows / 2) - 1, col: Math.floor(this.cols / 6)};
-    this.tiles[Math.floor(this.rows / 2) - 1][this.cols - Math.floor(this.cols / 6)] = {type: 'end', distance: 1};
+    // this.tiles[Math.floor(this.rows / 2) - 1][this.cols - Math.floor(this.cols / 6)] = {type: 'end', distance: 1};
     this.endTile = {row: Math.floor(this.rows / 2) - 1, col: this.cols - Math.floor(this.cols / 6)};
     this.tileGraph = [];
     this.setGraph();
@@ -189,7 +192,9 @@ export class HomeComponent implements OnInit {
     }
     return neighbors;
 
-  }findNeighborsHex(row: number, col: number): Coords[] {
+  }
+
+  findNeighborsHex(row: number, col: number): Coords[] {
     const neighbors = [];
     if (col + 1 < this.cols && this.tiles[row][col + 1].distance === 1) { // right
       neighbors.push({row, col: col + 1});
@@ -197,11 +202,15 @@ export class HomeComponent implements OnInit {
     if (col - 1 >= 0 && this.tiles[row][col - 1].distance === 1) { // left
       neighbors.push({row, col: col - 1});
     }
-    if (col + 1 < this.cols && ((col % 2) === 0 ? row + 1 < this.rows : row - 1 >= 0) && this.tiles[row][col + 1].distance === 1) { // right
-      neighbors.push({row: row + ((col % 2) === 0 ? 1 : -1), col: col + 1});
+    if (col + 1 < this.cols &&
+      ((col % 2) === 1 ? row + 1 < this.rows : row - 1 >= 0) &&
+      this.tiles[(col % 2) === 1 ? row + 1 : row - 1][col + 1].distance === 1) { // right diagonal
+      neighbors.push({row: row + ((col % 2) === 1 ? 1 : -1), col: col + 1});
     }
-    if (col - 1 >= 0 && ((col % 2) === 0 ? row + 1 < this.rows : row - 1 >= 0) && this.tiles[row][col - 1].distance === 1) { // left
-      neighbors.push({row: row + ((col % 2) === 0 ? 1 : -1), col: col - 1});
+    if (col - 1 >= 0  &&
+      ((col % 2) === 1 ? row + 1 < this.rows : row - 1 >= 0) &&
+      this.tiles[(col % 2) === 1 ? row + 1 : row - 1][col - 1].distance === 1) { // left diagonal
+      neighbors.push({row: row + ((col % 2) === 1 ? 1 : -1), col: col - 1});
     }
     if (row + 1 < this.rows && this.tiles[row + 1][col].distance === 1) { // down
       neighbors.push({row: (row + 1), col});
@@ -220,6 +229,7 @@ export class HomeComponent implements OnInit {
     }
     if (e.buttons === 0){
       this.draggingStart = this.draggingEnd = this.draggingWall = this.draggingBlank = false;
+      return;
     }
     else if (!this.draggingWall && e.buttons === 1) {
       this.draggingWall = true;
@@ -230,27 +240,32 @@ export class HomeComponent implements OnInit {
       this.draggingWall = false;
     }
 
-    if (this.draggingStart && this.tiles[row][col].type !== 'end'){
+    if (this.draggingStart && JSON.stringify(this.endTile) !== JSON.stringify({row, col})){
       this.startTile = {row, col};
-      if (this.tiles[row][col].type === 'wall'){
-        this.addToGraph(row * this.cols + col, col, row);
-      }
+      // this.setNonWall('start', row, col, false);
 
-      this.setNonWall('start', row, col);
     }
-    else if (this.draggingEnd && this.tiles[row][col].type !== 'start'){
+    else if (this.draggingEnd && JSON.stringify(this.startTile) !== JSON.stringify({row, col})){
       this.endTile = {row, col};
-      if (this.tiles[row][col].type === 'wall'){
-        this.addToGraph(row * this.cols + col, col, row);
-      }
+      // this.setNonWall('end', row, col, false);
 
-      this.setNonWall('end', row, col);
     }
-    else if (this.draggingWall && this.tiles[row][col].type !== 'start' && this.tiles[row][col].type !== 'end'){
-      this.setWall(row, col);
+    else if (this.draggingWall && JSON.stringify(this.startTile) !== JSON.stringify({row, col}) && JSON.stringify(this.endTile) !== JSON.stringify({row, col})){
+
+      if (this.tiles[row][col].type !== 'wall') {
+        this.setWall(row, col, !this.globals.finished);
+      }
     }
-    else if (this.draggingBlank && this.tiles[row][col].type !== 'start' && this.tiles[row][col].type !== 'end'){
-      this.setNonWall('blank', row, col);
+    else if (this.draggingBlank && JSON.stringify(this.startTile) !== JSON.stringify({row, col}) && JSON.stringify(this.endTile) !== JSON.stringify({row, col})){
+      if (this.tiles[row][col].type !== 'blank') {
+        this.setNonWall('blank', row, col, true);
+      }
+    }
+    if (this.globals.finished){
+      this.visualize(0);
+    }
+    else if (!this.globals.finished) {
+      this.resetPath();
     }
   }
 
@@ -258,19 +273,31 @@ export class HomeComponent implements OnInit {
     if (this.globals.inProgress){
       return;
     }
-    if (this.tiles[row][col].type === 'start'){
+    // if (this.tiles[row][col].type === 'start'){
+    console.log(JSON.stringify(this.startTile) === JSON.stringify({row, col}));
+    if (JSON.stringify(this.startTile) === JSON.stringify({row, col})){
       this.draggingStart = true;
     }
-    else if (this.tiles[row][col].type === 'end'){
+    else if (JSON.stringify(this.endTile) === JSON.stringify({row, col})){
       this.draggingEnd = true;
     }
     else if (e.buttons === 1) {
       this.draggingWall = true;
-      this.setWall(row, col);
+      if (this.tiles[row][col].type !== 'wall') {
+        this.setWall(row, col, !this.globals.finished);
+      }
     }
     else if (e.buttons === 2) {
       this.draggingBlank = true;
-      this.setNonWall('blank', row, col);
+      if (this.tiles[row][col].type !== 'blank') {
+        this.setNonWall('blank', row, col, true);
+      }
+    }
+    if (this.globals.finished){
+      this.visualize(0);
+    }
+    else if (!this.globals.finished) {
+      this.resetPath();
     }
   }
 
@@ -279,32 +306,40 @@ export class HomeComponent implements OnInit {
     if (this.globals.inProgress){
       return;
     }
-    if (this.draggingStart && this.tileElementToTile((e.target as Element).id).type !== 'end'){
-      this.tiles[row][col].type = 'blank';
-      this.tiles[row][col].distance = 1;
-      document.getElementById('tile-' + row + ':' + col).style.animation = 'none';
-    }
-    if (this.draggingEnd && this.tileElementToTile((e.target as Element).id).type !== 'start'){
-      this.tiles[row][col].type = 'blank';
-      this.tiles[row][col].distance = 1;
-      document.getElementById('tile-' + row + ':' + col).style.animation = 'none';
+    if ((this.draggingStart && JSON.stringify(this.endTile) !== JSON.stringify({row, col})) ||
+      (this.draggingEnd && JSON.stringify(this.startTile) !== JSON.stringify({row, col}))){
+      // this.setNonWall('blank', row, col, false);
     }
   }
+
   mouseUp(): void {
     this.draggingStart = this.draggingEnd = this.draggingWall = this.draggingBlank = false;
   }
 
-  setWall(row, col): void{
+  setWall(row, col, animation): void{
+    const tile = document.getElementById('tile-' + row + ':' + col);
+
+    if (animation) {
+      tile.classList.remove('noTransition');
+    }
+    else {
+      tile.classList.add('noTransition');
+    }
     this.tiles[row][col].type = 'wall';
     this.tiles[row][col].distance = 0;
     this.removeFromGraph(row * this.cols + col);
-    if (this.globals.finished){
-      this.visualize(0);
-    }
   }
-  setNonWall(type: any, row, col): void{
+
+  setNonWall(type: any, row, col, animation): void{
     this.tiles[row][col].type = type;
     this.tiles[row][col].distance = 1;
+    const tile = document.getElementById('tile-' + row + ':' + col);
+    if (animation) {
+      tile.classList.remove('noTransition');
+    }
+    else {
+      tile.classList.add('noTransition');
+    }
     let neighbors;
     if (this.boardType === 'square'){
       neighbors = this.findNeighborsSquare(row, col);
@@ -315,10 +350,7 @@ export class HomeComponent implements OnInit {
     for (const neighbor of neighbors) {
       this.addEdge(parseInt(row, 10) * this.cols + parseInt(col, 10),
         neighbor.row * this.cols + neighbor.col,
-        neighbor.col !== col && neighbor.row !== row ? Math.sqrt(2) : 1);
-    }
-    if (this.globals.finished){
-      this.visualize(0);
+        neighbor.col !== col && neighbor.row !== row  && this.boardType === 'square' ? Math.sqrt(2) : 1);
     }
   }
 
@@ -326,6 +358,7 @@ export class HomeComponent implements OnInit {
     const indices = id.split('-')[1].split(':');
     return this.tiles[indices[0]][indices[1]];
   }
+
   getOffset( el ): any {
     const rect = el.getBoundingClientRect();
     return {
@@ -335,6 +368,7 @@ export class HomeComponent implements OnInit {
       height: rect.height || el.offsetHeight
     };
   }
+
   connect(div1, div2): Line { // draw a line connecting elements
     div1 = document.getElementById(div1);
     div2 = document.getElementById(div2);
@@ -350,74 +384,77 @@ export class HomeComponent implements OnInit {
     return { weight: 1, x1, y1, x2, y2 };
 
   }
+
   visualize(delay: number): void {
+    // this.printMatrix()
     this.globals.inProgress = true;
-    this.resetLine();
+    this.resetPath();
     const path = this.algorithms.runPathfindingAlgorithm('dijkstra', this.tileGraph,
       parseInt(this.startTile.row, 10) * this.cols + parseInt(this.startTile.col, 10),
       parseInt(this.endTile.row, 10) * this.cols + parseInt(this.endTile.col, 10),
       this.numTiles);
-    console.log(path.steps);
+    this.globals.pathExists = path.path !== undefined;
     this.displayPath(path, delay).then(() => {
       this.globals.inProgress = false;
-      this.globals.finished = true;
+      // time = Date.now() - time;
+      // this.statsSnackbar = this.snackBar.open('Time: ' + time + 'ms      Path Length: ' + path.path.length
+      // + ' Tiles Searched: ' + path.steps.length, 'Dismiss');
     });
-    // this.dijkstra(this.tileGraph, delay);
-  }
 
-  resetLine(): void {
+  }
+  resetPath(): void {
     this.lines = [];
     for (let i = 0; i < this.rows; i++) {
       for (let j = 0; j < this.cols; j++) {
         const tile = document.getElementById('tile-' + i + ':' + j);
-        tile.style.animation = 'none';
-        tile.classList.remove('searched');
-        tile.style.animation = '';
+        if (tile.classList.contains('searched')){
+          tile.classList.add('noTransition');
+          tile.classList.remove('searched');
+        }
       }
     }
     this.globals.finished = false;
-    this.globals.noPath = false;
+    this.globals.pathExists = false;
   }
   resetTiles(): void {
     for (let row = 0; row < this.rows; row++) {
       for (let col = 0; col < this.cols; col++) {
         if (this.tiles[row][col].type === 'wall') {
-          const tile = document.getElementById('tile-' + row + ':' + col);
-          tile.style.animation = 'none';
-          this.tiles[row][col] = {type: 'blank', distance: 1};
-          const neighbors = this.findNeighborsSquare(row, col);
-          for (const neighbor of neighbors) {
-            this.addEdge(row * this.cols + col,
-              neighbor.row * this.cols + neighbor.col,
-              neighbor.col !== col && neighbor.row !== row ? Math.sqrt(2) : 1);
-          }
-          tile.style.animation = '';
+          this.setNonWall('blank', row, col,  false);
         }
       }
     }
+    // console.log('finished', this.globals.finished);
     if (this.globals.finished) {
       this.visualize(0);
+    }
+    else if (!this.globals.finished) {
+      this.resetPath();
     }
   }
   async displayPath(path: {path, steps}, delay: number): Promise<void>{
     for (const step of path.steps){
       if (this.globals.inProgress === false){
+        this.globals.pathExists = false;
         return;
       }
 
       const tile = {row: Math.floor(step / this.cols), col:  step % this.cols};
-      if (this.tiles[tile.row][tile.col].type !== 'start' &&
-        this.tiles[tile.row]  [tile.col].type !== 'end' &&
-        this.tiles[tile.row]  [tile.col].type !== 'wall') {
+      if (this.tiles[tile.row]  [tile.col].type === 'blank' &&
+        JSON.stringify(this.startTile) !== JSON.stringify({row: tile.row, col: tile.col}) &&
+        JSON.stringify(this.endTile) !== JSON.stringify({row: tile.row, col: tile.col})) {
         const tileElement = document.getElementById('tile-' + tile.row + ':' + tile.col);
-        tileElement.classList.remove('blank');
+        tileElement.classList.remove('noTransition');
         tileElement.classList.add('searched');
+        if (delay === 0){
+          tileElement.classList.add('noTransition');
+        }
         if (delay > 0){
           await this.sleep(delay);
         }
       }
     }
-    if (!this.globals.noPath){
+    if (this.globals.pathExists){
       for (let i = 0; i < path.path.length - 1; i++) {
         if (delay > 0) {
           await this.sleep(10);
@@ -426,31 +463,21 @@ export class HomeComponent implements OnInit {
           'tile-' + Math.floor(path.path[i + 1] / this.cols) + ':' + path.path[i + 1] % this.cols));
       }
     }
+    this.globals.finished = true;
   }
+
   sleep(ms: number): any {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   diagonalChange(): void {
     this.setGraph();
-    if (this.globals.finished){
-      this.visualize(0);
-    }
-    else {
-      this.resetLine();
-    }
   }
 
   changeSpeed(delay: any): void {
-    this.resetLine();
     this.delay = parseInt(delay, 10);
-    // for (let i = 0; i < this.rows; i++) {
-    //   for (let j = 0; j < this.cols; j++) {
-    //     const tile = document.getElementById('tile-' + i + ':' + j);
-    //     // tile.style.animation = 'none';
-    //   }
-    // }
   }
+
   printMatrix(): void {
     let str = '';
     for (const vertex of this.tileGraph){
@@ -461,12 +488,11 @@ export class HomeComponent implements OnInit {
 
   cancel(): void {
     this.globals.inProgress = false;
-    this.globals.noPath = true;
   }
 
   async loadBoard(): Promise<void> {
     this.boardLoading = true;
-    this.resetLine();
+    this.resetPath();
     this.resetTiles();
     if (this.selectedBoard === undefined){
       this.boardLoading = false;
@@ -475,10 +501,9 @@ export class HomeComponent implements OnInit {
     const walls = this.boardService.generateBoard(this.selectedBoard, this.rows, this.cols);
 
     for (const wall of walls){
-      if (this.tiles[wall[0]][wall[1]].type !== 'start' && this.tiles[wall[0]][wall[1]].type !== 'end') {
-        this.tiles[wall[0]][wall[1]].type = 'wall';
-        this.tiles[wall[0]][wall[1]].distance = 0;
-        this.removeFromGraph(wall[0] * this.cols + wall[1]);
+      if (JSON.stringify(this.startTile) !== JSON.stringify({row: wall[0], col: wall[1]}) &&
+          JSON.stringify(this.endTile) !== JSON.stringify({row: wall[0], col: wall[1]})) {
+        this.setWall(wall[0], wall[1], true);
         await this.sleep(1);
       }
     }
@@ -486,29 +511,3 @@ export class HomeComponent implements OnInit {
 
   }
 }
-// 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-// 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-// 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-// 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-// 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-// 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-// 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-// 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-// 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-// 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-// 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-// 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0,
-// 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
-// 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0,
-// 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
-// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0,
-// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0,
-// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0,
-// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1,
-// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1,
-// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0,
-// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0,
-// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0,
-// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1,
-// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0,
-

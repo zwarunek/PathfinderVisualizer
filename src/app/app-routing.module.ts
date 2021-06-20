@@ -5,7 +5,7 @@ import {HomeComponent} from './home/home.component';
 const routes: Routes = [
   {path: ':boardType', component: HomeComponent},
 
-  {path: '**', redirectTo: '/hex'}
+  {path: '**', redirectTo: '/square'}
 ];
 
 @NgModule({

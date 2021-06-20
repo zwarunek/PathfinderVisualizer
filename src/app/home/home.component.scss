@@ -21,6 +21,16 @@ $end-color: orangered;
 //  box-shadow: 0 0 0 0;
 //
 //}
+.noTransition {
+  -webkit-transition: none !important;
+  -moz-transition: none !important;
+  -o-transition: none !important;
+  transition: none !important;
+  -webkit-animation: none !important;
+  -moz-animation: none !important;
+  -o-animation: none !important;
+  animation: none !important;
+}
 .mat-button-toggle {
   background-color: mat-color($my-primary);
   color: white;
@@ -151,7 +161,7 @@ $end-color: orangered;
   animation: pathfindingFastGridCell 1s;
 }
 .grid-cell.searched.medium {
-  animation: pathfindingGridCell 1s;
+  animation: pathfindingGridCell 2s;
 }
 .grid-cell.searched.slow {
   animation: pathfindingGridCell 3s;
@@ -325,6 +335,16 @@ $end-color: orangered;
 }
 .hex.searched.slow .right {
   animation: rightPathfindingHex 3s;
+}
+.hex.noTransition * {
+  -webkit-transition: none !important;
+  -moz-transition: none !important;
+  -o-transition: none !important;
+  transition: none !important;
+  -webkit-animation: none !important;
+  -moz-animation: none !important;
+  -o-animation: none !important;
+  animation: none !important;
 }
 
 .hex.wall *{
