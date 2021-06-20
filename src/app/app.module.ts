@@ -21,13 +21,15 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatSelectModule} from '@angular/material/select';
 import {Globals} from './globals';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import { SelectBoardTypeComponent } from './select-board-type/select-board-type.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    NoRightClickDirective
+    NoRightClickDirective,
+    SelectBoardTypeComponent
   ],
   imports: [
     BrowserModule,
