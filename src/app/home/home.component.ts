@@ -356,11 +356,6 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  tileElementToTile(id: any): Tile{
-    const indices = id.split('-')[1].split(':');
-    return this.tiles[indices[0]][indices[1]];
-  }
-
   getOffset( el ): any {
     const rect = el.getBoundingClientRect();
     return {
