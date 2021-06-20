@@ -310,7 +310,7 @@ export class HomeComponent implements OnInit {
     }
     if ((this.draggingStart && JSON.stringify(this.endTile) !== JSON.stringify({row, col})) ||
       (this.draggingEnd && JSON.stringify(this.startTile) !== JSON.stringify({row, col}))){
-      // this.setNonWall('blank', row, col, false);
+      this.setNonWall('blank', row, col, false);
     }
   }
 
