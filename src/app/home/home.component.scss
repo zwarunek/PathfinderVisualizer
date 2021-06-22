@@ -32,26 +32,26 @@ $end-color: orangered;
   animation: none !important;
 }
 .mat-button-toggle {
-  background-color: mat-color($my-primary);
+  //background-color: mat-color($my-primary);
   color: white;
   //box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, .2), 0px 2px 2px 0px rgba(0, 0, 0, .14), 0px 1px 5px 0px rgba(0, 0, 0, .12);
 }
-
-.mat-button-toggle.mat-button-toggle-checked {
-  background-color: mat-color($my-accent);
-  color: white;
-}
-.mat-button-toggle.mat-button-toggle-disabled {
-  background-color: rgba(255,255,255,.12);
-  color: rgba(255,255,255,.3);
-  box-shadow: 0 0 0 0;
-}
-.mat-button-toggle.mat-button-toggle-checked.mat-button-toggle-disabled {
-  background-color: lighten(mat-color($my-accent), 20%);
-  opacity: .7;
-  color: rgba(255,255,255,.7);
-  box-shadow: 0 0 0 0;
-}
+//
+//.mat-button-toggle.mat-button-toggle-checked {
+//  background-color: mat-color($my-accent);
+//  color: white;
+//}
+//.mat-button-toggle.mat-button-toggle-disabled {
+//  background-color: rgba(255,255,255,.12);
+//  color: rgba(255,255,255,.3);
+//  box-shadow: 0 0 0 0;
+//}
+//.mat-button-toggle.mat-button-toggle-checked.mat-button-toggle-disabled {
+//  background-color: lighten(mat-color($my-accent), 20%);
+//  opacity: .7;
+//  color: rgba(255,255,255,.7);
+//  box-shadow: 0 0 0 0;
+//}
 .mat-button-toggle-button {
   color: #000000;
 }
@@ -74,7 +74,6 @@ $end-color: orangered;
 .disable-select {
   user-select: none; /* supported by Chrome and Opera */
   -webkit-user-select: none; /* Safari */
-  -khtml-user-select: none; /* Konqueror HTML */
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* Internet Explorer/Edge */
 }
@@ -355,3 +354,9 @@ $end-color: orangered;
   transition: .5s;
 }
 
+::ng-deep.mat-menu-panel {
+  max-width: none !important;
+}
+.mat-menu-content{
+  background: mat-color($my-primary);
+}

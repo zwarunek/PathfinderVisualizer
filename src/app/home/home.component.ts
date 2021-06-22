@@ -492,6 +492,7 @@ export class HomeComponent implements OnInit {
     this.resetPath();
     this.resetTiles();
     if (this.selectedBoard === undefined){
+      this.resetTiles();
       this.boardLoading = false;
       return;
     }
@@ -505,6 +506,5 @@ export class HomeComponent implements OnInit {
       }
     }
     this.boardLoading = false;
-
   }
 }

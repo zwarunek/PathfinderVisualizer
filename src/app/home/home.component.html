@@ -20,24 +20,20 @@
       <mat-checkbox [color]="'accent'" [(ngModel)]="diagonal" (change)="diagonalChange()" [disabled]="globals.inProgress || boardLoading">Diagonal</mat-checkbox>
     </section>
 
-    <section style="margin-right: 20px;font-size: 15px">
-      <mat-button-toggle-group appearance="legacy" (change)="resetPath();changeSpeed($event.value)" value="{{delay}}" [disabled]="globals.inProgress || boardLoading" style="font-size: 15px">
-        <mat-button-toggle value="0">Instant</mat-button-toggle>
-        <mat-button-toggle value="1">Fast</mat-button-toggle>
-        <mat-button-toggle value="20">Medium</mat-button-toggle>
-        <mat-button-toggle value="50">Slow</mat-button-toggle>
-      </mat-button-toggle-group>
-    </section>
+<!--    <section style="margin-right: 20px;font-size: 15px">-->
+<!--    </section>-->
 
     <section style="margin-right: 20px; padding-top: 15px">
       <mat-form-field appearance="fill" style="font-size: 10px">
         <mat-label style="font-size: 15px">Select Board</mat-label>
         <mat-select [(value)]="selectedBoard"   [disabled]="boardLoading || globals.inProgress" style="font-size: 15px;">
-          <mat-option>None</mat-option>
+          <mat-option (click)="loadBoard()">None</mat-option>
           <mat-option (click)="loadBoard()" *ngFor="let board of boards; let i = index" value="{{board}}">{{board}}</mat-option>
         </mat-select>
       </mat-form-field>
     </section>
+
+    <button mat-button [matMenuTriggerFor]="menu">Menu</button>
 
     <section style="margin-right: 20px;font-size: 15px; margin-left: auto">
       <button mat-raised-button color="primary" [disabled]="!globals.inProgress" (click)="cancel()">Cancel</button>
@@ -100,3 +96,53 @@
   <line [id]="lines" *ngFor="let line of lines" class="line"  [attr.x1]="line.x1" [attr.y1]="line.y1" [attr.x2]="line.x2" [attr.y2]="line.y2" stroke="yellow" stroke-width="6px" stroke-linecap="round" style="z-index: 900"/>
 </svg>
 <!--https://jtauber.github.io/articles/css-hexagon.html-->
+<mat-menu #menu="matMenu" style="max-width: none">
+  <div (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+    <mat-accordion class="example-headers-align">
+      <mat-expansion-panel  hideToggle>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Personal data
+          </mat-panel-title>
+          <mat-panel-description>
+            Type your name and age
+            <mat-icon>account_circle</mat-icon>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel  hideToggle>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Destination
+          </mat-panel-title>
+          <mat-panel-description>
+            Type the country name
+            <mat-icon>map</mat-icon>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel  hideToggle>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Day of the trip
+          </mat-panel-title>
+          <mat-panel-description>
+            Inform the date you wish to travel
+            <mat-icon>date_range</mat-icon>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+      </mat-expansion-panel>
+
+    </mat-accordion>
+      <div style="max-width: fit-content; margin: auto; margin-top: 8px">
+        <mat-button-toggle-group appearance="legacy" (change)="resetPath();changeSpeed($event.value)" value="{{delay}}" [disabled]="globals.inProgress || boardLoading" style="font-size: 15px">
+          <mat-button-toggle value="0">Instant</mat-button-toggle>
+          <mat-button-toggle value="1">Fast</mat-button-toggle>
+          <mat-button-toggle value="20">Medium</mat-button-toggle>
+          <mat-button-toggle value="50">Slow</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+  </div>
+</mat-menu>
