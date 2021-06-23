@@ -1,0 +1,28 @@
+@import "src/custom-theme.scss";
+
+$tile-color: #000000;
+$background: #d4d4d4;
+$wall-color: darken(mat-color($my-primary), 20%);
+$start-color: #32cd32;
+$end-color: orangered;
+
+.primary-background{
+  background-color: mat-color($my-primary);
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 150px;
+  font-size: 50px;
+  border-radius: 30px;
+  font-weight: bold;
+}
+.zoom-image{
+  transition: .5s ease-in-out;
+  cursor: pointer;
+}
+.zoom-image:hover {
+  transform: scale(1.1);
+}
