@@ -360,3 +360,8 @@ $end-color: orangered;
 .mat-menu-content{
   background: mat-color($my-primary);
 }
+.heuristic-button-group {
+  display: flex;
+  flex-direction: column;
+  margin: 15px 0;
+}

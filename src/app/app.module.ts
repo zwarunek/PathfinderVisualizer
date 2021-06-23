@@ -25,6 +25,7 @@ import { SelectBoardTypeComponent } from './select-board-type/select-board-type.
 import {MatExpansionModule} from '@angular/material/expansion';
 import {CdkAccordionModule} from '@angular/cdk/accordion';
 import {MatCardModule} from '@angular/material/card';
+import {MatRadioModule} from '@angular/material/radio';
 
 
 @NgModule({
@@ -54,7 +55,8 @@ import {MatCardModule} from '@angular/material/card';
     MatSnackBarModule,
     MatExpansionModule,
     CdkAccordionModule,
-    MatCardModule
+    MatCardModule,
+    MatRadioModule
   ],
   providers: [
     Globals

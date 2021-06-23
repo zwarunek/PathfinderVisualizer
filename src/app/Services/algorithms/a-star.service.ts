@@ -27,6 +27,7 @@ export class AStarService {
            target: number[],
            rows: number,
            cols: number,
+           heuristic: string,
            diagonal: boolean,
            boardType: string): { path; steps } {
     const open: Node[] = [];
@@ -75,19 +76,7 @@ export class AStarService {
             s.p_row = q.index[0];
             s.p_col = q.index[1];
             s.g = details[q.index[0]][q.index[1]].g + cost;
-            if (diagonal){
-              const dx = Math.abs(col - target[1]);
-              const dy = Math.abs(row - target[0]);
-              s.h = 1 * (dx + dy) + (Math.sqrt(2) - 2 * 1 ) * Math.min(dx, dy);
-            }
-            else if (boardType === 'hex'){
-              const dx = Math.abs(col - target[1]);
-              const dy = Math.abs(row - target[0]);
-              s.h = 1 * (dx + dy) + (1 - 2 * 1 ) * Math.min(dx, dy);
-            }
-            else {
-              s.h = Math.abs(col - target[1]) + Math.abs(row - target[0]);
-            }
+            s.h = this.getH(row, col, target, heuristic);
             s.f = s.g + s.h;
             const tempPath = this.getPath(target[0], target[1], details, src);
             return {
@@ -97,20 +86,7 @@ export class AStarService {
           }
           else if (closed[row][col] === false){
             const gNew = details[q.index[0]][q.index[1]].g + cost;
-            let hNew;
-            if (diagonal){
-              const dx = Math.abs(col - target[1]);
-              const dy = Math.abs(row - target[0]);
-              hNew = 1 * (dx + dy) + (Math.sqrt(2) - 2 * 1 ) * Math.min(dx, dy);
-            }
-            else if (boardType === 'hex'){
-              const dx = Math.abs(col - target[1]);
-              const dy = Math.abs(row - target[0]);
-              hNew = 1 * (dx + dy) + (1 - 2 * 1 ) * Math.min(dx, dy);
-            }
-            else {
-              hNew = Math.abs(col - target[1]) + Math.abs(row - target[0]);
-            }
+            const hNew = this.getH(row, col, target, heuristic);
             const fNew = gNew + hNew;
 
             if (details[row][col].f === Number.MAX_SAFE_INTEGER || details[row][col].f > fNew) {
@@ -142,5 +118,32 @@ export class AStarService {
     path = this.getPath(details[row][col].p_row, details[row][col].p_col, details, src, path);
     path.push(row * details[0].length + col);
     return path;
+  }
+
+  private getH(row: number, col: number, target: number[], heuristic: string): number {
+    if (heuristic === 'octile'){
+      const dx = Math.abs(col - target[1]);
+      const dy = Math.abs(row - target[0]);
+      return 1 * (dx + dy) + (Math.sqrt(2) - 2 * 1 ) * Math.min(dx, dy);
+    }
+    else if (heuristic === 'hex'){
+      const a = this.oddq_to_cube(row, col);
+      const b = this.oddq_to_cube(target[0], target[1]);
+      return (Math.abs(a.x - b.x) + Math.abs(a.y - b.y) + Math.abs(a.z - b.z)) / 2;
+    }
+    else if (heuristic === 'euclidean'){
+      return Math.sqrt(Math.pow(col - target[1], 2) + Math.pow(row - target[0], 2));
+    }
+    else if (heuristic === 'manhattan'){
+      return Math.abs(col - target[1]) + Math.abs(row - target[0]);
+    }
+  }
+
+  private oddq_to_cube(row, col): any {
+    const x = col;
+    // tslint:disable-next-line:no-bitwise
+    const z = row - (col - (col & 1)) / 2;
+    const y = -x - z;
+    return {x, y, z};
   }
 }

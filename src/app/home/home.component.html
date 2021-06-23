@@ -123,6 +123,14 @@
             {{algorithm === 'A* Algorithm' ? 'Selected' : ''}}
           </mat-panel-description>
         </mat-expansion-panel-header>
+        <mat-radio-group
+          aria-labelledby="example-radio-group-label"
+          class="heuristic-button-group"
+          [(ngModel)]="heuristic">
+          <mat-radio-button style="margin: 5px" *ngFor="let h of heuristics" [value]="h.value">
+            {{h.label}}
+          </mat-radio-button>
+        </mat-radio-group>
       </mat-expansion-panel>
 
     </mat-accordion>
