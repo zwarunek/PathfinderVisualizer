@@ -5,6 +5,7 @@ import {BoardsService} from '../Services/boards.service';
 import {ActivatedRoute} from '@angular/router';
 import {MatSnackBar, MatSnackBarRef} from '@angular/material/snack-bar';
 import {TimeInterval} from 'rxjs/internal-compatibility';
+import {GraphUtilsService} from '../Services/graph-utils.service';
 
 export interface Tile {
   type: any;
@@ -61,7 +62,7 @@ export class HomeComponent implements OnInit {
   selectedBoard: any;
   boardType: any;
 
-  constructor(public globals: Globals, private algorithms: AlgorithmsService, private boardService: BoardsService, private route: ActivatedRoute, private snackBar: MatSnackBar) {
+  constructor(public globals: Globals, private algorithms: AlgorithmsService, private boardService: BoardsService, private route: ActivatedRoute, private snackBar: MatSnackBar, private graphUtils: GraphUtilsService) {
   }
 
   ngOnInit(): void{
@@ -160,67 +161,6 @@ export class HomeComponent implements OnInit {
 
   addEdge(i: number, j: number, distance: number): void{
     this.tileGraph[i][j] = this.tileGraph[j][i] = distance;
-  }
-
-  findNeighborsSquare(row: number, col: number): Coords[] {
-    const neighbors = [];
-    if (col + 1 < this.cols && this.tiles[row][col + 1].distance === 1) { // right
-      neighbors.push({row, col: col + 1});
-    }
-    if (col - 1 >= 0 && this.tiles[row][col - 1].distance === 1) { // left
-      neighbors.push({row, col: col - 1});
-    }
-    if (row + 1 < this.rows && this.tiles[row + 1][col].distance === 1) { // down
-      neighbors.push({row: (row + 1), col});
-    }
-    if (row - 1 >= 0 && this.tiles[row - 1][col].distance === 1) { // up
-      neighbors.push({row: (row - 1), col});
-    }
-    if (this.diagonal){
-      if (col + 1 < this.cols && row - 1 >= 0 && this.tiles[row - 1][col + 1].distance === 1) {
-        neighbors.push({row: (row - 1), col: col + 1});
-      }
-      if (col - 1 >= 0 && row - 1 >= 0 && this.tiles[row - 1][col - 1].distance === 1) {
-        neighbors.push({row: (row - 1), col: col - 1});
-      }
-      if (col + 1 < this.cols && row + 1 < this.rows && this.tiles[row + 1][col + 1].distance === 1) {
-        neighbors.push({row: (row + 1), col: col + 1});
-      }
-      if (col - 1 >= 0 && row + 1 < this.rows && this.tiles[row + 1][col - 1].distance === 1) {
-        neighbors.push({row: (row + 1), col: col - 1});
-      }
-    }
-    return neighbors;
-
-  }
-
-  findNeighborsHex(row: number, col: number): Coords[] {
-    const neighbors = [];
-    if (col + 1 < this.cols && this.tiles[row][col + 1].distance === 1) { // right
-      neighbors.push({row, col: col + 1});
-    }
-    if (col - 1 >= 0 && this.tiles[row][col - 1].distance === 1) { // left
-      neighbors.push({row, col: col - 1});
-    }
-    if (col + 1 < this.cols &&
-      ((col % 2) === 1 ? row + 1 < this.rows : row - 1 >= 0) &&
-      this.tiles[(col % 2) === 1 ? row + 1 : row - 1][col + 1].distance === 1) { // right diagonal
-      neighbors.push({row: row + ((col % 2) === 1 ? 1 : -1), col: col + 1});
-    }
-    if (col - 1 >= 0  &&
-      ((col % 2) === 1 ? row + 1 < this.rows : row - 1 >= 0) &&
-      this.tiles[(col % 2) === 1 ? row + 1 : row - 1][col - 1].distance === 1) { // left diagonal
-      neighbors.push({row: row + ((col % 2) === 1 ? 1 : -1), col: col - 1});
-    }
-    if (row + 1 < this.rows && this.tiles[row + 1][col].distance === 1) { // down
-      neighbors.push({row: (row + 1), col});
-    }
-    if (row - 1 >= 0 && this.tiles[row - 1][col].distance === 1) { // up
-      neighbors.push({row: (row - 1), col});
-    }
-
-    return neighbors;
-
   }
 
   mouseEnter(e: MouseEvent, row: any, col: any): void {
@@ -344,15 +284,17 @@ export class HomeComponent implements OnInit {
     }
     let neighbors;
     if (this.boardType === 'square'){
-      neighbors = this.findNeighborsSquare(row, col);
+      neighbors = this.graphUtils.findNeighborsSquare(row, col, this.rows, this.cols, this.diagonal);
     }
     else if (this.boardType === 'hex'){
-      neighbors = this.findNeighborsHex(row, col);
+      neighbors = this.graphUtils.findNeighborsHex(row, col, this.rows, this.cols);
     }
     for (const neighbor of neighbors) {
-      this.addEdge(parseInt(row, 10) * this.cols + parseInt(col, 10),
-        neighbor.row * this.cols + neighbor.col,
-        neighbor.col !== col && neighbor.row !== row  && this.boardType === 'square' ? Math.sqrt(2) : 1);
+      if (this.tiles[neighbor.row][neighbor.col].distance > 0){
+        this.addEdge(parseInt(row, 10) * this.cols + parseInt(col, 10),
+          neighbor.row * this.cols + neighbor.col,
+          neighbor.col !== col && neighbor.row !== row  && this.boardType === 'square' ? Math.sqrt(2) : 1);
+      }
     }
   }
 
@@ -386,10 +328,18 @@ export class HomeComponent implements OnInit {
     // this.printMatrix()
     this.globals.inProgress = true;
     this.resetPath();
-    const path = this.algorithms.runPathfindingAlgorithm('dijkstra', this.tileGraph,
-      parseInt(this.startTile.row, 10) * this.cols + parseInt(this.startTile.col, 10),
-      parseInt(this.endTile.row, 10) * this.cols + parseInt(this.endTile.col, 10),
-      this.numTiles);
+    this.algorithms.runPathfindingAlgorithm('dijkstra', this.tileGraph,
+      this.startTile,
+      this.endTile,
+      this.rows,
+      this.cols,
+      this.diagonal);
+    const path = this.algorithms.runPathfindingAlgorithm('A*', this.tileGraph,
+      this.startTile,
+      this.endTile,
+      this.rows,
+      this.cols,
+      this.diagonal);
     this.globals.pathExists = path.path !== undefined;
     this.displayPath(path, delay).then(() => {
       this.globals.inProgress = false;
