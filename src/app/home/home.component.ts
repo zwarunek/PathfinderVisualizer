@@ -4,7 +4,6 @@ import {Globals} from '../globals';
 import {BoardsService} from '../Services/boards.service';
 import {ActivatedRoute} from '@angular/router';
 import {MatSnackBar, MatSnackBarRef} from '@angular/material/snack-bar';
-import {TimeInterval} from 'rxjs/internal-compatibility';
 import {GraphUtilsService} from '../Services/graph-utils.service';
 
 export interface Tile {
@@ -27,6 +26,7 @@ export interface Coords {
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
+
 export class HomeComponent implements OnInit {
 
   draggingWall = false;
@@ -35,7 +35,7 @@ export class HomeComponent implements OnInit {
   draggingEnd = false;
   boards: any[];
   boardLoading = false;
-
+  algorithm = 'Dijkstra\'s Algorithm';
 
   lines: any[] = [];
   // inProgress = false;
@@ -62,7 +62,12 @@ export class HomeComponent implements OnInit {
   selectedBoard: any;
   boardType: any;
 
-  constructor(public globals: Globals, private algorithms: AlgorithmsService, private boardService: BoardsService, private route: ActivatedRoute, private snackBar: MatSnackBar, private graphUtils: GraphUtilsService) {
+  constructor(public globals: Globals,
+              private algorithms: AlgorithmsService,
+              private boardService: BoardsService,
+              private route: ActivatedRoute,
+              private snackBar: MatSnackBar,
+              private graphUtils: GraphUtilsService) {
   }
 
   ngOnInit(): void{
@@ -76,8 +81,6 @@ export class HomeComponent implements OnInit {
       this.rows = Math.floor((window.innerHeight - 104) / 31) - (Math.floor((window.innerHeight - 104) / 31) % 2 === 1 ? 0 : 1);
     }
 
-    // this.rows = 5;
-    // this.cols = 5;
     this.numTiles = this.rows * this.cols;
 
     this.tiles = [];
@@ -87,9 +90,7 @@ export class HomeComponent implements OnInit {
         this.tiles[i][j] = {type: 'blank', distance: 1};
       }
     }
-    // this.tiles[Math.floor(this.rows / 2) - 1][Math.floor(this.cols / 6)] = {type: 'start', distance: 1};
     this.startTile = {row: Math.floor(this.rows / 2) - 1, col: Math.floor(this.cols / 6)};
-    // this.tiles[Math.floor(this.rows / 2) - 1][this.cols - Math.floor(this.cols / 6)] = {type: 'end', distance: 1};
     this.endTile = {row: Math.floor(this.rows / 2) - 1, col: this.cols - Math.floor(this.cols / 6)};
     this.tileGraph = [];
     this.setGraph();
@@ -215,7 +216,6 @@ export class HomeComponent implements OnInit {
     if (this.globals.inProgress){
       return;
     }
-    // if (this.tiles[row][col].type === 'start'){
     console.log(JSON.stringify(this.startTile) === JSON.stringify({row, col}));
     if (JSON.stringify(this.startTile) === JSON.stringify({row, col})){
       this.draggingStart = true;
@@ -328,13 +328,7 @@ export class HomeComponent implements OnInit {
     // this.printMatrix()
     this.globals.inProgress = true;
     this.resetPath();
-    this.algorithms.runPathfindingAlgorithm('dijkstra', this.tileGraph,
-      this.startTile,
-      this.endTile,
-      this.rows,
-      this.cols,
-      this.diagonal);
-    const path = this.algorithms.runPathfindingAlgorithm('A*', this.tileGraph,
+    const path = this.algorithms.runPathfindingAlgorithm(this.algorithm, this.tileGraph,
       this.startTile,
       this.endTile,
       this.rows,
@@ -371,7 +365,6 @@ export class HomeComponent implements OnInit {
         }
       }
     }
-    // console.log('finished', this.globals.finished);
     if (this.globals.finished) {
       this.visualize(0);
     }

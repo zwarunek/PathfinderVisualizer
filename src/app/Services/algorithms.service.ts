@@ -18,9 +18,9 @@ export class AlgorithmsService {
                           cols: number,
                           diagonal: boolean): any {
     switch (algorithm){
-      case 'dijkstra':
+      case 'Dijkstra\'s Algorithm':
         return this.dijkstra.pathFind(graph, src.row * cols + src.col, target.row * cols + target.col, rows * cols);
-      case 'A*':
+      case 'A* Algorithm':
         return this.aStar.pathFind(graph, [src.row, src.col], [target.row, target.col], rows, cols, diagonal);
     }
   }
