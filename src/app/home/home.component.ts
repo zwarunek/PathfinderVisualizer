@@ -333,7 +333,8 @@ export class HomeComponent implements OnInit {
       this.endTile,
       this.rows,
       this.cols,
-      this.diagonal);
+      this.diagonal,
+      this.boardType);
     this.globals.pathExists = path.path !== undefined;
     this.displayPath(path, delay).then(() => {
       this.globals.inProgress = false;

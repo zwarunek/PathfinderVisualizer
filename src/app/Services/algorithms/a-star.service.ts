@@ -27,7 +27,8 @@ export class AStarService {
            target: number[],
            rows: number,
            cols: number,
-           diagonal: boolean): {path, steps} {
+           diagonal: boolean,
+           boardType: string): { path; steps } {
     const open: Node[] = [];
     const closed: boolean[][] = newArray(rows).fill(newArray(cols).fill(false));
     const details: Cell[][] = [];
@@ -52,14 +53,16 @@ export class AStarService {
     details[src[0]][src[1]].p_row = src[0];
     details[src[0]][src[1]].p_col = src[1];
     details[0][0].f = 1;
-
+    console.log(boardType)
     while (open.length > 0){
       let q = open[0];
       for (let i = open.length - 1; i >= 0; i--) {
         if (open[i].f < q.f) {q = open[i]; }
       }
       open.splice(open.indexOf(q), 1);
-      const neighbors = this.graphUtils.findNeighborsSquare(q.index[0], q.index[1], rows, cols, diagonal);
+      const neighbors = boardType === 'square' ?
+        this.graphUtils.findNeighborsSquare(q.index[0], q.index[1], rows, cols, diagonal) :
+        this.graphUtils.findNeighborsHex(q.index[0], q.index[1], rows, cols);
       for (const neighbor of neighbors){
         const cost = graph[q.index[0] * cols + q.index[1]][neighbor.row * cols + neighbor.col];
         const row = neighbor.row;
@@ -74,6 +77,11 @@ export class AStarService {
               const dx = Math.abs(col - target[1]);
               const dy = Math.abs(row - target[0]);
               s.h = 1 * (dx + dy) + (Math.sqrt(2) - 2 * 1 ) * Math.min(dx, dy);
+            }
+            else if (boardType === 'hex'){
+              const dx = Math.abs(col - target[1]);
+              const dy = Math.abs(row - target[0]);
+              s.h = 1 * (dx + dy) + (1 - 2 * 1 ) * Math.min(dx, dy);
             }
             else {
               s.h = Math.abs(col - target[1]) + Math.abs(row - target[0]);
@@ -92,6 +100,11 @@ export class AStarService {
               const dx = Math.abs(col - target[1]);
               const dy = Math.abs(row - target[0]);
               hNew = 1 * (dx + dy) + (Math.sqrt(2) - 2 * 1 ) * Math.min(dx, dy);
+            }
+            else if (boardType === 'hex'){
+              const dx = Math.abs(col - target[1]);
+              const dy = Math.abs(row - target[0]);
+              hNew = 1 * (dx + dy) + (1 - 2 * 1 ) * Math.min(dx, dy);
             }
             else {
               hNew = Math.abs(col - target[1]) + Math.abs(row - target[0]);
