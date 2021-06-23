@@ -53,13 +53,15 @@ export class AStarService {
     details[src[0]][src[1]].p_row = src[0];
     details[src[0]][src[1]].p_col = src[1];
     details[0][0].f = 1;
-    console.log(boardType)
     while (open.length > 0){
       let q = open[0];
       for (let i = open.length - 1; i >= 0; i--) {
         if (open[i].f < q.f) {q = open[i]; }
       }
       open.splice(open.indexOf(q), 1);
+      if (display.indexOf(q.index[0] * cols + q.index[1]) === -1) {
+        display.push(q.index[0] * cols + q.index[1]);
+      }
       const neighbors = boardType === 'square' ?
         this.graphUtils.findNeighborsSquare(q.index[0], q.index[1], rows, cols, diagonal) :
         this.graphUtils.findNeighborsHex(q.index[0], q.index[1], rows, cols);
@@ -113,7 +115,6 @@ export class AStarService {
 
             if (details[row][col].f === Number.MAX_SAFE_INTEGER || details[row][col].f > fNew) {
               open.push({index: [row, col], f: fNew});
-              display.push(row * cols + col);
               s.f = fNew;
               s.g = gNew;
               s.h = hNew;
