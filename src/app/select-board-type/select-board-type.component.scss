@@ -1,13 +1,14 @@
+@use '~@angular/material' as mat;
 @import "src/custom-theme.scss";
 
 $tile-color: #000000;
 $background: #d4d4d4;
-$wall-color: darken(mat-color($my-primary), 20%);
+$wall-color: darken(mat.get-color-from-palette($my-primary), 20%);
 $start-color: #32cd32;
 $end-color: orangered;
 
 .primary-background{
-  background-color: mat-color($my-primary);
+  background-color: mat.get-color-from-palette($my-primary);
 }
 
 .center {

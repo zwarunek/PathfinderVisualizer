@@ -1,8 +1,9 @@
+@use '~@angular/material' as mat;
 @import "src/custom-theme.scss";
 
 $tile-color: #000000;
 $background: #d4d4d4;
-$wall-color: darken(mat-color($my-primary), 20%);
+$wall-color: darken(mat.get-color-from-palette($my-primary), 20%);
 $start-color: #32cd32;
 $end-color: orangered;
 
@@ -13,7 +14,7 @@ $end-color: orangered;
 
   .mat-tab-label-active{
     .mat-tab-icon {
-      background-color: mat-color($my-primary);
+      background-color: mat.get-color-from-palette($my-primary);
     }
   }
 }
@@ -32,13 +33,13 @@ $end-color: orangered;
   animation: none !important;
 }
 .mat-button-toggle {
-  //background-color: mat-color($my-primary);
+  //background-color: mat.get-color-from-palette($my-primary);
   color: white;
   //box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, .2), 0px 2px 2px 0px rgba(0, 0, 0, .14), 0px 1px 5px 0px rgba(0, 0, 0, .12);
 }
 //
 //.mat-button-toggle.mat-button-toggle-checked {
-//  background-color: mat-color($my-accent);
+//  background-color: mat.get-color-from-palette($my-accent);
 //  color: white;
 //}
 //.mat-button-toggle.mat-button-toggle-disabled {
@@ -47,7 +48,7 @@ $end-color: orangered;
 //  box-shadow: 0 0 0 0;
 //}
 //.mat-button-toggle.mat-button-toggle-checked.mat-button-toggle-disabled {
-//  background-color: lighten(mat-color($my-accent), 20%);
+//  background-color: lighten(mat.get-color-from-palette($my-accent), 20%);
 //  opacity: .7;
 //  color: rgba(255,255,255,.7);
 //  box-shadow: 0 0 0 0;
@@ -113,12 +114,12 @@ $end-color: orangered;
 @keyframes blankkf {
   0%{
     z-index: 100;
-    background-color: darken(mat-color($my-primary), 20%);
+    background-color: darken(mat.get-color-from-palette($my-primary), 20%);
     transform: matrix(1, 0, 0, 1, 0, 0);
   }
   100%{
     transform: matrix(.1, 0, 0, .1, 0, 0);
-    background-color: darken(mat-color($my-primary), 20%);
+    background-color: darken(mat.get-color-from-palette($my-primary), 20%);
     z-index: 100;
   }
 }
@@ -137,24 +138,24 @@ $end-color: orangered;
   }
   5%{
     transform:  scale(.3) translate(-1px, -1px);
-    background-color: darken(mat-color($my-accent), 40%);
+    background-color: darken(mat.get-color-from-palette($my-accent), 40%);
   }
   100%{
     transform: scale(1) translate(-1px, -1px);
-    background-color: darken(mat-color($my-accent), 10%);
+    background-color: darken(mat.get-color-from-palette($my-accent), 10%);
   }
 }
 @keyframes pathfindingFastGridCell {
   0%{
-    background-color: darken(mat-color($my-accent), 30%);
+    background-color: darken(mat.get-color-from-palette($my-accent), 30%);
   }
   80%{
-    background-color: darken(mat-color($my-accent), 10%);
+    background-color: darken(mat.get-color-from-palette($my-accent), 10%);
   }
 }
 .searched.grid-cell {
   z-index: 100;
-  background-color: darken(mat-color($my-accent), 10%);
+  background-color: darken(mat.get-color-from-palette($my-accent), 10%);
 }
 .grid-cell.searched.fast {
   animation: pathfindingFastGridCell 1s;
@@ -166,7 +167,7 @@ $end-color: orangered;
   animation: pathfindingGridCell 3s;
 }
 .searched.wall.grid-cell {
-  background-color: darken(mat-color($my-primary), 20%);
+  background-color: darken(mat.get-color-from-palette($my-primary), 20%);
 }
 
 
@@ -246,13 +247,13 @@ $end-color: orangered;
 }
 
 .hex.searched .middle {
-  background-color: darken(mat-color($my-accent), 10%);
+  background-color: darken(mat.get-color-from-palette($my-accent), 10%);
 }
 .hex.searched .left {
-  border-right-color: darken(mat-color($my-accent), 10%);
+  border-right-color: darken(mat.get-color-from-palette($my-accent), 10%);
 }
 .hex.searched .right {
-  border-left-color: darken(mat-color($my-accent), 10%);
+  border-left-color: darken(mat.get-color-from-palette($my-accent), 10%);
 }
 
 
@@ -283,26 +284,26 @@ $end-color: orangered;
 }
 @keyframes middlePathfindingHex {
   0%{
-    background-color: darken(mat-color($my-accent), 30%);
+    background-color: darken(mat.get-color-from-palette($my-accent), 30%);
   }
   80%{
-    background-color: darken(mat-color($my-accent), 10%);
+    background-color: darken(mat.get-color-from-palette($my-accent), 10%);
   }
 }
 @keyframes leftPathfindingHex {
   0%{
-    border-right-color: darken(mat-color($my-accent), 30%);
+    border-right-color: darken(mat.get-color-from-palette($my-accent), 30%);
   }
   80%{
-    border-right-color: darken(mat-color($my-accent), 10%);
+    border-right-color: darken(mat.get-color-from-palette($my-accent), 10%);
   }
 }
 @keyframes rightPathfindingHex {
   0%{
-    border-left-color: darken(mat-color($my-accent), 30%);
+    border-left-color: darken(mat.get-color-from-palette($my-accent), 30%);
   }
   80%{
-    border-left-color: darken(mat-color($my-accent), 10%);
+    border-left-color: darken(mat.get-color-from-palette($my-accent), 10%);
   }
 }
 
@@ -358,7 +359,7 @@ $end-color: orangered;
   max-width: none !important;
 }
 .mat-menu-content{
-  background: mat-color($my-primary);
+  background: mat.get-color-from-palette($my-primary);
 }
 .heuristic-button-group {
   display: flex;
