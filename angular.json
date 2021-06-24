@@ -134,7 +134,6 @@
   "defaultProject": "PathfinderVisualizer",
   "schematics": {
     "@schematics/angular:component": {
-      "styleExt": "scss"
     }
   }
 }

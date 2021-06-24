@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import {Globals} from '../../globals';
-import {newArray} from '@angular/compiler/src/util';
 import {GraphUtilsService} from '../graph-utils.service';
 
 export interface Node {
@@ -31,7 +30,13 @@ export class AStarService {
            diagonal: boolean,
            boardType: string): { path; steps } {
     const open: Node[] = [];
-    const closed: boolean[][] = newArray(rows).fill(newArray(cols).fill(false));
+    const closed: any[][] = [];
+    for (let i = 0; i < rows; i++) {
+      closed[i] = [];
+      for (let j = 0; j < cols; j++) {
+        closed[i][j] = false;
+      }
+    }
     const details: Cell[][] = [];
     const display = [];
     for (let i = 0; i < rows; i++) {
