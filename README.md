@@ -1,4 +1,4 @@
-# PathfinderVisualizer
+# PathfindingVisualizer
 
 A tool for visualizing various pathfinding algorithms
 

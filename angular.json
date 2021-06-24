@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "PathfinderVisualizer": {
+    "PathfindingVisualizer": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "C:/Users/zacha/Documents/Node Projects/PathfinderVisualizer/dist/PathfinderVisualizer",
+            "outputPath": "dist/PathfindingVisualizer/browser",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -64,6 +64,27 @@
                   "maximumError": "10kb"
                 }
               ]
+            },
+            "development": {
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
             }
           },
           "defaultConfiguration": ""
@@ -71,18 +92,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "PathfinderVisualizer:build"
+            "browserTarget": "PathfindingVisualizer:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "PathfinderVisualizer:build:production"
+              "browserTarget": "PathfindingVisualizer:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "PathfinderVisualizer:build"
+            "browserTarget": "PathfindingVisualizer:build"
           }
         },
         "test": {
@@ -120,18 +141,73 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "PathfinderVisualizer:serve"
+            "devServerTarget": "PathfindingVisualizer:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "PathfinderVisualizer:serve:production"
+              "devServerTarget": "PathfindingVisualizer:serve:production"
             }
           }
+        },
+        "server": {
+          "builder": "@angular-devkit/build-angular:server",
+          "options": {
+            "outputPath": "dist/PathfindingVisualizer/server",
+            "main": "server.ts",
+            "tsConfig": "tsconfig.server.json",
+            "optimization": false,
+            "sourceMap": true,
+            "extractLicenses": false
+          },
+          "configurations": {
+            "production": {
+              "outputHashing": "media",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "sourceMap": false,
+              "extractLicenses": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve-ssr": {
+          "builder": "@nguniversal/builders:ssr-dev-server",
+          "options": { "browserTarget": "PathfindingVisualizer:build", "serverTarget": "PathfindingVisualizer:server"},
+          "configurations": {
+            "production": {
+              "browserTarget": "PathfindingVisualizer:build:production",
+              "serverTarget": "PathfindingVisualizer:server:production"
+            }
+          }
+        },
+        "prerender": {
+          "builder": "@nguniversal/builders:prerender",
+          "options": {
+            "routes": [
+              "/"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "PathfindingVisualizer:build:production",
+              "serverTarget": "PathfindingVisualizer:server:production"
+            },
+            "development": {
+              "browserTarget": "PathfindingVisualizer:build:development",
+              "serverTarget": "PathfindingVisualizer:server:development"
+            }
+          },
+          "defaultConfiguration": "production"
         }
       }
     }
   },
-  "defaultProject": "PathfinderVisualizer",
+  "defaultProject": "PathfindingVisualizer",
   "schematics": {
     "@schematics/angular:component": {
     }

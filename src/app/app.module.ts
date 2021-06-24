@@ -26,6 +26,7 @@ import {MatExpansionModule} from '@angular/material/expansion';
 import {CdkAccordionModule} from '@angular/cdk/accordion';
 import {MatCardModule} from '@angular/material/card';
 import {MatRadioModule} from '@angular/material/radio';
+import {WindowRefService} from './Services/window-ref.service';
 
 
 @NgModule({
@@ -36,7 +37,7 @@ import {MatRadioModule} from '@angular/material/radio';
     SelectBoardTypeComponent
   ],
   imports: [
-    BrowserModule,
+    BrowserModule.withServerTransition({ appId: 'serverApp' }),
     AppRoutingModule,
     BrowserAnimationsModule,
     MatSliderModule,
@@ -59,7 +60,8 @@ import {MatRadioModule} from '@angular/material/radio';
     MatRadioModule
   ],
   providers: [
-    Globals
+    Globals,
+    WindowRefService
     ],
   bootstrap: [AppComponent]
 })

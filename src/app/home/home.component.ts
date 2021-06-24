@@ -1,10 +1,11 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Inject, OnInit, PLATFORM_ID} from '@angular/core';
 import {AlgorithmsService} from '../Services/algorithms.service';
 import {Globals} from '../globals';
 import {BoardsService} from '../Services/boards.service';
 import {ActivatedRoute} from '@angular/router';
 import {MatSnackBar, MatSnackBarRef} from '@angular/material/snack-bar';
 import {GraphUtilsService} from '../Services/graph-utils.service';
+import {WindowRefService} from '../Services/window-ref.service';
 
 export interface Tile {
   type: any;
@@ -70,6 +71,8 @@ export class HomeComponent implements OnInit {
   ];
 
   constructor(public globals: Globals,
+              @Inject(PLATFORM_ID) private platformId: any,
+              private windowRef: WindowRefService,
               private algorithms: AlgorithmsService,
               private boardService: BoardsService,
               private route: ActivatedRoute,

@@ -1,5 +1,5 @@
 {
-  "name": "pathfinder-visualizer",
+  "name": "pathfinding-visualizer",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -7,7 +7,11 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "dev:ssr": "ng run PathfindingVisualizer:serve-ssr",
+    "serve:ssr": "node dist/PathfindingVisualizer/server/main.js",
+    "build:ssr": "ng build && ng run PathfindingVisualizer:server",
+    "prerender": "ng run PathfindingVisualizer:prerender"
   },
   "private": true,
   "dependencies": {
@@ -20,7 +24,11 @@
     "@angular/material": "^12.0.5",
     "@angular/platform-browser": "~12.0.5",
     "@angular/platform-browser-dynamic": "~12.0.5",
+    "@angular/platform-server": "~12.0.5",
     "@angular/router": "~12.0.5",
+    "@nguniversal/express-engine": "^12.0.2",
+    "domino": "^2.1.6",
+    "express": "^4.15.2",
     "rxjs": "~6.6.0",
     "sass": "^1.32.12",
     "tslib": "^2.3.0",
@@ -30,6 +38,8 @@
     "@angular-devkit/build-angular": "~12.0.5",
     "@angular/cli": "~12.0.5",
     "@angular/compiler-cli": "~12.0.5",
+    "@nguniversal/builders": "^12.0.2",
+    "@types/express": "^4.17.0",
     "@types/jasmine": "~3.6.0",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "^12.11.1",
