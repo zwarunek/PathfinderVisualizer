@@ -1,1 +1,43 @@
-<p>select-board-type works!</p>
+<div style=" padding: 20px">
+  <div class="center" style="width: 100%; height: 80px">
+    <span style="color: white;font-size: 50px; font-weight: bold">
+      Pathfinding Visualizer
+    </span>
+  </div>
+  <div style="padding: 40px;height: 100%">
+    <mat-grid-list cols="2" rowHeight="8:6" gutterSize="40px">
+      <mat-grid-tile class="zoom-image" style="border: 3px white solid; border-radius: 30px;" [colspan]=1 [rowspan]=1>
+        <div style="; width: 100%; height: 100%;">
+          <span>
+            <mat-card routerLink="board/hex" style="height: 100%; padding: 0">
+              <a style="text-decoration: none" routerLink="/board/hex">
+                <div class="primary-background center" style=" z-index: 20; height: 20%">
+                    <span style="color: white;font-size: 40px; font-weight: normal">Hex Grid</span>
+                  </div>
+                <div style="height: 100%; margin-top: 0">
+                  <img draggable="false" mat-card-image src="../../assets/hex%20thumbnail.JPG" alt="Square Board Image">
+                </div>
+              </a>
+            </mat-card>
+          </span>
+        </div>
+      </mat-grid-tile>
+      <mat-grid-tile class="zoom-image" style="border: 3px white solid; border-radius: 30px; " [colspan]=1 [rowspan]=1>
+        <div style="; width: 100%; height: 100%;">
+          <span>
+            <mat-card routerLink="board/square" style="height: 100%; padding: 0">
+              <a style="text-decoration: none" routerLink="/board/square">
+                <div class="primary-background center" style=" z-index: 20; height: 20%">
+                  <span style="color: white;font-size: 40px; font-weight: normal">Square Grid</span>
+                </div>
+                <div style="height: 100%; margin-top: 0">
+                  <img draggable="false" mat-card-image src="../../assets/square%20thumbnail.JPG" alt="Square Board Image">
+                </div>
+              </a>
+            </mat-card>
+          </span>
+        </div>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </div>
+</div>

@@ -16,13 +16,14 @@ export class AlgorithmsService {
                           target: {row, col},
                           rows: number,
                           cols: number,
+                          heuristic: string,
                           diagonal: boolean,
                           boardType: string): any {
     switch (algorithm){
       case 'Dijkstra\'s Algorithm':
         return this.dijkstra.pathFind(graph, src.row * cols + src.col, target.row * cols + target.col, rows * cols);
       case 'A* Algorithm':
-        return this.aStar.pathFind(graph, [src.row, src.col], [target.row, target.col], rows, cols, diagonal, boardType);
+        return this.aStar.pathFind(graph, [src.row, src.col], [target.row, target.col], rows, cols, heuristic, diagonal, boardType);
     }
   }
 }

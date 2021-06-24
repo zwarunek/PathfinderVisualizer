@@ -1,0 +1,77 @@
+@import "src/custom-theme.scss";
+
+$tile-color: #000000;
+$background: #d4d4d4;
+$wall-color: darken(mat-color($my-primary), 20%);
+$start-color: #32cd32;
+$end-color: orangered;
+
+.primary-background{
+  background-color: mat-color($my-primary);
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.zoom-image{
+  transition: .1s ease-in-out;
+  cursor: pointer;
+}
+.zoom-image:hover {
+  transform: scale(1.02);
+}
+.mat-card-image:first-child{
+  margin-top: 0;
+}
+
+.grid {
+  display: grid;
+}
+.grid-row {
+  display: grid;
+}
+.grid-cell{
+  display:table-cell;
+  width:25px;
+  min-width:25px;
+  height: 25px;
+  border: 1px solid #303030;
+}
+
+.hex {
+  float: left;
+  margin-right: -8px;//negative width/2 - 1
+  margin-bottom: -14px;//negative height/2 - 1
+}
+.hex .left {
+  float: left;
+  width: 0;
+  border-right: 9px solid $background;//width/2
+  border-top: 15px solid transparent;//height/2
+  border-bottom: 15px solid transparent;//height/2
+}
+.hex .middle {
+  float: left;
+  width: 18px;
+  height: 30px;
+  background: $background;
+}
+.hex .right {
+  float: left;
+  width: 0;
+  border-left: 9px solid $background;//width/2
+  border-top: 15px solid transparent;//height/2
+  border-bottom: 15px solid transparent;//height/2
+}
+.hex-row {
+  clear: left;
+}
+.hex.even {//height/2 + 1
+  margin-top: 16px;
+}
+
+.hex-background.even {//height/2 + 1
+  margin-top: 16px;
+}

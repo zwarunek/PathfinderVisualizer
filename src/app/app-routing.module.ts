@@ -1,11 +1,13 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import {HomeComponent} from './home/home.component';
+import {SelectBoardTypeComponent} from './select-board-type/select-board-type.component';
 
 const routes: Routes = [
-  {path: ':boardType', component: HomeComponent},
+  {path: 'board/:boardType', component: HomeComponent},
+  {path: 'boardtype', component: SelectBoardTypeComponent},
 
-  {path: '**', redirectTo: '/square'}
+  {path: '**', redirectTo: 'boardtype'}
 ];
 
 @NgModule({
