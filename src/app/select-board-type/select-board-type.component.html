@@ -1,43 +1,38 @@
-<div style="position:fixed; height: 100%; top: 0; left: 0;width: 100%">
-  <div style="padding: 20px; height: auto">
-<!--    <div class="primary-background center" style="margin-bottom: 20px">-->
-<!--      <span>-->
-<!--        Welcome to Pathfinding Visualizer-->
-<!--      </span>-->
-<!--    </div>-->
-<!--    <div class="container" style="display: flex; height: 100px;">-->
-<!--      <div style="width: 50%; height: 100%; border: 3px white solid; margin-right: 20px; border-radius: 30px">-->
-<!--        asdf-->
-<!--      </div>-->
-<!--      <div style="width: 50%; height: 100%; border: 3px white solid; border-radius: 30px">-->
-<!--        asdf-->
-<!--      </div>-->
-<!--    </div>-->
-    <mat-grid-list cols="2" rowHeight="1:1" gutterSize="40px">
-      <mat-grid-tile [colspan]=2 [rowspan]=1 class="primary-background" style="border-radius: 30px;">
-        <div class="center" style="width: 100%">
+<div style=" padding: 20px">
+  <div class="center" style="width: 100%; height: 80px">
+    <span style="color: white;font-size: 50px; font-weight: bold">
+      Pathfinding Visualizer
+    </span>
+  </div>
+  <div style="padding: 40px;height: 100%">
+    <mat-grid-list cols="2" rowHeight="8:6" gutterSize="40px">
+      <mat-grid-tile class="zoom-image" style="border: 3px white solid; border-radius: 30px;" [colspan]=1 [rowspan]=1>
+        <div style="; width: 100%; height: 100%;">
           <span>
-            Pathfinding Visualizer
-          </span>
-        </div>
-      </mat-grid-tile>
-      <mat-grid-tile style="border: 3px white solid; border-radius: 30px" [colspan]=1 [rowspan]=3>
-        <div style="width: 100%; height: 100%;">
-          <span>
-            <mat-card>
-              <a href="https://pathfindingvisualizer.net/board/hex">
-              <img class="zoom-image" mat-card-image src="../../assets/hex%20thumbnail.JPG" alt="Hex Board Image">
+            <mat-card routerLink="board/hex" style="height: 100%; padding: 0">
+              <a style="text-decoration: none" routerLink="/board/hex">
+                <div class="primary-background center" style=" z-index: 20; height: 20%">
+                    <span style="color: white;font-size: 40px; font-weight: normal">Hex Grid</span>
+                  </div>
+                <div style="height: 100%; margin-top: 0">
+                  <img draggable="false" mat-card-image src="../../assets/hex%20thumbnail.JPG" alt="Square Board Image">
+                </div>
               </a>
             </mat-card>
           </span>
         </div>
       </mat-grid-tile>
-      <mat-grid-tile style="border: 3px white solid; border-radius: 30px" [colspan]=1 [rowspan]=3>
+      <mat-grid-tile class="zoom-image" style="border: 3px white solid; border-radius: 30px; " [colspan]=1 [rowspan]=1>
         <div style="; width: 100%; height: 100%;">
           <span>
-            <mat-card routerLink="board/square">
-              <a href="https://pathfindingvisualizer.net/board/square">
-                <img class="zoom-image" mat-card-image src="../../assets/square%20thumbnail.JPG" alt="Square Board Image">
+            <mat-card routerLink="board/square" style="height: 100%; padding: 0">
+              <a style="text-decoration: none" routerLink="/board/square">
+                <div class="primary-background center" style=" z-index: 20; height: 20%">
+                  <span style="color: white;font-size: 40px; font-weight: normal">Square Grid</span>
+                </div>
+                <div style="height: 100%; margin-top: 0">
+                  <img draggable="false" mat-card-image src="../../assets/square%20thumbnail.JPG" alt="Square Board Image">
+                </div>
               </a>
             </mat-card>
           </span>

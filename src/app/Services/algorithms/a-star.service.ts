@@ -60,9 +60,6 @@ export class AStarService {
         if (open[i].f < q.f) {q = open[i]; }
       }
       open.splice(open.indexOf(q), 1);
-      if (display.indexOf(q.index[0] * cols + q.index[1]) === -1) {
-        display.push(q.index[0] * cols + q.index[1]);
-      }
       const neighbors = boardType === 'square' ?
         this.graphUtils.findNeighborsSquare(q.index[0], q.index[1], rows, cols, diagonal) :
         this.graphUtils.findNeighborsHex(q.index[0], q.index[1], rows, cols);
@@ -76,7 +73,7 @@ export class AStarService {
             s.p_row = q.index[0];
             s.p_col = q.index[1];
             s.g = details[q.index[0]][q.index[1]].g + cost;
-            s.h = this.getH(row, col, target, heuristic);
+            s.h = this.getH(row, col, target, src, heuristic);
             s.f = s.g + s.h;
             const tempPath = this.getPath(target[0], target[1], details, src);
             return {
@@ -86,9 +83,12 @@ export class AStarService {
           }
           else if (closed[row][col] === false){
             const gNew = details[q.index[0]][q.index[1]].g + cost;
-            const hNew = this.getH(row, col, target, heuristic);
+            const hNew = this.getH(row, col, target, src, heuristic);
             const fNew = gNew + hNew;
 
+            if (display.indexOf(row * cols + col) === -1) {
+              display.push(row * cols + col);
+            }
             if (details[row][col].f === Number.MAX_SAFE_INTEGER || details[row][col].f > fNew) {
               open.push({index: [row, col], f: fNew});
               s.f = fNew;
@@ -120,11 +120,17 @@ export class AStarService {
     return path;
   }
 
-  private getH(row: number, col: number, target: number[], heuristic: string): number {
+  private getH(row: number, col: number, target: number[], src: number[], heuristic: string): number {
     if (heuristic === 'octile'){
       const dx = Math.abs(col - target[1]);
       const dy = Math.abs(row - target[0]);
-      return 1 * (dx + dy) + (Math.sqrt(2) - 2 * 1 ) * Math.min(dx, dy);
+      const dx1 = col - target[1];
+      const dy1 = row - target[0];
+      const dx2 = src[1] - target[1];
+      const dy2 = src[0] - target[0];
+      const cross = Math.abs(dx1 * dy2 - dx2 * dy1);
+      // heuristic += cross*0.001
+      return 1 * (dx + dy) + (Math.sqrt(2) - 2 * 1 ) * Math.min(dx, dy) + cross * 0.001;
     }
     else if (heuristic === 'hex'){
       const a = this.oddq_to_cube(row, col);
@@ -135,7 +141,12 @@ export class AStarService {
       return Math.sqrt(Math.pow(col - target[1], 2) + Math.pow(row - target[0], 2));
     }
     else if (heuristic === 'manhattan'){
-      return Math.abs(col - target[1]) + Math.abs(row - target[0]);
+      const dx1 = col - target[1];
+      const dy1 = row - target[0];
+      const dx2 = src[1] - target[1];
+      const dy2 = src[0] - target[0];
+      const cross = Math.abs(dx1 * dy2 - dx2 * dy1);
+      return (Math.abs(col - target[1]) + Math.abs(row - target[0])) + cross * 0.001;
     }
   }
 
