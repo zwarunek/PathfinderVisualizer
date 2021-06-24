@@ -25,7 +25,8 @@
             ],
             "styles": [
               {
-                "input": "src/custom-theme.scss"
+                "input": "src/custom-theme.scss",
+                "inject": true
               },
               "src/styles.scss"
             ],
@@ -42,7 +43,6 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
               "extractLicenses": true,
               "vendorChunk": false,
