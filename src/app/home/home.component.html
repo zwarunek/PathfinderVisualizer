@@ -1,7 +1,7 @@
 <div style="width: 100%">
   <mat-toolbar color="primary">
-    <section style="margin-right: 20px;font-size: 15px">
-      <div style="font-size: 20px;margin-right: 100px; display: grid">
+    <section style="margin-right: 100px;font-size: 15px">
+      <div style="font-size: 20px; display: grid; padding: 0 5px; cursor: pointer" routerLink="/">
         <span>Pathfinding Algorithm Visualizer</span>
         <span style="font-size: 15px">Under Construction</span>
       </div>
@@ -123,6 +123,14 @@
             {{algorithm === 'A* Algorithm' ? 'Selected' : ''}}
           </mat-panel-description>
         </mat-expansion-panel-header>
+        <mat-radio-group
+          aria-labelledby="example-radio-group-label"
+          class="heuristic-button-group"
+          [(ngModel)]="heuristic">
+          <mat-radio-button style="margin: 5px" *ngFor="let h of heuristics" [value]="h.value">
+            {{h.label}}
+          </mat-radio-button>
+        </mat-radio-group>
       </mat-expansion-panel>
 
     </mat-accordion>

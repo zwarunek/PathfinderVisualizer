@@ -61,6 +61,13 @@ export class HomeComponent implements OnInit {
   grid = true;
   selectedBoard: any;
   boardType: any;
+  heuristic = 'manhattan';
+  heuristics: any[] = [
+    {label: 'Manhattan', value: 'manhattan'},
+    {label: 'Octile', value: 'octile'},
+    {label: 'Euclidean', value: 'euclidean'},
+    {label: 'Manhattan Hex', value: 'hex'},
+  ];
 
   constructor(public globals: Globals,
               private algorithms: AlgorithmsService,
@@ -333,6 +340,7 @@ export class HomeComponent implements OnInit {
       this.endTile,
       this.rows,
       this.cols,
+      this.heuristic,
       this.diagonal,
       this.boardType);
     this.globals.pathExists = path.path !== undefined;
