@@ -28,6 +28,7 @@ import {CdkAccordionModule} from '@angular/cdk/accordion';
 import {MatCardModule} from '@angular/material/card';
 import {MatRadioModule} from '@angular/material/radio';
 import {WindowRefService} from './Services/window-ref.service';
+import {SeoService} from './Services/seo-servce.service';
 
 
 @NgModule({
@@ -63,7 +64,8 @@ import {WindowRefService} from './Services/window-ref.service';
   providers: [
     Globals,
     WindowRefService,
-    Colors
+    Colors,
+    SeoService
     ],
   bootstrap: [AppComponent]
 })

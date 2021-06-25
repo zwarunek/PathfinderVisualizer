@@ -416,10 +416,8 @@ export class HomeComponent implements OnInit {
     for (let i = 0; i < this.rows; i++) {
       for (let j = 0; j < this.cols; j++) {
         const tile = document.getElementById('tile-' + i + ':' + j);
-        // if (tile.classList.contains('searched')){
         if (this.tiles[i][j].type === 'searched'){
           tile.classList.add('noTransition');
-          // tile.classList.remove('searched');
           this.tiles[i][j].type = 'blank';
         }
       }
@@ -455,7 +453,6 @@ export class HomeComponent implements OnInit {
         JSON.stringify(this.endTile) !== JSON.stringify({row: tile.row, col: tile.col})) {
         const tileElement = document.getElementById('tile-' + tile.row + ':' + tile.col);
         tileElement.classList.remove('noTransition');
-        // tileElement.classList.add('searched');
         this.tiles[tile.row][tile.col].type = 'searched';
         if (delay === 0){
           tileElement.classList.add('noTransition');
