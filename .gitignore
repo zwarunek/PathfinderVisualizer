@@ -46,6 +46,7 @@ testem.log
 Thumbs.db
 
 # Elastic Beanstalk Files
-.elasticbeanstalk/*
+deployment/.elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
+/deployment/

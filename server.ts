@@ -2,22 +2,30 @@ import 'zone.js/dist/zone-node';
 
 import { ngExpressEngine } from '@nguniversal/express-engine';
 import * as express from 'express';
-import { createWindow } from 'domino';
 import { join } from 'path';
 
 import { AppServerModule } from './src/main.server';
 import { APP_BASE_HREF } from '@angular/common';
 import { existsSync } from 'fs';
 
+const domino = require('domino');
+const distFolder = join(process.cwd(), 'dist/PathfindingVisualizer/browser');
+const indexHtml = existsSync(join(distFolder, 'index.original.html')) ? 'index.original.html' : 'index.html';
+const win = domino.createWindow(indexHtml);
+
+
+global['window'] = win;
+global['Node'] = win.Node;
+global['navigator'] = win.navigator;
+global['Event'] = win.Event;
+global['KeyboardEvent'] = win.Event;
+global['MouseEvent'] = win.Event;
+global['Event']['prototype'] = win.Event.prototype;
+global['document'] = win.document;
+
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
   const server = express();
-  const distFolder = join(process.cwd(), 'dist/PathfindingVisualizer/browser');
-  const indexHtml = existsSync(join(distFolder, 'index.original.html')) ? 'index.original.html' : 'index';
-  const win = createWindow(indexHtml);
-  (global as any).window = win;
-  (global as any).document = win.document;
-  (global as any).navigator = win.navigator;
   // Our Universal express-engine (found @ https://github.com/angular/universal/tree/master/modules/express-engine)
   server.engine('html', ngExpressEngine({
     bootstrap: AppServerModule,
