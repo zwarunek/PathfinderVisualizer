@@ -20,6 +20,7 @@ import {FormsModule} from '@angular/forms';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatSelectModule} from '@angular/material/select';
 import {Globals} from './globals';
+import {Colors} from './colors';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import { SelectBoardTypeComponent } from './select-board-type/select-board-type.component';
 import {MatExpansionModule} from '@angular/material/expansion';
@@ -61,7 +62,8 @@ import {WindowRefService} from './Services/window-ref.service';
   ],
   providers: [
     Globals,
-    WindowRefService
+    WindowRefService,
+    Colors
     ],
   bootstrap: [AppComponent]
 })

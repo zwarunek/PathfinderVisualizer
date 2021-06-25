@@ -6,6 +6,9 @@ import {ActivatedRoute} from '@angular/router';
 import {MatSnackBar, MatSnackBarRef} from '@angular/material/snack-bar';
 import {GraphUtilsService} from '../Services/graph-utils.service';
 import {WindowRefService} from '../Services/window-ref.service';
+import {animate, keyframes, query, style, transition, trigger} from '@angular/animations';
+import {Colors} from '../colors';
+import {isPlatformBrowser} from '@angular/common';
 
 export interface Tile {
   type: any;
@@ -22,10 +25,63 @@ export interface Coords {
   row: number;
   col: number;
 }
+export const searching = keyframes([
+    style({
+      'background-color': 'yellow',
+      offset: 0
+    }),
+    style({
+      'background-color': Colors.background,
+      transform:  'scale(.3) translate(-1px, -1px)',
+      offset: .02
+    }),
+    style({
+      'background-color': Colors.searchColorDark,
+      transform:  'scale(.3) translate(-1px, -1px)',
+      offset: .05
+    }),
+    style({
+      transform:  'scale(1) translate(-1px, -1px)',
+      'background-color': Colors.searchColor,
+      offset: 1
+    })
+  ]);
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  styleUrls: ['./home.component.scss'],
+  animations: [
+    trigger('gridSquare', [
+      transition('blank => wall', [
+        animate('0.3s', keyframes([
+          style({'z-index': 100,
+            transform: 'matrix(.1, 0, 0, .1, 0, 0)',
+            'background-color': Colors.wallColor,
+            offset: 0}),
+          style({'z-index': 100,
+            transform: 'matrix(1, 0, 0, 1, 0, 0)',
+            'background-color': Colors.wallColor,
+            offset: 1})
+        ]))
+      ]),
+      transition('wall => blank', [
+        animate('0.3s', keyframes([
+          style({
+            'z-index': 100,
+            transform: 'matrix(1, 0, 0, 1, 0, 0)',
+            'background-color': Colors.wallColor,
+            offset: 0
+          }),
+          style({
+            'z-index': 100,
+            transform: 'matrix(.1, 0, 0, .1, 0, 0)',
+            'background-color': Colors.wallColor,
+            offset: 1
+          })
+        ]))
+      ])
+    ])
+  ]
 })
 
 export class HomeComponent implements OnInit {
@@ -39,9 +95,6 @@ export class HomeComponent implements OnInit {
   algorithm = 'Dijkstra\'s Algorithm';
 
   lines: any[] = [];
-  // inProgress = false;
-  // finished = false;
-  // noPath = false;
 
   delay = 20;
   statsSnackbar: MatSnackBarRef<any>;
@@ -100,8 +153,12 @@ export class HomeComponent implements OnInit {
         this.tiles[i][j] = {type: 'blank', distance: 1};
       }
     }
-    this.startTile = {row: Math.floor(this.rows / 2) - 1, col: Math.floor(this.cols / 6)};
-    this.endTile = {row: Math.floor(this.rows / 2) - 1, col: this.cols - Math.floor(this.cols / 6)};
+    if (isPlatformBrowser(this.platformId)){
+      this.startTile = {row: Math.floor(this.rows / 2) - 1, col: Math.floor(this.cols / 6)};
+      this.tiles[this.startTile.row][this.startTile.col].type = 'start';
+      this.endTile = {row: Math.floor(this.rows / 2) - 1, col: this.cols - Math.floor(this.cols / 6)};
+      this.tiles[this.endTile.row][this.endTile.col].type = 'end';
+    }
     this.tileGraph = [];
     this.setGraph();
 
@@ -193,12 +250,12 @@ export class HomeComponent implements OnInit {
 
     if (this.draggingStart && JSON.stringify(this.endTile) !== JSON.stringify({row, col})){
       this.startTile = {row, col};
-      this.setNonWall('blank', row, col, false);
+      this.setNonWall('start', row, col, false);
 
     }
     else if (this.draggingEnd && JSON.stringify(this.startTile) !== JSON.stringify({row, col})){
       this.endTile = {row, col};
-      this.setNonWall('blank', row, col, false);
+      this.setNonWall('end', row, col, false);
 
     }
     else if (this.draggingWall && JSON.stringify(this.startTile) !== JSON.stringify({row, col}) &&
@@ -226,7 +283,6 @@ export class HomeComponent implements OnInit {
     if (this.globals.inProgress){
       return;
     }
-    console.log(JSON.stringify(this.startTile) === JSON.stringify({row, col}));
     if (JSON.stringify(this.startTile) === JSON.stringify({row, col})){
       this.draggingStart = true;
     }
@@ -360,9 +416,11 @@ export class HomeComponent implements OnInit {
     for (let i = 0; i < this.rows; i++) {
       for (let j = 0; j < this.cols; j++) {
         const tile = document.getElementById('tile-' + i + ':' + j);
-        if (tile.classList.contains('searched')){
+        // if (tile.classList.contains('searched')){
+        if (this.tiles[i][j].type === 'searched'){
           tile.classList.add('noTransition');
-          tile.classList.remove('searched');
+          // tile.classList.remove('searched');
+          this.tiles[i][j].type = 'blank';
         }
       }
     }
@@ -397,7 +455,8 @@ export class HomeComponent implements OnInit {
         JSON.stringify(this.endTile) !== JSON.stringify({row: tile.row, col: tile.col})) {
         const tileElement = document.getElementById('tile-' + tile.row + ':' + tile.col);
         tileElement.classList.remove('noTransition');
-        tileElement.classList.add('searched');
+        // tileElement.classList.add('searched');
+        this.tiles[tile.row][tile.col].type = 'searched';
         if (delay === 0){
           tileElement.classList.add('noTransition');
         }

@@ -5,5 +5,4 @@ export class Globals {
   finished = false;
   inProgress = false;
   pathExists = false;
-
 }

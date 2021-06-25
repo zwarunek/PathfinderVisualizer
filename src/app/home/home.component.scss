@@ -6,9 +6,9 @@ $background: #d4d4d4;
 $wall-color: darken(mat.get-color-from-palette($my-primary), 20%);
 $start-color: #32cd32;
 $end-color: orangered;
+$searched-color: darken(mat.get-color-from-palette($my-accent), 10%);
 
 @mixin my-theme($my-theme) {
-  // Extract whichever individual palettes you need from the theme.
   $primary: map-get($my-theme, primary);
   $accent: map-get($my-theme, accent);
 
@@ -18,10 +18,6 @@ $end-color: orangered;
     }
   }
 }
-//.mat-button-toggle-group{
-//  box-shadow: 0 0 0 0;
-//
-//}
 .noTransition {
   -webkit-transition: none !important;
   -moz-transition: none !important;
@@ -33,44 +29,26 @@ $end-color: orangered;
   animation: none !important;
 }
 .mat-button-toggle {
-  //background-color: mat.get-color-from-palette($my-primary);
   color: white;
-  //box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, .2), 0px 2px 2px 0px rgba(0, 0, 0, .14), 0px 1px 5px 0px rgba(0, 0, 0, .12);
 }
-//
-//.mat-button-toggle.mat-button-toggle-checked {
-//  background-color: mat.get-color-from-palette($my-accent);
-//  color: white;
-//}
-//.mat-button-toggle.mat-button-toggle-disabled {
-//  background-color: rgba(255,255,255,.12);
-//  color: rgba(255,255,255,.3);
-//  box-shadow: 0 0 0 0;
-//}
-//.mat-button-toggle.mat-button-toggle-checked.mat-button-toggle-disabled {
-//  background-color: lighten(mat.get-color-from-palette($my-accent), 20%);
-//  opacity: .7;
-//  color: rgba(255,255,255,.7);
-//  box-shadow: 0 0 0 0;
-//}
 .mat-button-toggle-button {
   color: #000000;
 }
-
 .blank.grid-cell {
   background-color: $background;
 }
-
 .start.grid-cell {
   background-color: $start-color;
 }
-
 .end.grid-cell {
   background-color: $end-color;
 }
-
 .wall.grid-cell{
   background-color: $wall-color;
+}
+.searched.grid-cell {
+  z-index: 100;
+  background-color: $searched-color;
 }
 .disable-select {
   user-select: none; /* supported by Chrome and Opera */
@@ -78,7 +56,6 @@ $end-color: orangered;
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* Internet Explorer/Edge */
 }
-
 .grid {
   display: grid;
 }
@@ -101,34 +78,6 @@ $end-color: orangered;
   height: 100%;
   cursor: pointer
 }
-@keyframes wallkf {
-  0%{
-    z-index: 100;
-    transform: matrix(.1, 0, 0, .1, 0, 0) translate(-1px, -1px);
-  }
-  100%{
-    transform: matrix(1, 0, 0, 1, 0, 0) translate(-1px, -1px);
-    z-index: 100
-  }
-}
-@keyframes blankkf {
-  0%{
-    z-index: 100;
-    background-color: darken(mat.get-color-from-palette($my-primary), 20%);
-    transform: matrix(1, 0, 0, 1, 0, 0);
-  }
-  100%{
-    transform: matrix(.1, 0, 0, .1, 0, 0);
-    background-color: darken(mat.get-color-from-palette($my-primary), 20%);
-    z-index: 100;
-  }
-}
-.grid-cell.wall{
-  animation: wallkf .3s;
-}
-.grid-cell.blank{
-  animation: blankkf .3s;
-}
 @keyframes pathfindingGridCell {
   0%{
     background-color: yellow;
@@ -148,14 +97,11 @@ $end-color: orangered;
 @keyframes pathfindingFastGridCell {
   0%{
     background-color: darken(mat.get-color-from-palette($my-accent), 30%);
+
   }
   80%{
     background-color: darken(mat.get-color-from-palette($my-accent), 10%);
   }
-}
-.searched.grid-cell {
-  z-index: 100;
-  background-color: darken(mat.get-color-from-palette($my-accent), 10%);
 }
 .grid-cell.searched.fast {
   animation: pathfindingFastGridCell 1s;
@@ -167,7 +113,7 @@ $end-color: orangered;
   animation: pathfindingGridCell 3s;
 }
 .searched.wall.grid-cell {
-  background-color: darken(mat.get-color-from-palette($my-primary), 20%);
+  //background-color: darken(mat.get-color-from-palette($my-primary), 20%);
 }
 
 

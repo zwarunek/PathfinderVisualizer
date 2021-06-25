@@ -51,15 +51,16 @@
   <table style="border-spacing: 0;border-collapse: collapse;">
     <tbody>
     <tr *ngFor="let row of tiles; let y = index" style="background-color: #d4d4d4">
-      <td class="grid-cell" *ngFor="let tile of row; let x = index"  [attr.id]="'tile-'+y+':'+x"
-          [ngClass]="{wall: tile.type === 'wall',
-                      blank: tile.type === 'blank',
+      <td [@gridSquare]="tile.type" class="grid-cell" *ngFor="let tile of row; let x = index"  [attr.id]="'tile-'+y+':'+x"
+          [ngClass]="{ wall: tile.type === 'wall',
+                       blank: tile.type === 'blank',
+                       searched: tile.type === 'searched',
                        start: startTile.row === y && startTile.col === x,
                        end: endTile.row === y && endTile.col === x,
-                      fast: delay === 1,
-                      medium: delay === 20,
-                      slow: delay === 50,
-                      instant: delay === 0}"
+                       fast: delay === 1,
+                       medium: delay === 20,
+                       slow: delay === 50,
+                       instant: delay === 0}"
           (mouseenter)="mouseEnter($event, y, x)"
           (mousedown)="mouseDown($event, y, x)"
           (mouseup)="mouseUp()"
@@ -73,15 +74,16 @@
   <div class="" style="display: table; padding-top: 20px; margin: 0 auto">
     <div class="hex-row" *ngFor="let row of tiles; let y = index" style="display: block">
       <div class="hex" *ngFor="let tile of row; let x = index" [attr.id]="'tile-'+y+':'+x" style="display: block; position: relative"
-           [ngClass]="{even: (x%2)===1,
-                       wall: tile.type === 'wall',
-                       blank: tile.type === 'blank',
-                       start: startTile.row === y && startTile.col === x,
-                       end: endTile.row === y && endTile.col === x,
-                       fast: delay === 1,
-                       medium: delay === 20,
-                       slow: delay === 50,
-                       instant: delay === 0
+           [ngClass]="{ even: (x%2)===1,
+                        wall: tile.type === 'wall',
+                        blank: tile.type === 'blank',
+                        searched: tile.type === 'searched',
+                        start: startTile.row === y && startTile.col === x,
+                        end: endTile.row === y && endTile.col === x,
+                        fast: delay === 1,
+                        medium: delay === 20,
+                        slow: delay === 50,
+                        instant: delay === 0
            }"
            (mouseenter)="mouseEnter($event, y, x)"
            (mousedown)="mouseDown($event, y, x)"
