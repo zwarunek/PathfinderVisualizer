@@ -10,3 +10,13 @@ $my-accent:  mat.define-palette(mat.$teal-palette, A400);
 $my-theme: mat.define-dark-theme($my-primary, $my-accent);
 
 @include mat.all-component-themes($my-theme);
+
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}

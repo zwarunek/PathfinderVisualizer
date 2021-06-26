@@ -1,16 +1,9 @@
 @use '~@angular/material' as mat;
 @import "src/custom-theme.scss";
 
-$tile-color: #000000;
-$background: #d4d4d4;
-$wall-color: darken(mat.get-color-from-palette($my-primary), 20%);
-$start-color: #32cd32;
-$end-color: orangered;
-
 .primary-background{
   background-color: mat.get-color-from-palette($my-primary);
 }
-
 .center {
   display: flex;
   justify-content: center;
@@ -23,56 +16,51 @@ $end-color: orangered;
 .zoom-image:hover {
   transform: scale(1.02);
 }
-.mat-card-image:first-child{
-  margin-top: 0;
+.board-container{
+  padding: 40px;
+  display: flex;
+  flex: auto;
+  justify-content: center;
 }
 
-.grid {
-  display: grid;
+.board{
+  border: 3px solid white;
+  border-radius: 30px;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
 }
-.grid-row {
-  display: grid;
+@media only screen and (max-width: 600px) {
+  .board-container{
+    flex-direction: column;
+  }
+  .board:nth-child(1){
+    margin-bottom: 20px
+  }
 }
-.grid-cell{
-  display:table-cell;
-  width:25px;
-  min-width:25px;
-  height: 25px;
-  border: 1px solid #303030;
+@media only screen and (min-width: 601px) {
+  .board-container{
+    flex-direction: row;
+  }
+  .board:nth-child(1){
+    margin-right: 20px
+  }
+  .board:nth-child(2){
+    margin-left: 20px
+  }
 }
-
-.hex {
-  float: left;
-  margin-right: -8px;//negative width/2 - 1
-  margin-bottom: -14px;//negative height/2 - 1
+@media only screen and (min-width: 1801px) and (min-height: 751px) {
+  .small{
+    display: none;
+  }
 }
-.hex .left {
-  float: left;
-  width: 0;
-  border-right: 9px solid $background;//width/2
-  border-top: 15px solid transparent;//height/2
-  border-bottom: 15px solid transparent;//height/2
+@media only screen and (max-width: 1801px)  {
+  .large{
+    display: none;
+  }
 }
-.hex .middle {
-  float: left;
-  width: 18px;
-  height: 30px;
-  background: $background;
-}
-.hex .right {
-  float: left;
-  width: 0;
-  border-left: 9px solid $background;//width/2
-  border-top: 15px solid transparent;//height/2
-  border-bottom: 15px solid transparent;//height/2
-}
-.hex-row {
-  clear: left;
-}
-.hex.even {//height/2 + 1
-  margin-top: 16px;
-}
-
-.hex-background.even {//height/2 + 1
-  margin-top: 16px;
+@media only screen and (max-height: 751px)  {
+  .large{
+    display: none;
+  }
 }
