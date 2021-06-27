@@ -1,14 +1,11 @@
 <div style="width: 100%">
   <mat-toolbar color="primary">
     <section class="title-section" style="font-size: 15px; cursor: pointer" routerLink="/">
-<!--      <div style="font-size: 20px; display: grid; padding: 0 5px; cursor: pointer" routerLink="/">-->
         <div style="font-size: 20px; white-space: break-spaces; text-align: center;">Pathfinding Algorithm Visualizer</div>
-<!--        <span style="font-size: 15px">Under Construction</span>-->
-<!--      </div>-->
     </section>
 
     <section class="main-bar-component" style="margin: auto;font-size: 15px">
-      <button mat-stroked-button style="margin-right: 20px;" [disabled]="globals.inProgress || boardLoading" (click)="visualize(delay)">Visualize</button>
+      <button mat-stroked-button style="margin-right: 20px;" [disabled]="globals.inProgress || boardLoading" (click)="visualize(delay.delay)">Visualize</button>
       <button mat-stroked-button style="margin-right: 20px;" [disabled]="globals.inProgress || boardLoading" (click)="resetPath()">Reset Path</button>
       <button mat-stroked-button style="margin-right: 20px;" [disabled]="globals.inProgress || boardLoading" (click)="resetTiles()">Remove Walls</button>
       <button mat-stroked-button [matMenuTriggerFor]="algorithmMenu">
@@ -35,10 +32,11 @@
                        searched: tile.type === 'searched',
                        start: startTile.row === y && startTile.col === x,
                        end: endTile.row === y && endTile.col === x,
-                       fast: delay === 1,
-                       medium: delay === 20,
-                       slow: delay === 50,
-                       instant: delay === 0}"
+                       fast: delay.delay === 1,
+                       medium: delay.delay === 20,
+                       slow: delay.delay === 50,
+                       instant: delay.delay === 0
+                       }"
               (mouseenter)="mouseEnter($event, y, x)"
               (mousedown)="mouseDown($event, y, x)"
               (mouseup)="mouseUp()"
@@ -58,10 +56,10 @@
                         searched: tile.type === 'searched',
                         start: startTile.row === y && startTile.col === x,
                         end: endTile.row === y && endTile.col === x,
-                        fast: delay === 1,
-                        medium: delay === 20,
-                        slow: delay === 50,
-                        instant: delay === 0
+                        fast: delay.delay === 1,
+                        medium: delay.delay === 20,
+                        slow: delay.delay === 50,
+                        instant: delay.delay === 0
            }"
            (mouseenter)="mouseEnter($event, y, x)"
            (mousedown)="mouseDown($event, y, x)"
@@ -88,10 +86,41 @@
         stroke-linecap="round"
         style="z-index: 900"/>
 </svg>
-<mat-menu #algorithmMenu="matMenu" style="max-width: none">
-  <div (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" style="flex-direction: column;display: flex">
-    <mat-accordion class="example-headers-align">
-      <mat-expansion-panel (opened)="algorithm = 'Dijkstra\'s Algorithm'">
+<mat-menu #algorithmMenu="matMenu" class="custom-menu">
+  <div (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" class="drop-down-menu">
+    <div style="width: 325px; margin: 0 auto">
+      <div style="text-align: center; display: flex; justify-content: space-between">
+        <span>Instant</span>
+        <span>Fast</span>
+        <span>Normal</span>
+        <span>Slow</span>
+      </div>
+    </div>
+
+    <div style="width: 100%; text-align: center; display: flex; justify-content: space-around; margin: -10px auto">
+      <mat-slider
+        style="width: 325px; padding: 0"
+        class="example-margin"
+        [disabled]="globals.inProgress || boardLoading"
+        [max]="3"
+        [min]="0"
+        [step]="1"
+        [tickInterval]="1"
+        value="2"
+        (change)="resetPath(); changeSpeed($event.value)">
+      </mat-slider>
+    </div>
+
+    <mat-form-field appearance="fill" style="font-size: 10px; margin: 0 auto; padding-top: 8px; width: 325px">
+      <mat-label style="font-size: 15px">Select Board</mat-label>
+      <mat-select [(value)]="selectedBoard"   [disabled]="boardLoading || globals.inProgress" style="font-size: 15px;">
+        <mat-option (click)="loadBoard()">None</mat-option>
+        <mat-option (click)="loadBoard()" *ngFor="let board of boards; let i = index" value="{{board}}">{{board}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-accordion style="width: 325px; margin: 0 auto">
+      <mat-expansion-panel (opened)="algorithm = 'Dijkstra\'s Algorithm'; diagonal = false; diagonalChange()">
         <mat-expansion-panel-header>
           <mat-panel-title>
             Dijkstra's Algorithm
@@ -100,9 +129,10 @@
             {{algorithm === 'Dijkstra\'s Algorithm' ? 'Selected' : ''}}
           </mat-panel-description>
         </mat-expansion-panel-header>
+        <mat-checkbox [color]="'accent'" [(ngModel)]="diagonal" (change)="diagonalChange()" [disabled]="globals.inProgress || boardLoading">Diagonal</mat-checkbox>
       </mat-expansion-panel>
 
-      <mat-expansion-panel  (opened)="algorithm = 'A* Algorithm'">
+      <mat-expansion-panel  (opened)="algorithm = 'A* Algorithm'; diagonal = false; diagonalChange()">
         <mat-expansion-panel-header >
           <mat-panel-title>
             A* Algorithm
@@ -111,6 +141,7 @@
             {{algorithm === 'A* Algorithm' ? 'Selected' : ''}}
           </mat-panel-description>
         </mat-expansion-panel-header>
+        <mat-checkbox [color]="'accent'" [(ngModel)]="diagonal" (change)="diagonalChange()" [disabled]="globals.inProgress || boardLoading">Diagonal</mat-checkbox>
         <mat-radio-group
           aria-labelledby="example-radio-group-label"
           class="heuristic-button-group"
@@ -122,32 +153,84 @@
       </mat-expansion-panel>
 
     </mat-accordion>
-    <mat-checkbox [color]="'accent'" [(ngModel)]="diagonal" (change)="diagonalChange()" [disabled]="globals.inProgress || boardLoading">Diagonal</mat-checkbox>
-    <mat-form-field appearance="fill" style="font-size: 10px; margin: 0 auto; padding-top: 8px; width: 100%">
-      <mat-label style="font-size: 15px">Select Board</mat-label>
-      <mat-select [(value)]="selectedBoard"   [disabled]="boardLoading || globals.inProgress" style="font-size: 15px;">
-        <mat-option (click)="loadBoard()">None</mat-option>
-        <mat-option (click)="loadBoard()" *ngFor="let board of boards; let i = index" value="{{board}}">{{board}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <div style="max-width: fit-content; margin: 0 auto">
-      <mat-button-toggle-group appearance="legacy" (change)="resetPath();changeSpeed($event.value)" value="{{delay}}" [disabled]="globals.inProgress || boardLoading" style="font-size: 15px">
-        <mat-button-toggle value="0">Instant</mat-button-toggle>
-        <mat-button-toggle value="1">Fast</mat-button-toggle>
-        <mat-button-toggle value="20">Medium</mat-button-toggle>
-        <mat-button-toggle value="50">Slow</mat-button-toggle>
-      </mat-button-toggle-group>
-    </div>
   </div>
 </mat-menu>
 <div id="sheet" class="bottom-sheet-bg disable-select" draggable="false" (touchmove)="testSheet($event)" (touchend)="testSheetClick()" (touchstart)="touchStart($event)" (mousemove)="testSheet($event)" (mouseup)="testSheetClick()" (mousedown)="touchStart($event)">
+
   <div class="sheet-handle">
     <div class="sheet-knob"></div>
   </div>
+
   <div class="sheet-main-buttons">
-    <button mat-stroked-button *ngIf="!globals.inProgress" style="margin-right: 8px" [disabled]="boardLoading" (click)="visualize(delay)">Visualize</button>
+    <button mat-stroked-button *ngIf="!globals.inProgress" style="margin-right: 8px" [disabled]="boardLoading" (click)="visualize(delay.delay)">Visualize</button>
     <button mat-stroked-button *ngIf="!globals.inProgress" style="margin-right: 8px" [disabled]="boardLoading" (click)="resetPath()">Reset Path</button>
     <button mat-stroked-button *ngIf="!globals.inProgress" [disabled]="boardLoading" (click)="resetTiles()">Remove Walls</button>
     <button mat-stroked-button *ngIf="globals.inProgress" (click)="cancel()">Cancel</button>
   </div>
+
+  <div style="width: 325px; margin: 0 auto">
+    <div style="text-align: center; display: flex; justify-content: space-between">
+      <span>Instant</span>
+      <span>Fast</span>
+      <span>Normal</span>
+      <span>Slow</span>
+    </div>
+  </div>
+
+  <div style="width: 100%; text-align: center; display: flex; justify-content: space-around; margin: -10px auto">
+    <mat-slider
+      style="width: 325px; padding: 0"
+      class="example-margin"
+      [disabled]="globals.inProgress || boardLoading"
+      [max]="3"
+      [min]="0"
+      [step]="1"
+      [tickInterval]="1"
+      value="2"
+      (change)="resetPath(); changeSpeed($event.value)">
+    </mat-slider>
+  </div>
+
+  <mat-form-field appearance="fill" style="font-size: 10px; margin: 0 auto; padding-top: 8px; width: 325px">
+    <mat-label style="font-size: 15px">Select Board</mat-label>
+    <mat-select [(value)]="selectedBoard"   [disabled]="boardLoading || globals.inProgress" style="font-size: 15px;">
+      <mat-option (click)="loadBoard()">None</mat-option>
+      <mat-option (click)="loadBoard()" *ngFor="let board of boards; let i = index" value="{{board}}">{{board}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-accordion style="width: 325px; margin: 0 auto">
+    <mat-expansion-panel (opened)="algorithm = 'Dijkstra\'s Algorithm'; diagonal = false; diagonalChange()">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Dijkstra's Algorithm
+        </mat-panel-title>
+        <mat-panel-description>
+          {{algorithm === 'Dijkstra\'s Algorithm' ? 'Selected' : ''}}
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <mat-checkbox [color]="'accent'" [(ngModel)]="diagonal" (change)="diagonalChange()" [disabled]="globals.inProgress || boardLoading">Diagonal</mat-checkbox>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel  (opened)="algorithm = 'A* Algorithm'; diagonal = false; diagonalChange()">
+      <mat-expansion-panel-header >
+        <mat-panel-title>
+          A* Algorithm
+        </mat-panel-title>
+        <mat-panel-description>
+          {{algorithm === 'A* Algorithm' ? 'Selected' : ''}}
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <mat-checkbox [color]="'accent'" [(ngModel)]="diagonal" (change)="diagonalChange()" [disabled]="globals.inProgress || boardLoading">Diagonal</mat-checkbox>
+      <mat-radio-group
+        aria-labelledby="example-radio-group-label"
+        class="heuristic-button-group"
+        [(ngModel)]="heuristic">
+        <mat-radio-button style="margin: 5px" *ngFor="let h of heuristics" [value]="h.value">
+          {{h.label}}
+        </mat-radio-button>
+      </mat-radio-group>
+    </mat-expansion-panel>
+
+  </mat-accordion>
 </div>

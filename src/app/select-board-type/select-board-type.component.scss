@@ -65,3 +65,11 @@
     display: none;
   }
 }
+
+.image-container {
+  height: 100%;
+  margin-top: 0;
+  display: flex;
+  justify-content: center;
+  background-color: darken(mat.get-color-from-palette($my-primary), 10%)
+}

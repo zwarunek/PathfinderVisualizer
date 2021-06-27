@@ -96,7 +96,8 @@ export class HomeComponent implements OnInit {
 
   lines: any[] = [];
 
-  delay = 20;
+  delay: any;
+  delaySliderOptions: any[];
   statsSnackbar: MatSnackBarRef<any>;
 
   startTile: {row: any, col: any};
@@ -136,9 +137,36 @@ export class HomeComponent implements OnInit {
               private route: ActivatedRoute,
               private snackBar: MatSnackBar,
               private graphUtils: GraphUtilsService) {
+    // this.delay = 20;
   }
 
   ngOnInit(): void{
+    this.delaySliderOptions = [
+      {
+        delay: 0,
+        label: 'Instant',
+        value: 1
+      },
+      {
+        delay: 1,
+        label: 'Fast',
+        value: 2
+      },
+      {
+        delay: 20,
+        label: 'Normal',
+        value: 3
+      },
+      {
+        delay: 50,
+        label: 'Slow',
+        value: 4
+      }
+    ];
+    this.delay = this.delaySliderOptions[2];
+    this.globals.finished = false;
+    this.globals.inProgress = false;
+    this.globals.pathExists = false;
     document.getElementById('sheet').style.top = window.innerHeight - this.sheetCloseHeight + 'px';
     this.sheetOpenPos = window.innerHeight * .2;
 
@@ -403,6 +431,7 @@ export class HomeComponent implements OnInit {
 
   visualize(delay: number): void {
     // this.printMatrix()
+    console.log(delay);
     this.globals.inProgress = true;
     this.resetPath();
     const path = this.algorithms.runPathfindingAlgorithm(this.algorithm, this.tileGraph,
@@ -494,7 +523,8 @@ export class HomeComponent implements OnInit {
   }
 
   changeSpeed(delay: any): void {
-    this.delay = parseInt(delay, 10);
+    this.delay = this.delaySliderOptions[parseInt(delay, 10)];
+
   }
 
   printMatrix(): void {
@@ -530,7 +560,7 @@ export class HomeComponent implements OnInit {
     this.boardLoading = false;
   }
   testSheet(e: any): void {
-    if (e instanceof TouchEvent || e.buttons === 1){
+    if ((e instanceof TouchEvent || e.buttons === 1) && !e.path[0].className.includes('mat-slider')){
       e.preventDefault();
       const sheet = document.getElementById('sheet');
       const sheetTop = parseInt(sheet.style.top.slice(0, -2), 10);

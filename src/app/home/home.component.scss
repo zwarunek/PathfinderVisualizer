@@ -3,10 +3,10 @@
 
 $tile-color: #000000;
 $background: #d4d4d4;
-$wall-color: darken(mat.get-color-from-palette($my-primary), 20%);
+$wall-color: darken(mat.get-color-from-palette($my-primary), 10%);
 $start-color: #32cd32;
 $end-color: orangered;
-$searched-color: darken(mat.get-color-from-palette($my-accent), 10%);
+$searched-color: mat.get-color-from-palette($my-accent);
 
 @mixin my-theme($my-theme) {
   $primary: map-get($my-theme, primary);
@@ -28,11 +28,16 @@ $searched-color: darken(mat.get-color-from-palette($my-accent), 10%);
   -o-animation: none !important;
   animation: none !important;
 }
-.mat-button-toggle {
-  color: white;
+.mat-expansion-panel::ng-deep{
+  background: #ffffff1a;
 }
-.mat-button-toggle-button {
-  color: #000000;
+@media (hover: none) {
+  .mat-expansion-panel[_ngcontent-serverApp-c60]:not(.mat-expanded):not([aria-disabled=true]) .mat-expansion-panel-header[_ngcontent-serverApp-c60]:hover{
+    background: transparent;
+  }
+}
+::ng-deep .custom-menu {
+  background-color: mat.get-color-from-palette($my-primary);
 }
 .blank.grid-cell {
   background-color: $background;
@@ -91,20 +96,20 @@ $searched-color: darken(mat.get-color-from-palette($my-accent), 10%);
   }
   5%{
     transform:  scale(.3);
-    background-color: darken(mat.get-color-from-palette($my-accent), 40%);
+    background-color: darken($searched-color, 40%);
   }
   100%{
     transform: scale(1);
-    background-color: darken(mat.get-color-from-palette($my-accent), 10%);
+    background-color: $searched-color;
   }
 }
 @keyframes pathfindingFastGridCell {
   0%{
-    background-color: darken(mat.get-color-from-palette($my-accent), 30%);
+    background-color: darken($searched-color, 30%);
 
   }
   80%{
-    background-color: darken(mat.get-color-from-palette($my-accent), 10%);
+    background-color: $searched-color;
   }
 }
 .grid-cell.searched.fast {
@@ -197,13 +202,13 @@ $searched-color: darken(mat.get-color-from-palette($my-accent), 10%);
 }
 
 .hex.searched .middle {
-  background-color: darken(mat.get-color-from-palette($my-accent), 10%);
+  background-color: $searched-color;
 }
 .hex.searched .left {
-  border-right-color: darken(mat.get-color-from-palette($my-accent), 10%);
+  border-right-color: $searched-color;
 }
 .hex.searched .right {
-  border-left-color: darken(mat.get-color-from-palette($my-accent), 10%);
+  border-left-color: $searched-color;
 }
 
 
@@ -234,26 +239,26 @@ $searched-color: darken(mat.get-color-from-palette($my-accent), 10%);
 }
 @keyframes middlePathfindingHex {
   0%{
-    background-color: darken(mat.get-color-from-palette($my-accent), 30%);
+    background-color: darken($searched-color, 30%);
   }
   80%{
-    background-color: darken(mat.get-color-from-palette($my-accent), 10%);
+    background-color: $searched-color;
   }
 }
 @keyframes leftPathfindingHex {
   0%{
-    border-right-color: darken(mat.get-color-from-palette($my-accent), 30%);
+    border-right-color: darken($searched-color, 30%);
   }
   80%{
-    border-right-color: darken(mat.get-color-from-palette($my-accent), 10%);
+    border-right-color: $searched-color;
   }
 }
 @keyframes rightPathfindingHex {
   0%{
-    border-left-color: darken(mat.get-color-from-palette($my-accent), 30%);
+    border-left-color: darken($searched-color, 30%);
   }
   80%{
-    border-left-color: darken(mat.get-color-from-palette($my-accent), 10%);
+    border-left-color: $searched-color;
   }
 }
 
@@ -316,6 +321,18 @@ $searched-color: darken(mat.get-color-from-palette($my-accent), 10%);
   flex-direction: column;
   margin: 15px 0;
 }
+.drop-down-menu{
+  padding: 10px;
+  height: 200%;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-content: center;
+  justify-content: flex-start;
+  background-color: mat.get-color-from-palette($my-primary);
+}
 .bottom-sheet-bg{
   position: fixed;
   left: 0;
@@ -329,11 +346,11 @@ $searched-color: darken(mat.get-color-from-palette($my-accent), 10%);
   flex-wrap: nowrap;
   align-content: center;
   justify-content: flex-start;
-  background-color: darken(mat.get-color-from-palette($my-accent), 32%);
+  background-color: mat.get-color-from-palette($my-primary);
 }
 .sheet-handle{
   //background-color: #0c7b5f;
-  background-color: darken(mat.get-color-from-palette($my-accent), 25%);
+  background-color: lighten(mat.get-color-from-palette($my-primary), 10%);
   height: 30px; width: 100%;
   display: flex;
   justify-content: center;
@@ -341,7 +358,7 @@ $searched-color: darken(mat.get-color-from-palette($my-accent), 10%);
 }
 .sheet-knob{
   width: 20%;
-  border: 3px solid darken(mat.get-color-from-palette($my-accent), 40%);
+  border: 3px solid darken(mat.get-color-from-palette($my-primary), 8%);
   border-radius: 10px
 }
 .sheet-main-buttons{
@@ -351,7 +368,7 @@ $searched-color: darken(mat.get-color-from-palette($my-accent), 10%);
   justify-content: center;
 }
 .sheet-main-button{
-  background-color: darken(mat.get-color-from-palette($my-accent), 32%);
+  background-color: mat.get-color-from-palette($my-primary);
 }
 /* start of desktop styles */
 
