@@ -110,9 +110,6 @@ export class HomeComponent implements OnInit {
   adjList: any[][] = [];
   diagonal = false;
   // temp: any[][] = [];
-  sheetClosed = true;
-  prevMove = window.innerHeight - 15;
-  sheetStartY;
 
 // 12x12 12x52
   grid = true;
@@ -126,6 +123,10 @@ export class HomeComponent implements OnInit {
     {label: 'Manhattan Hex', value: 'hex'},
   ];
   sheetOpenPos: number;
+  sheetCloseHeight = 82;
+  sheetClosed = true;
+  prevMove = window.innerHeight - this.sheetCloseHeight;
+  sheetStartY;
 
   constructor(public globals: Globals,
               @Inject(PLATFORM_ID) private platformId: any,
@@ -138,18 +139,19 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void{
+    document.getElementById('sheet').style.top = window.innerHeight - this.sheetCloseHeight + 'px';
+    this.sheetOpenPos = window.innerHeight * .2;
+
     this.boardType = this.route.snapshot.paramMap.get('boardType');
-
-    document.getElementById('sheet').style.top = window.innerHeight - 15 - 15 + 'px';
-    this.sheetOpenPos = window.innerHeight * .2 - 15;
-
+    const bottomOffset = window.innerWidth > 991 ? 0 : this.sheetCloseHeight;
+    console.log(bottomOffset);
     if (this.boardType === 'square') {
-      this.cols = Math.floor((window.innerWidth - 40) / 28) - (Math.floor((window.innerWidth - 40) / 28) % 2 === 1 ? 0 : 1);
-      this.rows = Math.floor((window.innerHeight - 30 - 104) / 28) - (Math.floor((window.innerHeight - 30 - 104) / 28) % 2 === 1 ? 0 : 1);
+      this.cols = Math.floor((window.innerWidth - 40) / 26) - (Math.floor((window.innerWidth - 40) / 26) % 2 === 1 ? 0 : 1);
+      this.rows = Math.floor((window.innerHeight - bottomOffset - 104) / 26) - (Math.floor((window.innerHeight - bottomOffset - 104) / 26) % 2 === 1 ? 0 : 1);
     }
     else if (this.boardType === 'hex'){
       this.cols = Math.floor((window.innerWidth - 40) / 29) - (Math.floor((window.innerWidth - 40) / 29) % 2 === 1 ? 0 : 1);
-      this.rows = Math.floor((window.innerHeight - 30 - 104) / 31) - (Math.floor((window.innerHeight - 30 - 104) / 31) % 2 === 1 ? 0 : 1);
+      this.rows = Math.floor((window.innerHeight - this.sheetCloseHeight - 104) / 31) - (Math.floor((window.innerHeight - this.sheetCloseHeight - 104) / 31) % 2 === 1 ? 0 : 1);
     }
 
     this.numTiles = this.rows * this.cols;
@@ -164,7 +166,7 @@ export class HomeComponent implements OnInit {
     if (isPlatformBrowser(this.platformId)){
       this.startTile = {row: Math.floor(this.rows / 2) - 1, col: Math.floor(this.cols / 6)};
       this.tiles[this.startTile.row][this.startTile.col].type = 'start';
-      this.endTile = {row: Math.floor(this.rows / 2) - 1, col: this.cols - Math.floor(this.cols / 6)};
+      this.endTile = {row: Math.floor(this.rows / 2) - 1, col: this.cols - Math.floor(this.cols / 6) - 1};
       this.tiles[this.endTile.row][this.endTile.col].type = 'end';
     }
     this.tileGraph = [];
@@ -527,29 +529,36 @@ export class HomeComponent implements OnInit {
     }
     this.boardLoading = false;
   }
-  testSheet(e: TouchEvent): void {
-    e.preventDefault();
-    const sheet = document.getElementById('sheet');
-    const sheetTop = parseInt(sheet.style.top.slice(0, -2), 10);
-    sheet.style.transition = 'none';
-    sheet.style.top = e.touches[0].clientY - this.sheetStartY + 'px';
-    this.prevMove = sheetTop;
+  testSheet(e: any): void {
+    if (e instanceof TouchEvent || e.buttons === 1){
+      e.preventDefault();
+      const sheet = document.getElementById('sheet');
+      const sheetTop = parseInt(sheet.style.top.slice(0, -2), 10);
+      sheet.style.transition = 'none';
+      if (e instanceof TouchEvent){
+        sheet.style.top = e.touches[0].clientY - this.sheetStartY + 'px';
+      }
+      else {
+        sheet.style.top = e.clientY - this.sheetStartY + 'px';
+      }
+      this.prevMove = sheetTop;
+    }
   }
 
-  testSheetClick(e: TouchEvent): void {
-    e.preventDefault();
+  testSheetClick(): void {
+    // e.preventDefault();
     const sheet = document.getElementById('sheet');
     const sheetTop = parseInt(sheet.style.top.slice(0, -2), 10);
     // send to bottom
-    if (sheetTop === window.innerHeight - 15 - 15 || (
+    if (sheetTop === window.innerHeight - this.sheetCloseHeight || (
           sheetTop !== this.sheetOpenPos && ((
             sheetTop >= this.prevMove &&
             sheetTop >= this.sheetOpenPos &&
-            sheetTop < window.innerHeight - 15 - 15
-          ) || sheetTop > window.innerHeight - 15 - 15))){
+            sheetTop < window.innerHeight - this.sheetCloseHeight
+          ) || sheetTop > window.innerHeight - this.sheetCloseHeight))){
       sheet.style.transition = '.6s cubic-bezier(0.12, 0.35, 0.29, 1.24)';
-      sheet.style.top = window.innerHeight - 15 - 15 + 'px';
-      this.prevMove = window.innerHeight - 15 - 15;
+      sheet.style.top = window.innerHeight - this.sheetCloseHeight + 'px';
+      this.prevMove = window.innerHeight - this.sheetCloseHeight;
     }
     else {
       sheet.style.transition = '.6s cubic-bezier(0.12, 0.35, 0.29, 1.24)';
@@ -558,14 +567,20 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  touchStart(event: TouchEvent): void {
+  touchStart(event: any): void {
     const sheet = document.getElementById('sheet');
-    this.sheetStartY = event.touches[0].clientY - sheet.offsetTop;
+    if (event instanceof TouchEvent){
+      this.sheetStartY = event.touches[0].clientY - sheet.offsetTop;
+    }
+    else {
+      this.sheetStartY = event.clientY - sheet.offsetTop;
+    }
     const sheetTop = parseInt(sheet.style.top.slice(0, -2), 10);
     this.sheetClosed = sheetTop !== this.sheetOpenPos;
   }
   @HostListener('window:resize', ['$event'])
   onResize(): void {
+    this.cancel();
     const sheet = document.getElementById('sheet');
     sheet.style.transition = 'none';
     this.ngOnInit();

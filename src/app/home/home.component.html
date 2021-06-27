@@ -8,17 +8,17 @@
     </section>
 
     <section class="main-bar-component" style="margin: auto;font-size: 15px">
-      <button mat-raised-button color="primary" style="margin-right: 20px;" [disabled]="globals.inProgress || boardLoading" (click)="visualize(delay)">Visualize</button>
-      <button mat-raised-button color="primary" style="margin-right: 20px;" [disabled]="globals.inProgress || boardLoading" (click)="resetPath()">Reset Path</button>
-      <button mat-raised-button color="primary" style="margin-right: 20px;" [disabled]="globals.inProgress || boardLoading" (click)="resetTiles()">Remove Walls</button>
-      <button mat-raised-button color="primary" [matMenuTriggerFor]="algorithmMenu">
+      <button mat-stroked-button style="margin-right: 20px;" [disabled]="globals.inProgress || boardLoading" (click)="visualize(delay)">Visualize</button>
+      <button mat-stroked-button style="margin-right: 20px;" [disabled]="globals.inProgress || boardLoading" (click)="resetPath()">Reset Path</button>
+      <button mat-stroked-button style="margin-right: 20px;" [disabled]="globals.inProgress || boardLoading" (click)="resetTiles()">Remove Walls</button>
+      <button mat-stroked-button [matMenuTriggerFor]="algorithmMenu">
         Settings
         <mat-icon>settings</mat-icon>
       </button>
     </section>
 
     <section class="main-bar-component" style="margin-right: 20px;font-size: 15px; margin-left: auto">
-      <button mat-raised-button color="primary" [disabled]="!globals.inProgress" (click)="cancel()">Cancel</button>
+      <button mat-stroked-button [disabled]="!globals.inProgress" (click)="cancel()">Cancel</button>
     </section>
 
   </mat-toolbar>
@@ -28,8 +28,9 @@
   <table style="border-spacing: 0;border-collapse: collapse;">
     <tbody>
     <tr *ngFor="let row of tiles; let y = index" style="background-color: #d4d4d4">
-      <td [@gridSquare]="tile.type" class="grid-cell" *ngFor="let tile of row; let x = index"  [attr.id]="'tile-'+y+':'+x"
-          [ngClass]="{ wall: tile.type === 'wall',
+      <td *ngFor="let tile of row; let x = index" class="grid-cell-container">
+        <div [@gridSquare]="tile.type" class="grid-cell" [attr.id]="'tile-'+y+':'+x"
+              [ngClass]="{ wall: tile.type === 'wall',
                        blank: tile.type === 'blank',
                        searched: tile.type === 'searched',
                        start: startTile.row === y && startTile.col === x,
@@ -38,10 +39,10 @@
                        medium: delay === 20,
                        slow: delay === 50,
                        instant: delay === 0}"
-          (mouseenter)="mouseEnter($event, y, x)"
-          (mousedown)="mouseDown($event, y, x)"
-          (mouseup)="mouseUp()"
-          (mouseleave)="mouseLeave($event, y, x)">
+              (mouseenter)="mouseEnter($event, y, x)"
+              (mousedown)="mouseDown($event, y, x)"
+              (mouseup)="mouseUp()"
+              (mouseleave)="mouseLeave($event, y, x)"></div>
       </td>
     </tr>
     </tbody>
@@ -76,7 +77,7 @@
     </div>
   </div>
 </div>
-<svg width="100%" height="100%" style="z-index: 10; top: 0; left: 0; position:absolute;pointer-events: none">
+<svg width="100%" height="100%" style="top: 0; left: 0; position:absolute;pointer-events: none">
   <line [id]="lines" *ngFor="let line of lines" class="line"
         [attr.x1]="line.x1"
         [attr.y1]="line.y1"
@@ -139,8 +140,14 @@
     </div>
   </div>
 </mat-menu>
-<div id="sheet" class="bottom-sheet-bg" (touchmove)="testSheet($event)" (touchend)="testSheetClick($event)" (touchstart)="touchStart($event)" style="background-color: #0a634d">
-  <div style="background-color: #0c7b5f; height: 30px; width: 100%; display: flex; justify-content: center; align-items: center;">
-    <div style=" width: 20%; border: 3px solid #053529; border-radius: 10px"></div>
+<div id="sheet" class="bottom-sheet-bg disable-select" draggable="false" (touchmove)="testSheet($event)" (touchend)="testSheetClick()" (touchstart)="touchStart($event)" (mousemove)="testSheet($event)" (mouseup)="testSheetClick()" (mousedown)="touchStart($event)">
+  <div class="sheet-handle">
+    <div class="sheet-knob"></div>
+  </div>
+  <div class="sheet-main-buttons">
+    <button mat-stroked-button *ngIf="!globals.inProgress" style="margin-right: 8px" [disabled]="boardLoading" (click)="visualize(delay)">Visualize</button>
+    <button mat-stroked-button *ngIf="!globals.inProgress" style="margin-right: 8px" [disabled]="boardLoading" (click)="resetPath()">Reset Path</button>
+    <button mat-stroked-button *ngIf="!globals.inProgress" [disabled]="boardLoading" (click)="resetTiles()">Remove Walls</button>
+    <button mat-stroked-button *ngIf="globals.inProgress" (click)="cancel()">Cancel</button>
   </div>
 </div>

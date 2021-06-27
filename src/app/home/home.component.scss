@@ -65,7 +65,11 @@ $searched-color: darken(mat.get-color-from-palette($my-accent), 10%);
 .grid-cell{
   width: 25px;
   height: 25px;
-  border: 1px solid #303030;
+}
+.grid-cell-container{
+  display: inline-table;
+  border-bottom: 1px solid #303030;
+  border-right: 1px solid #303030;
 }
 
 .dragdrop-cell{
@@ -86,11 +90,11 @@ $searched-color: darken(mat.get-color-from-palette($my-accent), 10%);
     background-color: $background;
   }
   5%{
-    transform:  scale(.3) translate(-1px, -1px);
+    transform:  scale(.3);
     background-color: darken(mat.get-color-from-palette($my-accent), 40%);
   }
   100%{
-    transform: scale(1) translate(-1px, -1px);
+    transform: scale(1);
     background-color: darken(mat.get-color-from-palette($my-accent), 10%);
   }
 }
@@ -321,6 +325,33 @@ $searched-color: darken(mat.get-color-from-palette($my-accent), 10%);
   overflow: hidden;
   opacity: 95%;
   display: none;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-content: center;
+  justify-content: flex-start;
+  background-color: darken(mat.get-color-from-palette($my-accent), 32%);
+}
+.sheet-handle{
+  //background-color: #0c7b5f;
+  background-color: darken(mat.get-color-from-palette($my-accent), 25%);
+  height: 30px; width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.sheet-knob{
+  width: 20%;
+  border: 3px solid darken(mat.get-color-from-palette($my-accent), 40%);
+  border-radius: 10px
+}
+.sheet-main-buttons{
+  margin: 8px 0;
+  font-size: 15px;
+  display: flex;
+  justify-content: center;
+}
+.sheet-main-button{
+  background-color: darken(mat.get-color-from-palette($my-accent), 32%);
 }
 /* start of desktop styles */
 
