@@ -4,11 +4,11 @@ import { Injectable } from '@angular/core';
 export class Colors {
   public  static tileColor = '#000000';
   public  static background = '#d4d4d4';
-  public  static primary = '#9c27b0';
-  public  static accent = '#1de9b6';
-  public  static wallColor = '#52145d';
-  public  static searchColor = '#13c095';
-  public  static searchColorDark = '#053529';
+  public  static primary = '#006064';
+  public  static accent = '#b388ff';
+  public  static wallColor = '#002f31';
+  public  static searchColor = '#b388ff';
+  public  static searchColorDark = '#5600ee';
   public  static startColor = '#32cd32';
   public  static endColor = 'orangered';
 }

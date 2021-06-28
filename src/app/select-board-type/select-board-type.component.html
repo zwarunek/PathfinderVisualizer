@@ -1,43 +1,31 @@
-<div style=" padding: 20px">
-  <div class="center" style="width: 100%; height: 80px">
-    <span style="color: white;font-size: 50px; font-weight: bold">
-      Pathfinding Visualizer
-    </span>
-  </div>
-  <div style="padding: 40px;height: 100%">
-    <mat-grid-list cols="2" rowHeight="8:6" gutterSize="40px">
-      <mat-grid-tile class="zoom-image" style="border: 3px white solid; border-radius: 30px;" [colspan]=1 [rowspan]=1>
-        <div style="; width: 100%; height: 100%;">
-          <span>
-            <mat-card routerLink="board/hex" style="height: 100%; padding: 0">
-              <a style="text-decoration: none" routerLink="/board/hex">
-                <div class="primary-background center" style=" z-index: 20; height: 20%">
-                    <span style="color: white;font-size: 40px; font-weight: normal">Hex Grid</span>
-                  </div>
-                <div style="height: 100%; margin-top: 0">
-                  <img draggable="false" mat-card-image src="../../assets/hex%20thumbnail.JPG" alt="Square Board Image">
-                </div>
-              </a>
-            </mat-card>
-          </span>
+<div  style="height: 100%;display: flex;flex-direction: column; text-align: center;">
+<!--  <div style=" padding: 20px; text-align: center; flex: auto">-->
+
+  <span style="color: white; font-weight: bold; font-size: 50px; line-height: 50px; margin-top: 20px">
+    Pathfinding Visualizer
+  </span>
+  <div class="board-container">
+    <div class="zoom-image board">
+      <a style="text-decoration: none; display: flex; flex-direction: column; justify-content: center; height: 100%;" routerLink="/board/square">
+        <div class="primary-background center" style=" flex: 1;  flex-basis: 20%">
+          <span style="color: white;font-size: 40px; font-weight: normal">Square Grid</span>
         </div>
-      </mat-grid-tile>
-      <mat-grid-tile class="zoom-image" style="border: 3px white solid; border-radius: 30px; " [colspan]=1 [rowspan]=1>
-        <div style="; width: 100%; height: 100%;">
-          <span>
-            <mat-card routerLink="board/square" style="height: 100%; padding: 0">
-              <a style="text-decoration: none" routerLink="/board/square">
-                <div class="primary-background center" style=" z-index: 20; height: 20%">
-                  <span style="color: white;font-size: 40px; font-weight: normal">Square Grid</span>
-                </div>
-                <div style="height: 100%; margin-top: 0">
-                  <img draggable="false" mat-card-image src="../../assets/square%20thumbnail.JPG" alt="Square Board Image">
-                </div>
-              </a>
-            </mat-card>
-          </span>
+        <div class="image-container">
+          <div class="small" style="background-size: cover; background: url('../../assets/square thumbnail dynamic.PNG') no-repeat center; min-width: 100%;"></div>
+          <img class="large" draggable="false" mat-card-image src="../../assets/square%20thumbnail%20dynamic.PNG" alt="Square Board Image" style="height: 100%">
         </div>
-      </mat-grid-tile>
-    </mat-grid-list>
+      </a>
+    </div>
+    <div class="zoom-image board">
+      <a style="text-decoration: none; display: flex; flex-direction: column; justify-content: center; height: 100%;" routerLink="/board/hex">
+        <div class="primary-background center" style="  flex: 1;  flex-basis: 20%">
+          <span style="color: white;font-size: 40px; font-weight: normal">Hex Grid</span>
+        </div>
+        <div class="image-container">
+          <div class="small" style="background-size: cover; background: url('../../assets/hex thumbnail dynamic.PNG') no-repeat center; min-width: 100%;"></div>
+          <img class="large" draggable="false" mat-card-image src="../../assets/hex%20thumbnail%20dynamic.PNG" alt="Hex Board Image" style="height: 100%">
+        </div>
+      </a>
+    </div>
   </div>
 </div>

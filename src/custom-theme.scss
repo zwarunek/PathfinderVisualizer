@@ -3,10 +3,22 @@
 @include mat.core();
 
 
-$my-primary: mat.define-palette(mat.$purple-palette);
-$my-accent:  mat.define-palette(mat.$teal-palette, A400);
+$my-primary: mat.define-palette(mat.$cyan-palette, 900);
+$my-accent:  mat.define-palette(mat.$deep-purple-palette, A100);
+//$my-primary: #69efff;
+//$my-accent:  #69a5ff;
 // blue and teal - Mom and lindsey
 
 $my-theme: mat.define-dark-theme($my-primary, $my-accent);
 
 @include mat.all-component-themes($my-theme);
+
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
