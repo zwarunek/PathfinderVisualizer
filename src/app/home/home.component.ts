@@ -9,6 +9,7 @@ import {WindowRefService} from '../Services/window-ref.service';
 import {animate, keyframes, query, style, transition, trigger} from '@angular/animations';
 import {Colors} from '../colors';
 import {isPlatformBrowser} from '@angular/common';
+import {global} from '@angular/compiler/src/util';
 
 export interface Tile {
   type: any;
@@ -175,7 +176,7 @@ export class HomeComponent implements OnInit {
       const bottomOffset = window.innerWidth > 991 ? 0 : this.sheetCloseHeight;
       if (this.boardType === 'square') {
         this.cols = Math.floor((window.innerWidth - 40) / 26) - (Math.floor((window.innerWidth - 40) / 26) % 2 === 1 ? 0 : 1);
-        this.rows = Math.floor((window.innerHeight - bottomOffset - 104) / 26) - (Math.floor((window.innerHeight - bottomOffset - 104) / 26) % 2 === 1 ? 0 : 1);
+          this.rows = Math.floor((window.innerHeight - bottomOffset - 104) / 26) - (Math.floor((window.innerHeight - bottomOffset - 104) / 26) % 2 === 1 ? 0 : 1);
       } else if (this.boardType === 'hex') {
         this.cols = Math.floor((window.innerWidth - 40) / 29) - (Math.floor((window.innerWidth - 40) / 29) % 2 === 1 ? 0 : 1);
         this.rows = Math.floor((window.innerHeight - this.sheetCloseHeight - 104) / 31) - (Math.floor((window.innerHeight - this.sheetCloseHeight - 104) / 31) % 2 === 1 ? 0 : 1);
@@ -268,19 +269,22 @@ export class HomeComponent implements OnInit {
     this.tileGraph[i][j] = this.tileGraph[j][i] = distance;
   }
 
-  mouseEnter(e: MouseEvent, row: any, col: any): void {
-    if (this.globals.inProgress) {
+  mouseEnter(e: any, row: any, col: any): void {
+    if (this.globals.inProgress || (e.type.includes('mouse') && e.sourceCapabilities.firesTouchEvents)) {
       return;
     }
-    if (e.buttons === 0) {
-      this.draggingStart = this.draggingEnd = this.draggingWall = this.draggingBlank = false;
-      return;
-    } else if (!this.draggingWall && e.buttons === 1) {
-      this.draggingWall = true;
-      this.draggingBlank = false;
-    } else if (!this.draggingBlank && e.buttons === 2) {
-      this.draggingBlank = true;
-      this.draggingWall = false;
+    e.preventDefault();
+    if (!(e instanceof TouchEvent)) {
+      if (e.buttons === 0) {
+        this.draggingStart = this.draggingEnd = this.draggingWall = this.draggingBlank = false;
+        return;
+      } else if (!this.draggingWall && e.buttons === 1) {
+        this.draggingWall = true;
+        this.draggingBlank = false;
+      } else if (!this.draggingBlank && e.buttons === 2) {
+        this.draggingBlank = true;
+        this.draggingWall = false;
+      }
     }
 
     if (this.draggingStart && JSON.stringify(this.endTile) !== JSON.stringify({row, col})) {
@@ -310,20 +314,21 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  mouseDown(e: MouseEvent, row: any, col: any): void {
-    if (this.globals.inProgress) {
+  mouseDown(e: any, row: any, col: any): void {
+    if (this.globals.inProgress || (e.type.includes('mouse') && e.sourceCapabilities.firesTouchEvents)) {
       return;
     }
+    e.preventDefault();
     if (JSON.stringify(this.startTile) === JSON.stringify({row, col})) {
       this.draggingStart = true;
     } else if (JSON.stringify(this.endTile) === JSON.stringify({row, col})) {
       this.draggingEnd = true;
-    } else if (e.buttons === 1) {
+    } else if ((e instanceof MouseEvent && e.buttons === 1) || (e instanceof TouchEvent && this.tiles[row][col].type === 'blank')) {
       this.draggingWall = true;
       if (this.tiles[row][col].type !== 'wall') {
         this.setWall(row, col, !this.globals.finished);
       }
-    } else if (e.buttons === 2) {
+    } else if ((e instanceof MouseEvent && e.buttons === 2) || (e instanceof TouchEvent && this.tiles[row][col].type === 'wall')) {
       this.draggingBlank = true;
       if (this.tiles[row][col].type !== 'blank') {
         this.setNonWall('blank', row, col, true);
@@ -336,9 +341,9 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  mouseLeave(e: MouseEvent, row: any, col: any): void {
-
-    if (this.globals.inProgress) {
+  mouseLeave(e: any, row: any, col: any): void {
+    e.preventDefault();
+    if (this.globals.inProgress || (e.type.includes('mouse') && e.sourceCapabilities.firesTouchEvents)) {
       return;
     }
     if ((this.draggingStart && JSON.stringify(this.endTile) !== JSON.stringify({row, col})) ||
@@ -592,9 +597,12 @@ export class HomeComponent implements OnInit {
   }
   @HostListener('window:resize', ['$event'])
   onResize(): void {
-    this.cancel();
-    const sheet = document.getElementById('sheet');
-    sheet.style.transition = 'none';
-    this.ngOnInit();
+    if (this.globals.finished) {
+      this.visualize(0);
+    }
+  //   this.cancel();
+  //   const sheet = document.getElementById('sheet');
+  //   sheet.style.transition = 'none';
+  //   this.ngOnInit();
   }
 }
