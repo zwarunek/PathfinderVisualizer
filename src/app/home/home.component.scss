@@ -373,7 +373,8 @@ $searched-color: mat.get-color-from-palette($my-accent);
 /* start of desktop styles */
 
 .main-bar-component{
-  display: block;
+  display: flex;
+  flex-direction: row;
 }
 @media screen and (max-width: 991px) {
   /* start of large tablet styles */

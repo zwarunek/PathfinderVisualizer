@@ -10,6 +10,7 @@ import {animate, keyframes, query, style, transition, trigger} from '@angular/an
 import {Colors} from '../colors';
 import {isPlatformBrowser} from '@angular/common';
 import {global} from '@angular/compiler/src/util';
+import * as process from 'process';
 
 export interface Tile {
   type: any;
@@ -129,6 +130,10 @@ export class HomeComponent implements OnInit {
   sheetClosed = true;
   prevMove = window.innerHeight - this.sheetCloseHeight;
   sheetStartY;
+
+  timeStat: string;
+  pathLengthStat: string;
+  tilesSearchedStat: number;
 
   constructor(public globals: Globals,
               @Inject(PLATFORM_ID) private platformId: any,
@@ -422,6 +427,7 @@ export class HomeComponent implements OnInit {
   visualize(delay: number): void {
     this.globals.inProgress = true;
     this.resetPath();
+    let time = window.performance.now();
     const path = this.algorithms.runPathfindingAlgorithm(this.algorithm, this.tileGraph,
       this.startTile,
       this.endTile,
@@ -430,12 +436,18 @@ export class HomeComponent implements OnInit {
       this.heuristic,
       this.diagonal,
       this.boardType);
+    time = window.performance.now() - time;
     this.globals.pathExists = path.path !== undefined;
     this.displayPath(path, delay).then(() => {
       this.globals.inProgress = false;
-      // time = Date.now() - time;
-      // this.statsSnackbar = this.snackBar.open('Time: ' + time + 'ms      Path Length: ' + path.path.length
-      // + ' Tiles Searched: ' + path.steps.length, 'Dismiss');
+      this.timeStat = parseFloat(String(time)).toFixed(1) + 'ms';
+      if (this.globals.pathExists){
+        this.pathLengthStat = path.path.length;
+      }
+      else {
+        this.pathLengthStat = 'No Path Found';
+      }
+      this.tilesSearchedStat = path.steps.length;
     });
 
   }
