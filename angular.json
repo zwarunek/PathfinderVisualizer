@@ -94,7 +94,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "PathfindingVisualizer:build"
+            "browserTarget": "PathfindingVisualizer:build",
+            "disableHostCheck": true
           },
           "configurations": {
             "production": {
@@ -179,7 +180,10 @@
         },
         "serve-ssr": {
           "builder": "@nguniversal/builders:ssr-dev-server",
-          "options": { "browserTarget": "PathfindingVisualizer:build", "serverTarget": "PathfindingVisualizer:server"},
+          "options": {
+            "browserTarget": "PathfindingVisualizer:build",
+            "serverTarget": "PathfindingVisualizer:server"
+          },
           "configurations": {
             "production": {
               "browserTarget": "PathfindingVisualizer:build:production",
@@ -207,6 +211,10 @@
             }
           },
           "defaultConfiguration": "production"
+        },
+        "deploy": {
+          "builder": "angular-cli-ghpages:deploy",
+          "options": {}
         }
       }
     }

@@ -440,14 +440,14 @@ export class HomeComponent implements OnInit {
     this.globals.pathExists = path.path !== undefined;
     this.displayPath(path, delay).then(() => {
       this.globals.inProgress = false;
-      this.timeStat = parseFloat(String(time)).toFixed(1) + 'ms';
       if (this.globals.pathExists){
         this.pathLengthStat = path.path.length;
+        this.tilesSearchedStat = path.steps.length;
+        this.timeStat = parseFloat(String(time)).toFixed(1) + 'ms';
       }
       else {
         this.pathLengthStat = 'No Path Found';
       }
-      this.tilesSearchedStat = path.steps.length;
     });
 
   }
@@ -483,6 +483,7 @@ export class HomeComponent implements OnInit {
   }
 
   async displayPath(path: { path, steps }, delay: number): Promise<void> {
+    path.steps = path.steps.slice(1, -1);
     for (const step of path.steps) {
       if (this.globals.inProgress === false) {
         this.globals.pathExists = false;
@@ -490,19 +491,16 @@ export class HomeComponent implements OnInit {
       }
 
       const tile = {row: Math.floor(step / this.cols), col: step % this.cols};
-      if (this.tiles[tile.row]  [tile.col].type === 'blank' &&
-        JSON.stringify(this.startTile) !== JSON.stringify({row: tile.row, col: tile.col}) &&
-        JSON.stringify(this.endTile) !== JSON.stringify({row: tile.row, col: tile.col})) {
-        const tileElement = document.getElementById('tile-' + tile.row + ':' + tile.col);
-        tileElement.classList.remove('noTransition');
-        this.tiles[tile.row][tile.col].type = 'searched';
-        if (delay === 0) {
-          tileElement.classList.add('noTransition');
-        }
-        if (delay > 0) {
-          await this.sleep(delay);
-        }
+      const tileElement = document.getElementById('tile-' + tile.row + ':' + tile.col);
+      tileElement.classList.remove('noTransition');
+      this.tiles[tile.row][tile.col].type = 'searched';
+      if (delay === 0) {
+        tileElement.classList.add('noTransition');
       }
+      if (delay > 0) {
+        await this.sleep(delay);
+      }
+      console.log(new Date().getMilliseconds());
     }
     if (this.globals.pathExists) {
       for (let i = 0; i < path.path.length - 1; i++) {

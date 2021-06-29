@@ -14,7 +14,7 @@ const routes: Routes = [
       ogUrl: ''
     }
   },
-  {path: 'boardtype', component: SelectBoardTypeComponent,
+  {path: '', component: SelectBoardTypeComponent,
     data: {
       title: 'Pathfinding Visualizer',
       description: 'Visualize multiple pathfinding algorithms. Select grid type to get started',
@@ -23,7 +23,7 @@ const routes: Routes = [
       ogUrl: ''
     }},
 
-  {path: '**', redirectTo: 'boardtype'}
+  {path: '**', redirectTo: ''}
 ];
 
 @NgModule({
