@@ -18,16 +18,6 @@ $searched-color: mat.get-color-from-palette($my-accent);
     }
   }
 }
-.noTransition {
-  -webkit-transition: none !important;
-  -moz-transition: none !important;
-  -o-transition: none !important;
-  transition: none !important;
-  -webkit-animation: none !important;
-  -moz-animation: none !important;
-  -o-animation: none !important;
-  animation: none !important;
-}
 .mat-expansion-panel::ng-deep{
   background: #ffffff1a;
 }
@@ -52,7 +42,6 @@ $searched-color: mat.get-color-from-palette($my-accent);
   background-color: $wall-color;
 }
 .grid-cell.searched {
-  z-index: 100;
   background-color: $searched-color;
 }
 .disable-select {
@@ -113,187 +102,210 @@ $searched-color: mat.get-color-from-palette($my-accent);
     background-color: darken($searched-color, 30%);
 
   }
-  80%{
+  100%{
     background-color: $searched-color;
   }
 }
-.grid-cell.searched.fast {
+.grid-cell.searched.fast{
   animation: pathfindingFastGridCell 2s;
 }
-.grid-cell.searched.medium {
+.grid-cell.searched.medium, .grid-cell.searched.slow{
   animation: pathfindingGridCell 2s;
 }
-.grid-cell.searched.slow {
-  animation: pathfindingGridCell 3s;
-}
 
-
-.hex {
-  float: left;
-  margin-right: -8px;//negative width/2 - 1
-  margin-bottom: -14px;//negative height/2 - 1
-}
-.hex .left {
-  float: left;
-  width: 0;
-  border-right: 9px solid $background;//width/2
-  border-top: 15px solid transparent;//height/2
-  border-bottom: 15px solid transparent;//height/2
-}
-.hex .middle {
-  float: left;
-  width: 18px;
-  height: 30px;
-  background: $background;
-}
-.hex .right {
-  float: left;
-  width: 0;
-  border-left: 9px solid $background;//width/2
-  border-top: 15px solid transparent;//height/2
-  border-bottom: 15px solid transparent;//height/2
-}
-.hex-row {
-  clear: left;
-}
-.hex.even {//height/2 + 1
-  margin-top: 16px;
-}
-
-.hex-background.even {//height/2 + 1
-  margin-top: 16px;
-}
-.hex.wall .middle {
-  background-color: $wall-color;
-}
-.hex.wall .left {
-  border-right-color: $wall-color;
-}
-.hex.wall .right {
-  border-left-color: $wall-color;
-}
-
-.hex.blank .middle {
-  background-color: $background;
-}
-.hex.blank .left {
-  border-right-color: $background;
-}
-.hex.blank .right {
-  border-left-color: $background;
-}
-
-.hex.start .middle {
-  background-color: $start-color;
-}
-.hex.start .left {
-  border-right-color: $start-color;
-}
-.hex.start .right {
-  border-left-color: $start-color;
-}
-
-.hex.end .middle {
-  background-color: $end-color;
-}
-.hex.end .left {
-  border-right-color: $end-color;
-}
-.hex.end .right {
-  border-left-color: $end-color;
-}
-
-.hex.searched .middle {
-  background-color: $searched-color;
-}
-.hex.searched .left {
-  border-right-color: $searched-color;
-}
-.hex.searched .right {
-  border-left-color: $searched-color;
-}
-
-
-.hex-background {
-  float: left;
-  margin-right: -8px;//negative width/2 - 1
-  margin-bottom: -14px;//negative height/2 - 1
-}
-.hex-background .left {
-  float: left;
-  width: 0;
-  border-right: 9px solid $background;//width/2
-  border-top: 15px solid transparent;//height/2
-  border-bottom: 15px solid transparent;//height/2
-}
-.hex-background .middle {
-  float: left;
-  width: 18px;
-  height: 30px;
-  background: $background;
-}
-.hex-background .right {
-  float: left;
-  width: 0;
-  border-left: 9px solid $background;//width/2
-  border-top: 15px solid transparent;//height/2
-  border-bottom: 15px solid transparent;//height/2
-}
-@keyframes middlePathfindingHex {
+@keyframes pathfindingHex {
   0%{
-    background-color: darken($searched-color, 30%);
+    background-color: yellow;
   }
-  80%{
+  2%{
+    background-color: $background;
+  }
+  5%{
+    transform: scale(.3);
+    background-color: darken($searched-color, 40%);
+  }
+  40%{
+    transform: scale(.6) rotate(90deg);
+  }
+  100%{
+    transform: scale(1) rotate(90deg);;
     background-color: $searched-color;
   }
 }
-@keyframes leftPathfindingHex {
+@keyframes pathfindingFastHex {
   0%{
-    border-right-color: darken($searched-color, 30%);
+    background-color: darken($searched-color, 30%);
+
   }
-  80%{
-    border-right-color: $searched-color;
+  100%{
+    background-color: $searched-color;
   }
 }
-@keyframes rightPathfindingHex {
+.newhex.searched.fast{
+  animation: pathfindingFastHex 2s;
+}
+.newhex.searched.medium{
+  animation: pathfindingHex 3s;
+}
+.newhex.searched.slow{
+  animation: pathfindingHex 3s;
+}
+@keyframes pathfindingAfter {
   0%{
-    border-left-color: darken($searched-color, 30%);
+    border-top-color: yellow;
   }
-  80%{
-    border-left-color: $searched-color;
+  2%{
+    border-top-color: $background;
+  }
+  5%{
+    border-top-color: darken($searched-color, 40%);
+
+  }
+  100%{
+    border-top-color: $searched-color;
   }
 }
+@keyframes pathfindingFastAfter {
+  0%{
+    border-top-color: darken($searched-color, 30%);
 
-.hex.searched.fast .middle {
-  animation: middlePathfindingHex 1s;
+  }
+  100%{
+    border-top-color: $searched-color;
+  }
 }
-.hex.medium.searched .middle {
-  animation: middlePathfindingHex 2s;
+@keyframes pathfindingBefore {
+  0%{
+    border-bottom-color: yellow;
+  }
+  2%{
+    border-bottom-color: $background;
+  }
+  5%{
+    border-bottom-color: darken($searched-color, 40%);
+
+  }
+  100%{
+    border-bottom-color: $searched-color;
+  }
 }
-.hex.searched.slow .middle {
-  animation: middlePathfindingHex 3s;
+@keyframes pathfindingFastBefore {
+  0%{
+    border-bottom-color: darken($searched-color, 30%);
+
+  }
+  100%{
+    border-bottom-color: $searched-color;
+  }
+}
+.newhex.searched.fast::after{
+  animation: pathfindingFastAfter 2s;
+}
+.newhex.searched.medium::after, .newhex.searched.slow::after{
+  animation: pathfindingAfter 3s;
+}
+.newhex.searched.fast::before{
+  animation: pathfindingFastBefore 2s;
+}
+.newhex.searched.medium::before, .newhex.searched.slow::before{
+  animation: pathfindingBefore 3s;
 }
 
-.hex.searched.fast .left {
-  animation: leftPathfindingHex 1s;
+
+.newhex.blank {
+  background-color: $background;
 }
-.hex.medium.searched .left {
-  animation: leftPathfindingHex 2s;
+.newhex.blank::after {
+  border-top-color: $background;
 }
-.hex.searched.slow .left {
-  animation: leftPathfindingHex 3s;
+.newhex.blank::before {
+  border-bottom-color: $background;
+}
+.newhex.start {
+  background-color: $start-color;
+}
+.newhex.start::after {
+  border-top-color: $start-color;
+}
+.newhex.start::before {
+  border-bottom-color: $start-color;
+}
+.newhex.end {
+  background-color: $end-color;
+}
+.end.newhex::after {
+  border-top-color: $end-color;
+}
+.end.newhex::before {
+  border-bottom-color: $end-color;
+}
+.newhex.wall{
+  background-color: $wall-color;
+}
+.newhex.wall::after {
+  border-top-color: $wall-color;
+}
+.newhex.wall::before {
+  border-bottom-color: $wall-color;
+}
+.newhex.searched {
+  background-color: $searched-color;
+}
+.newhex.searched::after {
+  border-top-color: $searched-color;
+}
+.newhex.searched::before {
+  border-bottom-color: $searched-color;
 }
 
-.hex.searched.fast .right {
-  animation: rightPathfindingHex 1s;
+.newhex {
+  transform: rotate(
+      90deg
+  );
+  float: left;
+  min-width: 30px;
+  height: 18px;
+  position: relative;
+  margin-top: 0px;
+  margin-right: -4px;
+  margin-bottom: -4px;
 }
-.hex.medium.searched .right {
-  animation: rightPathfindingHex 2s;
+.newhex.grid-hide{
+  min-width: 32px;
+  height: 20px;
 }
-.hex.searched.slow .right {
-  animation: rightPathfindingHex 3s;
+.newhex.grid-show{
+  min-width: 30px;
+  height: 18px;
 }
-.hex.noTransition * {
+.newhex:before {
+  content: " ";
+  width: 0; height: 0;
+  position: absolute;
+  top: -9px;
+  border-bottom: 9px solid $background;
+
+}
+.newhex.grid-show:before, .newhex.grid-show:after {
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+}
+.newhex.grid-hide:before, .newhex.grid-hide:after {
+  border-left: 16px solid transparent;
+  border-right: 16px solid transparent;
+}
+.newhex:after {
+  content: "";
+  width: 0;
+  position: absolute;
+  bottom: -9px;
+  border-top: 9px solid $background;
+
+}
+.newhex.even {
+  margin-top: 16px;
+}
+.newhex.noTransition, .newhex.noTransition:after, .newhex.noTransition:before, .noTransition{
   -webkit-transition: none !important;
   -moz-transition: none !important;
   -o-transition: none !important;
@@ -303,15 +315,9 @@ $searched-color: mat.get-color-from-palette($my-accent);
   -o-animation: none !important;
   animation: none !important;
 }
-
-.hex.wall *{
-  transition: .5s;
+.hex-row {
+  clear: left;
 }
-
-.hex.blank *{
-  transition: .5s;
-}
-
 ::ng-deep.mat-menu-panel {
   max-width: none !important;
 }

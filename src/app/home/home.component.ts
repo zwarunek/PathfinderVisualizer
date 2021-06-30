@@ -27,27 +27,6 @@ export interface Coords {
   row: number;
   col: number;
 }
-export const searching = keyframes([
-    style({
-      'background-color': 'yellow',
-      offset: 0
-    }),
-    style({
-      'background-color': Colors.background,
-      transform:  'scale(.3) translate(-1px, -1px)',
-      offset: .02
-    }),
-    style({
-      'background-color': Colors.searchColorDark,
-      transform:  'scale(.3) translate(-1px, -1px)',
-      offset: .05
-    }),
-    style({
-      transform:  'scale(1) translate(-1px, -1px)',
-      'background-color': Colors.searchColor,
-      offset: 1
-    })
-  ]);
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -105,6 +84,36 @@ export const searching = keyframes([
           style({
             'z-index': 100,
             transform: 'matrix(1, 0, 0, 1, 0, 0)',
+            'background-color': Colors.wallColor,
+            offset: 1
+          })
+        ]))
+      ])
+    ]),
+    trigger('hex', [
+      transition('blank => wall', [
+        animate('0.3s', keyframes([
+          style({'z-index': 100,
+            transform: 'matrix(.1, 0, 0, .1, 0, 0) rotate(90deg)',
+            'background-color': Colors.wallColor,
+            offset: 0}),
+          style({'z-index': 100,
+            transform: 'matrix(1, 0, 0, 1, 0, 0) rotate(90deg)',
+            'background-color': Colors.wallColor,
+            offset: 1})
+        ]))
+      ]),
+      transition('wall => blank', [
+        animate('0.3s', keyframes([
+          style({
+            'z-index': 100,
+            transform: 'matrix(1, 0, 0, 1, 0, 0) rotate(90deg)',
+            'background-color': Colors.wallColor,
+            offset: 0
+          }),
+          style({
+            'z-index': 100,
+            transform: 'matrix(.1, 0, 0, .1, 0, 0) rotate(90deg)',
             'background-color': Colors.wallColor,
             offset: 1
           })
@@ -216,7 +225,6 @@ export class HomeComponent implements OnInit {
         this.cols = Math.floor((window.innerWidth - 40) / 29) - (Math.floor((window.innerWidth - 40) / 29) % 2 === 1 ? 0 : 1);
         this.rows = Math.floor((window.innerHeight - this.sheetCloseHeight - 104) / 31) - (Math.floor((window.innerHeight - this.sheetCloseHeight - 104) / 31) % 2 === 1 ? 0 : 1);
       }
-
       this.numTiles = this.rows * this.cols;
 
       this.tiles = [];
@@ -240,7 +248,7 @@ export class HomeComponent implements OnInit {
         localStorage.setItem('grid', String(true));
       }
       this.showGrid = localStorage.getItem('grid') === 'true';
-      this.grid = localStorage.getItem('grid') ? 'grid-show' : 'grid-hide';
+      this.grid = this.showGrid ? 'grid-show' : 'grid-hide';
 
       if (localStorage.getItem('heuristic') === null) {
         localStorage.setItem('heuristic', 'manhattan');
