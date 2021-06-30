@@ -143,10 +143,11 @@ export class HomeComponent implements OnInit {
   // temp: any[][] = [];
 
 // 12x12 12x52
-  grid = true;
+  grid: any;
+  showGrid: boolean;
   selectedBoard: any;
   boardType: any;
-  heuristic = 'manhattan';
+  heuristic: string;
   heuristics: any[] = [
     {label: 'Manhattan', value: 'manhattan'},
     {label: 'Octile', value: 'octile'},
@@ -171,10 +172,11 @@ export class HomeComponent implements OnInit {
               private route: ActivatedRoute,
               private snackBar: MatSnackBar,
               private graphUtils: GraphUtilsService) {
-    // this.delay = 20;
   }
 
   ngOnInit(): void {
+
+
     this.delaySliderOptions = [
       {
         delay: 0,
@@ -197,7 +199,7 @@ export class HomeComponent implements OnInit {
         value: 4
       }
     ];
-    this.delay = this.delaySliderOptions[2];
+
     this.globals.finished = false;
     this.globals.inProgress = false;
     this.globals.pathExists = false;
@@ -234,6 +236,27 @@ export class HomeComponent implements OnInit {
     this.lines = [];
 
     this.boards = ['Recursive Maze'];
+
+    if (localStorage.getItem('delay') === null) {
+      localStorage.setItem('delay', '2');
+    }
+    this.delay = this.delaySliderOptions[localStorage.getItem('delay')];
+
+    if (localStorage.getItem('grid') === null) {
+      localStorage.setItem('grid', String(true));
+    }
+    this.showGrid = localStorage.getItem('grid') === 'true';
+    this.grid = localStorage.getItem('grid') ? 'grid-show' : 'grid-hide';
+
+    if (localStorage.getItem('heuristic') === null) {
+      localStorage.setItem('heuristic', 'manhattan');
+    }
+    this.heuristic = localStorage.getItem('heuristic');
+
+    if (localStorage.getItem('algorithm') === null) {
+      localStorage.setItem('algorithm', 'Dijkstra\'s Algorithm');
+    }
+    this.algorithm = localStorage.getItem('algorithm');
   }
 
   setGraph(): void {
@@ -553,9 +576,23 @@ export class HomeComponent implements OnInit {
     this.setGraph();
   }
 
+  gridChange(): void {
+    localStorage.setItem('grid', String(this.showGrid));
+    this.grid = this.showGrid ? 'grid-show' : 'grid-hide';
+  }
+
   changeSpeed(delay: any): void {
     this.delay = this.delaySliderOptions[parseInt(delay, 10)];
+    localStorage.setItem('delay', delay);
+  }
 
+  heuristicChanged(value: any): void{
+    localStorage.setItem('heuristic', value);
+}
+
+  algorithmChange(algorithm: any) {
+    this.algorithm = algorithm;
+    localStorage.setItem('algorithm', algorithm);
   }
 
   printMatrix(): void {

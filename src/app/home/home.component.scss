@@ -39,19 +39,19 @@ $searched-color: mat.get-color-from-palette($my-accent);
 ::ng-deep .custom-menu {
   background-color: mat.get-color-from-palette($my-primary);
 }
-.blank.grid-cell {
+.blank {
   background-color: $background;
 }
-.start.grid-cell {
+.start {
   background-color: $start-color;
 }
-.end.grid-cell {
+.end {
   background-color: $end-color;
 }
-.wall.grid-cell{
+.wall{
   background-color: $wall-color;
 }
-.searched.grid-cell {
+.searched {
   z-index: 100;
   background-color: $searched-color;
 }
@@ -67,12 +67,14 @@ $searched-color: mat.get-color-from-palette($my-accent);
 .grid-row {
   display: grid;
 }
-.grid-cell{
+.grid-hide{
+  width: 26px;
+  height: 26px;
+}
+.grid-show{
+  border: solid 1px #303030;
   width: 25px;
   height: 25px;
-}
-.show-grid{
-  box-shadow:inset 1px 1px 1px #303030
 }
 .grid-cell-container{
   display: inline-table;
@@ -115,17 +117,14 @@ $searched-color: mat.get-color-from-palette($my-accent);
     background-color: $searched-color;
   }
 }
-.grid-cell.searched.fast {
-  animation: pathfindingFastGridCell 1s;
+.searched.fast {
+  animation: pathfindingFastGridCell 2s;
 }
-.grid-cell.searched.medium {
+.searched.medium {
   animation: pathfindingGridCell 2s;
 }
-.grid-cell.searched.slow {
+.searched.slow {
   animation: pathfindingGridCell 3s;
-}
-.searched.wall.grid-cell {
-  //background-color: darken(mat.get-color-from-palette($my-primary), 20%);
 }
 
 

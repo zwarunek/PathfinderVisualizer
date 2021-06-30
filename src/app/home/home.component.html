@@ -41,7 +41,7 @@
   <table style="border-spacing: 0;border-collapse: collapse;">
     <tbody>
     <tr *ngFor="let row of tiles; let y = index" style="background-color: #d4d4d4; border: none; ">
-      <td [@gridSquare]="tile.type" class="grid-cell show-grid" *ngFor="let tile of row; let x = index"  [attr.id]="'tile-'+y+':'+x"
+      <td [@gridSquare]="tile.type" class="{{grid}}" *ngFor="let tile of row; let x = index"  [attr.id]="'tile-'+y+':'+x"
               [ngClass]="{ wall: tile.type === 'wall',
                        blank: tile.type === 'blank',
                        searched: tile.type === 'searched',
@@ -126,7 +126,7 @@
         [min]="0"
         [step]="1"
         [tickInterval]="1"
-        value="2"
+        value="{{delaySliderOptions.indexOf(delay)}}"
         (change)="resetPath(); changeSpeed($event.value)">
       </mat-slider>
     </div>
@@ -140,7 +140,7 @@
     </mat-form-field>
 
     <mat-accordion style="width: 325px; margin: 0 auto">
-      <mat-expansion-panel (opened)="algorithm = 'Dijkstra\'s Algorithm'; diagonal = false; diagonalChange()">
+      <mat-expansion-panel (opened)="algorithmChange('Dijkstra\'s Algorithm')">
         <mat-expansion-panel-header>
           <mat-panel-title>
             Dijkstra's Algorithm
@@ -149,10 +149,9 @@
             {{algorithm === 'Dijkstra\'s Algorithm' ? 'Selected' : ''}}
           </mat-panel-description>
         </mat-expansion-panel-header>
-        <mat-checkbox *ngIf="boardType === 'square'" [color]="'accent'" [(ngModel)]="diagonal" (change)="diagonalChange()" [disabled]="globals.inProgress || boardLoading">Diagonal</mat-checkbox>
       </mat-expansion-panel>
 
-      <mat-expansion-panel  (opened)="algorithm = 'A* Algorithm'; diagonal = false; diagonalChange()">
+      <mat-expansion-panel  (opened)="algorithmChange('A* Algorithm')">
         <mat-expansion-panel-header >
           <mat-panel-title>
             A* Algorithm
@@ -161,18 +160,19 @@
             {{algorithm === 'A* Algorithm' ? 'Selected' : ''}}
           </mat-panel-description>
         </mat-expansion-panel-header>
-        <mat-checkbox [color]="'accent'" [(ngModel)]="diagonal" (change)="diagonalChange()" [disabled]="globals.inProgress || boardLoading">Diagonal</mat-checkbox>
         <mat-radio-group
           aria-labelledby="example-radio-group-label"
           class="heuristic-button-group"
           [(ngModel)]="heuristic">
-          <mat-radio-button style="margin: 5px" *ngFor="let h of heuristics" [value]="h.value">
+          <mat-radio-button style="margin: 5px" *ngFor="let h of heuristics" [value]="h.value" (change)="heuristicChanged(h.value)">
             {{h.label}}
           </mat-radio-button>
         </mat-radio-group>
       </mat-expansion-panel>
 
     </mat-accordion>
+    <mat-checkbox *ngIf="boardType === 'square'" style="margin-top: 10px; margin-left: 5px" [color]="'accent'" [(ngModel)]="diagonal" (change)="diagonalChange()" [disabled]="globals.inProgress || boardLoading">Diagonal</mat-checkbox>
+    <mat-checkbox *ngIf="boardType === 'square'" style="margin-top: 10px; margin-left: 5px" [color]="'accent'" [(ngModel)]="showGrid" (change)="gridChange()" [disabled]="globals.inProgress || boardLoading">Show Grid</mat-checkbox>
   </div>
 </mat-menu>
 <div id="sheet" class="bottom-sheet-bg disable-select" draggable="false" (touchmove)="testSheet($event)" (touchend)="testSheetClick($event)" (touchstart)="touchStart($event)" (mousemove)="testSheet($event)" (mouseup)="testSheetClick($event)" (mousedown)="touchStart($event)">
