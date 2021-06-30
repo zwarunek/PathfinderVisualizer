@@ -81,6 +81,34 @@ export const searching = keyframes([
             offset: 1
           })
         ]))
+      ]),
+      transition('searched => wall', [
+        animate('0.3s', keyframes([
+          style({
+            'z-index': 100,
+            transform: 'matrix(1, 0, 0, 1, 0, 0)',
+            'background-color': Colors.searchColor,
+            offset: 0
+          }),
+          style({
+            'z-index': 100,
+            transform: 'matrix(.1, 0, 0, .1, 0, 0)',
+            'background-color': Colors.searchColor,
+            offset: .20
+          }),
+          style({
+            'z-index': 100,
+            transform: 'matrix(.1, 0, 0, .1, 0, 0)',
+            'background-color': Colors.wallColor,
+            offset: .21
+          }),
+          style({
+            'z-index': 100,
+            transform: 'matrix(1, 0, 0, 1, 0, 0)',
+            'background-color': Colors.wallColor,
+            offset: 1
+          })
+        ]))
       ])
     ])
   ]
@@ -180,8 +208,8 @@ export class HomeComponent implements OnInit {
       this.boardType = this.route.snapshot.paramMap.get('boardType');
       const bottomOffset = window.innerWidth > 991 ? 0 : this.sheetCloseHeight;
       if (this.boardType === 'square') {
-        this.cols = Math.floor((window.innerWidth - 40) / 26) - (Math.floor((window.innerWidth - 40) / 26) % 2 === 1 ? 0 : 1);
-          this.rows = Math.floor((window.innerHeight - bottomOffset - 104) / 26) - (Math.floor((window.innerHeight - bottomOffset - 104) / 26) % 2 === 1 ? 0 : 1);
+        this.cols = Math.floor((window.innerWidth - 40) / 27) - (Math.floor((window.innerWidth - 40) / 27) % 2 === 1 ? 0 : 1);
+          this.rows = Math.floor((window.innerHeight - bottomOffset - 104) / 27) - (Math.floor((window.innerHeight - bottomOffset - 104) / 27) % 2 === 1 ? 0 : 1);
       } else if (this.boardType === 'hex') {
         this.cols = Math.floor((window.innerWidth - 40) / 29) - (Math.floor((window.innerWidth - 40) / 29) % 2 === 1 ? 0 : 1);
         this.rows = Math.floor((window.innerHeight - this.sheetCloseHeight - 104) / 31) - (Math.floor((window.innerHeight - this.sheetCloseHeight - 104) / 31) % 2 === 1 ? 0 : 1);
@@ -483,7 +511,7 @@ export class HomeComponent implements OnInit {
   }
 
   async displayPath(path: { path, steps }, delay: number): Promise<void> {
-    path.steps = path.steps.slice(1, -1);
+    // path.steps = path.steps.slice(1, -1);
     for (const step of path.steps) {
       if (this.globals.inProgress === false) {
         this.globals.pathExists = false;
@@ -491,16 +519,19 @@ export class HomeComponent implements OnInit {
       }
 
       const tile = {row: Math.floor(step / this.cols), col: step % this.cols};
-      const tileElement = document.getElementById('tile-' + tile.row + ':' + tile.col);
-      tileElement.classList.remove('noTransition');
-      this.tiles[tile.row][tile.col].type = 'searched';
-      if (delay === 0) {
-        tileElement.classList.add('noTransition');
+      if (this.tiles[tile.row]  [tile.col].type === 'blank' &&
+        JSON.stringify(this.startTile) !== JSON.stringify({row: tile.row, col: tile.col}) &&
+        JSON.stringify(this.endTile) !== JSON.stringify({row: tile.row, col: tile.col})) {
+        const tileElement = document.getElementById('tile-' + tile.row + ':' + tile.col);
+        tileElement.classList.remove('noTransition');
+        this.tiles[tile.row][tile.col].type = 'searched';
+        if (delay === 0) {
+          tileElement.classList.add('noTransition');
+        }
+        if (delay > 0) {
+          await this.sleep(delay);
+        }
       }
-      if (delay > 0) {
-        await this.sleep(delay);
-      }
-      console.log(new Date().getMilliseconds());
     }
     if (this.globals.pathExists) {
       for (let i = 0; i < path.path.length - 1; i++) {

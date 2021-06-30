@@ -40,9 +40,8 @@
 <div class="disable-select" style="padding: 20px; width: fit-content; margin: auto;" appNoRightClick *ngIf="boardType === 'square'">
   <table style="border-spacing: 0;border-collapse: collapse;">
     <tbody>
-    <tr *ngFor="let row of tiles; let y = index" style="background-color: #d4d4d4; border: none">
-      <td *ngFor="let tile of row; let x = index" class="grid-cell-container">
-        <div [@gridSquare]="tile.type" class="grid-cell" [attr.id]="'tile-'+y+':'+x"
+    <tr *ngFor="let row of tiles; let y = index" style="background-color: #d4d4d4; border: none; ">
+      <td [@gridSquare]="tile.type" class="grid-cell show-grid" *ngFor="let tile of row; let x = index"  [attr.id]="'tile-'+y+':'+x"
               [ngClass]="{ wall: tile.type === 'wall',
                        blank: tile.type === 'blank',
                        searched: tile.type === 'searched',
@@ -58,8 +57,7 @@
               (mouseup)="mouseUp()"
               (mouseleave)="mouseLeave($event, y, x)"
              (touchstart)="mouseDown($event, y, x)"
-             (touchend)="mouseUp()"
-        ></div>
+             (touchend)="mouseUp()">
       </td>
     </tr>
     </tbody>

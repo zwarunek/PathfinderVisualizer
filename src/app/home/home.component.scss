@@ -71,6 +71,9 @@ $searched-color: mat.get-color-from-palette($my-accent);
   width: 25px;
   height: 25px;
 }
+.show-grid{
+  box-shadow:inset 1px 1px 1px #303030
+}
 .grid-cell-container{
   display: inline-table;
   border-bottom: 1px solid #303030;
