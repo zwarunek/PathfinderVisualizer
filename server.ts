@@ -22,6 +22,7 @@ global['KeyboardEvent'] = win.Event;
 global['MouseEvent'] = win.Event;
 global['Event']['prototype'] = win.Event.prototype;
 global['document'] = win.document;
+global['localStorage'] = win.localStorage;
 
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {

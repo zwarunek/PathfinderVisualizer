@@ -230,33 +230,33 @@ export class HomeComponent implements OnInit {
       this.tiles[this.startTile.row][this.startTile.col].type = 'start';
       this.endTile = {row: Math.floor(this.rows / 2) - 1, col: this.cols - Math.floor(this.cols / 6) - 1};
       this.tiles[this.endTile.row][this.endTile.col].type = 'end';
+
+      if (localStorage.getItem('delay') === null) {
+        localStorage.setItem('delay', '2');
+      }
+      this.delay = this.delaySliderOptions[localStorage.getItem('delay')];
+
+      if (localStorage.getItem('grid') === null) {
+        localStorage.setItem('grid', String(true));
+      }
+      this.showGrid = localStorage.getItem('grid') === 'true';
+      this.grid = localStorage.getItem('grid') ? 'grid-show' : 'grid-hide';
+
+      if (localStorage.getItem('heuristic') === null) {
+        localStorage.setItem('heuristic', 'manhattan');
+      }
+      this.heuristic = localStorage.getItem('heuristic');
+
+      if (localStorage.getItem('algorithm') === null) {
+        localStorage.setItem('algorithm', 'Dijkstra\'s Algorithm');
+      }
+      this.algorithm = localStorage.getItem('algorithm');
     }
     this.tileGraph = [];
     this.setGraph();
     this.lines = [];
 
     this.boards = ['Recursive Maze'];
-
-    if (localStorage.getItem('delay') === null) {
-      localStorage.setItem('delay', '2');
-    }
-    this.delay = this.delaySliderOptions[localStorage.getItem('delay')];
-
-    if (localStorage.getItem('grid') === null) {
-      localStorage.setItem('grid', String(true));
-    }
-    this.showGrid = localStorage.getItem('grid') === 'true';
-    this.grid = localStorage.getItem('grid') ? 'grid-show' : 'grid-hide';
-
-    if (localStorage.getItem('heuristic') === null) {
-      localStorage.setItem('heuristic', 'manhattan');
-    }
-    this.heuristic = localStorage.getItem('heuristic');
-
-    if (localStorage.getItem('algorithm') === null) {
-      localStorage.setItem('algorithm', 'Dijkstra\'s Algorithm');
-    }
-    this.algorithm = localStorage.getItem('algorithm');
   }
 
   setGraph(): void {
