@@ -41,7 +41,7 @@
   <table style="border-spacing: 0;border-collapse: collapse;">
     <tbody>
     <tr *ngFor="let row of tiles; let y = index" style="background-color: #d4d4d4; border: none; ">
-      <td [@gridSquare]="tile.type" class="{{grid}}" *ngFor="let tile of row; let x = index"  [attr.id]="'tile-'+y+':'+x"
+      <td [@gridSquare]="tile.type" class="{{grid}} grid-cell" *ngFor="let tile of row; let x = index"  [attr.id]="'tile-'+y+':'+x"
               [ngClass]="{ wall: tile.type === 'wall',
                        blank: tile.type === 'blank',
                        searched: tile.type === 'searched',

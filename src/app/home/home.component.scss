@@ -39,19 +39,19 @@ $searched-color: mat.get-color-from-palette($my-accent);
 ::ng-deep .custom-menu {
   background-color: mat.get-color-from-palette($my-primary);
 }
-.blank {
+.grid-cell.blank {
   background-color: $background;
 }
-.start {
+.grid-cell.start {
   background-color: $start-color;
 }
-.end {
+.grid-cell.end {
   background-color: $end-color;
 }
-.wall{
+.grid-cell.wall{
   background-color: $wall-color;
 }
-.searched {
+.grid-cell.searched {
   z-index: 100;
   background-color: $searched-color;
 }
@@ -117,13 +117,13 @@ $searched-color: mat.get-color-from-palette($my-accent);
     background-color: $searched-color;
   }
 }
-.searched.fast {
+.grid-cell.searched.fast {
   animation: pathfindingFastGridCell 2s;
 }
-.searched.medium {
+.grid-cell.searched.medium {
   animation: pathfindingGridCell 2s;
 }
-.searched.slow {
+.grid-cell.searched.slow {
   animation: pathfindingGridCell 3s;
 }
 
