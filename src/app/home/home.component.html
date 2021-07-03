@@ -64,7 +64,7 @@
   </table>
 </div>
 <div class="disable-select" style="width: 100%" [ngStyle]="{}" appNoRightClick *ngIf="boardType === 'hex'" >
-  <div class="" style="display: table; margin: 20px auto 0; padding: 10px 12px 15px 8px;" [style]="{backgroundColor: showGrid ? '#303030' : '#d4d4d4'}">
+  <div class="" style="display: table; margin: 20px auto 0; padding: 10px 12px 15px 8px;">
     <div class="hex-row" *ngFor="let row of tiles; let y = index" style="display: block">
       <div [@hex]="tile.type" class="newhex {{grid}}" *ngFor="let tile of row; let x = index" [attr.id]="'tile-'+y+':'+x" style="display: block; position: relative;"
            [ngClass]="{ even: (x%2)===1,

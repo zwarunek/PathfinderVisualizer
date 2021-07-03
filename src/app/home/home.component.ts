@@ -6,11 +6,8 @@ import {ActivatedRoute} from '@angular/router';
 import {MatSnackBar, MatSnackBarRef} from '@angular/material/snack-bar';
 import {GraphUtilsService} from '../Services/graph-utils.service';
 import {WindowRefService} from '../Services/window-ref.service';
-import {animate, keyframes, query, style, transition, trigger} from '@angular/animations';
-import {Colors} from '../colors';
 import {isPlatformBrowser} from '@angular/common';
-import {global} from '@angular/compiler/src/util';
-import * as process from 'process';
+import {gridSquareTrigger, hexTrigger} from '../animations';
 
 export interface Tile {
   type: any;
@@ -32,94 +29,8 @@ export interface Coords {
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
   animations: [
-    trigger('gridSquare', [
-      transition('blank => wall', [
-        animate('0.3s', keyframes([
-          style({'z-index': 100,
-            transform: 'matrix(.1, 0, 0, .1, 0, 0)',
-            'background-color': Colors.wallColor,
-            offset: 0}),
-          style({'z-index': 100,
-            transform: 'matrix(1, 0, 0, 1, 0, 0)',
-            'background-color': Colors.wallColor,
-            offset: 1})
-        ]))
-      ]),
-      transition('wall => blank', [
-        animate('0.3s', keyframes([
-          style({
-            'z-index': 100,
-            transform: 'matrix(1, 0, 0, 1, 0, 0)',
-            'background-color': Colors.wallColor,
-            offset: 0
-          }),
-          style({
-            'z-index': 100,
-            transform: 'matrix(.1, 0, 0, .1, 0, 0)',
-            'background-color': Colors.wallColor,
-            offset: 1
-          })
-        ]))
-      ]),
-      transition('searched => wall', [
-        animate('0.3s', keyframes([
-          style({
-            'z-index': 100,
-            transform: 'matrix(1, 0, 0, 1, 0, 0)',
-            'background-color': Colors.searchColor,
-            offset: 0
-          }),
-          style({
-            'z-index': 100,
-            transform: 'matrix(.1, 0, 0, .1, 0, 0)',
-            'background-color': Colors.searchColor,
-            offset: .20
-          }),
-          style({
-            'z-index': 100,
-            transform: 'matrix(.1, 0, 0, .1, 0, 0)',
-            'background-color': Colors.wallColor,
-            offset: .21
-          }),
-          style({
-            'z-index': 100,
-            transform: 'matrix(1, 0, 0, 1, 0, 0)',
-            'background-color': Colors.wallColor,
-            offset: 1
-          })
-        ]))
-      ])
-    ]),
-    trigger('hex', [
-      transition('blank => wall', [
-        animate('0.3s', keyframes([
-          style({'z-index': 100,
-            transform: 'matrix(.1, 0, 0, .1, 0, 0) rotate(90deg)',
-            'background-color': Colors.wallColor,
-            offset: 0}),
-          style({'z-index': 100,
-            transform: 'matrix(1, 0, 0, 1, 0, 0) rotate(90deg)',
-            'background-color': Colors.wallColor,
-            offset: 1})
-        ]))
-      ]),
-      transition('wall => blank', [
-        animate('0.3s', keyframes([
-          style({
-            'z-index': 100,
-            transform: 'matrix(1, 0, 0, 1, 0, 0) rotate(90deg)',
-            'background-color': Colors.wallColor,
-            offset: 0
-          }),
-          style({
-            'z-index': 100,
-            transform: 'matrix(.1, 0, 0, .1, 0, 0) rotate(90deg)',
-            'background-color': Colors.wallColor,
-            offset: 1
-          })
-        ]))
-      ])
-    ])
+    gridSquareTrigger,
+    hexTrigger
   ]
 })
 
