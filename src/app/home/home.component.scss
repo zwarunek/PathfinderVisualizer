@@ -89,11 +89,11 @@ $searched-color: mat.get-color-from-palette($my-accent);
     background-color: $background;
   }
   5%{
-    transform:  scale(.3);
+    transform:  scale(.3) translate(0px, -1px);
     background-color: darken($searched-color, 40%);
   }
   100%{
-    transform: scale(1);
+    transform: scale(1) translate(0px, -1px);
     background-color: $searched-color;
   }
 }

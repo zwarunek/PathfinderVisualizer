@@ -58,6 +58,34 @@ export const gridSquareTrigger = trigger('gridSquare', [
         offset: 1
       })
     ]))
+  ]),
+  transition('blank => searched', [
+    animate('0.3s', keyframes([
+      style({
+        'z-index': 100,
+        transform: 'matrix(1, 0, 0, 1, 0, 0)',
+        'background-color': Colors.searchColor,
+        offset: 0
+      }),
+      style({
+        'z-index': 100,
+        transform: 'matrix(.1, 0, 0, .1, 0, 0)',
+        'background-color': Colors.searchColor,
+        offset: .20
+      }),
+      style({
+        'z-index': 100,
+        transform: 'matrix(.1, 0, 0, .1, 0, 0)',
+        'background-color': Colors.wallColor,
+        offset: .21
+      }),
+      style({
+        'z-index': 100,
+        transform: 'matrix(1, 0, 0, 1, 0, 0)',
+        'background-color': Colors.wallColor,
+        offset: 1
+      })
+    ]))
   ])
 ]);
 

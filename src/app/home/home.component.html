@@ -105,10 +105,10 @@
   <div (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" class="drop-down-menu">
     <div style="width: 325px; margin: 0 auto">
       <div style="text-align: center; display: flex; justify-content: space-between">
-        <span>Instant</span>
-        <span>Fast</span>
-        <span>Normal</span>
         <span>Slow</span>
+        <span>Normal</span>
+        <span>Fast</span>
+        <span>Instant</span>
       </div>
     </div>
 
@@ -129,7 +129,7 @@
     <mat-form-field appearance="fill" style="font-size: 10px; margin: 0 auto; padding-top: 8px; width: 325px">
       <mat-label style="font-size: 15px">Select Board</mat-label>
       <mat-select [(value)]="selectedBoard"   [disabled]="boardLoading || globals.inProgress" style="font-size: 15px;">
-        <mat-option (click)="loadBoard()">None</mat-option>
+        <mat-option (click)="loadBoard()" value="None">None</mat-option>
         <mat-option (click)="loadBoard()" *ngFor="let board of boards; let i = index" value="{{board}}">{{board}}</mat-option>
       </mat-select>
     </mat-form-field>
@@ -159,9 +159,11 @@
           aria-labelledby="example-radio-group-label"
           class="heuristic-button-group"
           [(ngModel)]="heuristic">
-          <mat-radio-button style="margin: 5px" *ngFor="let h of heuristics" [value]="h.value" (change)="heuristicChanged(h.value)">
-            {{h.label}}
-          </mat-radio-button>
+          <div *ngFor="let h of heuristics">
+            <mat-radio-button *ngIf="h.boardType === boardType || h.boardType === 'both'" style="margin: 5px" [value]="h.value" (change)="heuristicChanged(h.value)">
+              {{h.label}}
+            </mat-radio-button>
+          </div>
         </mat-radio-group>
       </mat-expansion-panel>
 

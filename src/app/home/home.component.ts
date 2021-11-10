@@ -65,14 +65,13 @@ export class HomeComponent implements OnInit {
 // 12x12 12x52
   grid: any;
   showGrid: boolean;
-  selectedBoard: any;
+  selectedBoard = 'None';
   boardType: any;
   heuristic: string;
   heuristics: any[] = [
-    {label: 'Manhattan', value: 'manhattan'},
-    {label: 'Octile', value: 'octile'},
-    {label: 'Euclidean', value: 'euclidean'},
-    {label: 'Manhattan Hex', value: 'hex'},
+    {label: 'Manhattan', value: 'manhattan', boardType: 'square'},
+    {label: 'Manhattan', value: 'hex', boardType: 'hex'},
+    {label: 'Euclidean', value: 'euclidean', boardType: 'both'},
   ];
   sheetOpenPos: number;
   sheetCloseHeight = 82;
@@ -99,23 +98,23 @@ export class HomeComponent implements OnInit {
 
     this.delaySliderOptions = [
       {
-        delay: 0,
-        label: 'Instant',
+        delay: 50,
+        label: 'Slow',
         value: 1
-      },
-      {
-        delay: 1,
-        label: 'Fast',
-        value: 2
       },
       {
         delay: 20,
         label: 'Normal',
+        value: 2
+      },
+      {
+        delay: 1,
+        label: 'Fast',
         value: 3
       },
       {
-        delay: 50,
-        label: 'Slow',
+        delay: 0,
+        label: 'Instant',
         value: 4
       }
     ];
@@ -130,8 +129,8 @@ export class HomeComponent implements OnInit {
       this.boardType = this.route.snapshot.paramMap.get('boardType');
       const bottomOffset = window.innerWidth > 991 ? 0 : this.sheetCloseHeight;
       if (this.boardType === 'square') {
-        this.cols = Math.floor((window.innerWidth - 40) / 27) - (Math.floor((window.innerWidth - 40) / 27) % 2 === 1 ? 0 : 1);
-          this.rows = Math.floor((window.innerHeight - bottomOffset - 104) / 27) - (Math.floor((window.innerHeight - bottomOffset - 104) / 27) % 2 === 1 ? 0 : 1);
+        this.cols = Math.floor((window.innerWidth - 40) / 28) - (Math.floor((window.innerWidth - 40) / 28) % 2 === 1 ? 0 : 1);
+          this.rows = Math.floor((window.innerHeight - bottomOffset - 104) / 28) - (Math.floor((window.innerHeight - bottomOffset - 104) / 28) % 2 === 1 ? 0 : 1);
       } else if (this.boardType === 'hex') {
         this.cols = Math.floor((window.innerWidth - 40) / 29) - (Math.floor((window.innerWidth - 40) / 29) % 2 === 1 ? 0 : 1);
         this.rows = Math.floor((window.innerHeight - this.sheetCloseHeight - 104) / 31) - (Math.floor((window.innerHeight - this.sheetCloseHeight - 104) / 31) % 2 === 1 ? 0 : 1);
@@ -530,7 +529,7 @@ export class HomeComponent implements OnInit {
     this.boardLoading = true;
     this.resetPath();
     this.resetTiles();
-    if (this.selectedBoard === undefined) {
+    if (this.selectedBoard === 'None') {
       this.resetTiles();
       this.boardLoading = false;
       return;
