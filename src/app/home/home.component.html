@@ -1,16 +1,16 @@
 <div style="width: 100%">
   <mat-toolbar color="primary" style="justify-content: space-between;">
-    <section class="title-section" style="font-size: 15px; cursor: pointer" routerLink="/">
+    <section class="title-section" style="font-size: 15px; cursor: pointer" routerLink="/" id="home_button">
         <div style="font-size: 20px; white-space: break-spaces; text-align: center;">Pathfinding Algorithm Visualizer</div>
     </section>
 
     <section class="main-bar-component" style="font-size: 15px; height: 100%">
       <div style="display: flex; justify-content: center; flex-direction: column;">
         <div style="height: fit-content">
-          <button mat-stroked-button style="margin-right: 20px;flex: 1" [disabled]="globals.inProgress || boardLoading" (click)="visualize(delay.delay)">Visualize</button>
-          <button mat-stroked-button style="margin-right: 20px;flex: 1" [disabled]="globals.inProgress || boardLoading" (click)="resetPath()">Reset Path</button>
-          <button mat-stroked-button style="margin-right: 20px;flex: 1" [disabled]="globals.inProgress || boardLoading" (click)="resetTiles()">Remove Walls</button>
-          <button mat-stroked-button style="margin-right: 20px;flex: 1" [matMenuTriggerFor]="algorithmMenu">
+          <button mat-stroked-button id="visualize_button" style="margin-right: 20px;flex: 1" [disabled]="globals.inProgress || boardLoading" (click)="visualize(delay.delay)">Visualize</button>
+          <button mat-stroked-button id="reset_path_button" style="margin-right: 20px;flex: 1" [disabled]="globals.inProgress || boardLoading" (click)="resetPath()">Reset Path</button>
+          <button mat-stroked-button id="remove_walls_button" style="margin-right: 20px;flex: 1" [disabled]="globals.inProgress || boardLoading" (click)="resetTiles()">Remove Walls</button>
+          <button mat-stroked-button id="settings_button" style="margin-right: 20px;flex: 1" [matMenuTriggerFor]="algorithmMenu">
             Settings
             <mat-icon>settings</mat-icon>
           </button>
@@ -31,7 +31,7 @@
     </section>
 
     <section class="main-bar-component" style="font-size: 15px">
-      <button mat-stroked-button [disabled]="!globals.inProgress" (click)="cancel()">Cancel</button>
+      <button mat-stroked-button id="cancel_visualization_button" [disabled]="!globals.inProgress" (click)="cancel()">Cancel</button>
     </section>
 
   </mat-toolbar>
