@@ -33,7 +33,6 @@
 .info{
   color: white;
   font-size: 20px;
-  padding: 10px;
   background-color: darken(mat.get-color-from-palette($my-primary), 5%);
 }
 .link-bg{
@@ -45,10 +44,15 @@
   background-color: darken(mat.get-color-from-palette($my-primary), 10%);
 }
 .title-container{
-  padding: 20px;
+  user-select: none;
   color: white;
   font-size: 40px;
   font-weight: normal;
+  cursor: pointer;
+  transition: all .3s ease;
+}
+.title-container:hover {
+  filter: brightness(85%);
 }
 
 .board{

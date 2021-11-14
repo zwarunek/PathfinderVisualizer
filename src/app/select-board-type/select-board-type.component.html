@@ -4,25 +4,51 @@
       Pathfinding Visualizer
     </span>
   </div>
-<!--  <div style="padding-top: 20px">-->
-<!--    <button mat-raised-button>Info</button>-->
-<!--  </div>-->
-  <div class="board-container">
-    <div class="zoom-image board square-board" routerLink="/board/square">
-      <div class="primary-background center title-container">
-        <span>Square Grid</span>
-      </div>
-      <div class="center info">
-        Visualize pathfinding algorithms using a square grid. This uses either a 4-connected or 8-connected graph
-      </div>
-    </div>
-    <div class="zoom-image board hex-board" routerLink="/board/hex">
-      <div class="primary-background center title-container">
-        <span>Hex Grid</span>
-      </div>
-      <div class="center info">
-        Visualize pathfinding algorithms using a square grid. This uses either a 6-connected graph
-      </div>
-    </div>
+  <div style="background-color: #1de9b6; margin: 10vh 30vw">
+    <mat-grid-list cols="2" rowHeight="100px" gutterSize="0">
+      <mat-grid-tile class="title-container" #squareBtn (mousedown)="clicked('s')"
+        [colspan]="1"
+        [rowspan]="1"
+        style="background-color: #2b5e52">
+        Square
+      </mat-grid-tile>
+      <mat-grid-tile class="title-container" #hexBtn (mousedown)="clicked('h')"
+        [colspan]="1"
+        [rowspan]="1"
+        style="background-color: #212121">
+        Hex
+      </mat-grid-tile>
+      <mat-grid-tile class="info"
+        [colspan]="2"
+        [rowspan]="6"
+        style="background-color: #282828">
+        <div style="width: 100%; height: 100%; vertical-align: top">
+          <div style="padding: 20px">
+            <span>{{info}}</span>
+          </div>
+          <div class="hex-board">
+
+          </div>
+        </div>
+      </mat-grid-tile>
+    </mat-grid-list>
   </div>
+<!--  <div class="board-container">-->
+<!--    <div class="zoom-image board square-board" routerLink="/board/square">-->
+<!--      <div class="primary-background center title-container">-->
+<!--        <span>Square Grid</span>-->
+<!--      </div>-->
+<!--      <div class="center info">-->
+<!--        Visualize pathfinding algorithms using a square grid. This uses either a 4-connected or 8-connected graph-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    <div class="zoom-image board hex-board" routerLink="/board/hex">-->
+<!--      <div class="primary-background center title-container">-->
+<!--        <span>Hex Grid</span>-->
+<!--      </div>-->
+<!--      <div class="center info">-->
+<!--        Visualize pathfinding algorithms using a square grid. This uses either a 6-connected graph-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
 </div>
