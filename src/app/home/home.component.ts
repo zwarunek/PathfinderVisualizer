@@ -126,14 +126,19 @@ export class HomeComponent implements OnInit {
       document.getElementById('sheet').style.top = window.innerHeight - this.sheetCloseHeight + 'px';
       this.sheetOpenPos = window.innerHeight * .2;
 
-      this.boardType = this.route.snapshot.paramMap.get('boardType');
+      // this.boardType = this.route.snapshot.paramMap.get('boardType');
+      this.boardType = 'square';
       const bottomOffset = window.innerWidth > 991 ? 0 : this.sheetCloseHeight;
       if (this.boardType === 'square') {
         this.cols = Math.floor((window.innerWidth - 40) / 28) - (Math.floor((window.innerWidth - 40) / 28) % 2 === 1 ? 0 : 1);
-          this.rows = Math.floor((window.innerHeight - bottomOffset - 104) / 28) - (Math.floor((window.innerHeight - bottomOffset - 104) / 28) % 2 === 1 ? 0 : 1);
+        this.rows = Math.floor(
+          (window.innerHeight - bottomOffset - 104) / 28) -
+          (Math.floor((window.innerHeight - bottomOffset - 104) / 28) % 2 === 1 ? 0 : 1);
       } else if (this.boardType === 'hex') {
         this.cols = Math.floor((window.innerWidth - 40) / 29) - (Math.floor((window.innerWidth - 40) / 29) % 2 === 1 ? 0 : 1);
-        this.rows = Math.floor((window.innerHeight - this.sheetCloseHeight - 104) / 31) - (Math.floor((window.innerHeight - this.sheetCloseHeight - 104) / 31) % 2 === 1 ? 0 : 1);
+        this.rows = Math.floor(
+          (window.innerHeight - this.sheetCloseHeight - 104) / 31) -
+          (Math.floor((window.innerHeight - this.sheetCloseHeight - 104) / 31) % 2 === 1 ? 0 : 1);
       }
       this.numTiles = this.rows * this.cols;
 
@@ -506,9 +511,8 @@ export class HomeComponent implements OnInit {
 
   heuristicChanged(value: any): void{
     localStorage.setItem('heuristic', value);
-}
-
-  algorithmChange(algorithm: any) {
+  }
+  algorithmChange(algorithm: any): void {
     this.algorithm = algorithm;
     localStorage.setItem('algorithm', algorithm);
   }
