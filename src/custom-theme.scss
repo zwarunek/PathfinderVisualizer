@@ -1,9 +1,12 @@
-@use '~@angular/material' as mat;
-@import '~@angular/material/theming';
+@use '@angular/material' as mat;
+@import '@angular/material/theming';
 @include mat.core();
 
+@import "~primeng/resources/themes/arya-blue/theme.css";
 
-$my-primary: mat.define-palette(mat.$cyan-palette, 900);
+@function color($color-name) {
+  @return var(--data-color-#{$color-name});
+}
 $my-accent:  mat.define-palette(mat.$deep-purple-palette, A100);
 //$my-primary: #69efff;
 //$my-accent:  #69a5ff;
@@ -20,5 +23,5 @@ html {
 body {
   height: 100%;
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-family: var(--font-family);
 }

@@ -28,6 +28,8 @@ import {MatCardModule} from '@angular/material/card';
 import {MatRadioModule} from '@angular/material/radio';
 import {WindowRefService} from './Services/window-ref.service';
 import {SeoService} from './Services/seo-servce.service';
+import {ButtonModule} from 'primeng/button';
+import {RippleModule} from 'primeng/ripple';
 
 
 @NgModule({
@@ -37,7 +39,7 @@ import {SeoService} from './Services/seo-servce.service';
     NoRightClickDirective
   ],
   imports: [
-    BrowserModule.withServerTransition({ appId: 'serverApp' }),
+    BrowserModule.withServerTransition({appId: 'serverApp'}),
     AppRoutingModule,
     BrowserAnimationsModule,
     MatSliderModule,
@@ -57,7 +59,9 @@ import {SeoService} from './Services/seo-servce.service';
     MatExpansionModule,
     CdkAccordionModule,
     MatCardModule,
-    MatRadioModule
+    MatRadioModule,
+    ButtonModule,
+    RippleModule
   ],
   providers: [
     Globals,

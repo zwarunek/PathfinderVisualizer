@@ -7,10 +7,10 @@
     <section class="main-bar-component" style="font-size: 15px; height: 100%">
       <div style="display: flex; justify-content: center; flex-direction: column;">
         <div style="height: fit-content">
-          <button mat-stroked-button id="visualize_button" style="margin-right: 20px;flex: 1" [disabled]="globals.inProgress || boardLoading" (click)="visualize(delay.delay)">Visualize</button>
-          <button mat-stroked-button id="reset_path_button" style="margin-right: 20px;flex: 1" [disabled]="globals.inProgress || boardLoading" (click)="resetPath()">Reset Path</button>
-          <button mat-stroked-button id="remove_walls_button" style="margin-right: 20px;flex: 1" [disabled]="globals.inProgress || boardLoading" (click)="resetTiles()">Remove Walls</button>
-          <button mat-stroked-button id="settings_button" style="margin-right: 20px;flex: 1" [matMenuTriggerFor]="algorithmMenu">
+          <button pButton pRipple type="button" class="p-button-outlined" id="visualize_button" style="margin-right: 20px;flex: 1" [disabled]="globals.inProgress || boardLoading" (click)="visualize(delay.delay)">Visualize</button>
+          <button pButton pRipple type="button" class="p-button-outlined" id="reset_path_button" style="margin-right: 20px;flex: 1" [disabled]="globals.inProgress || boardLoading" (click)="resetPath()">Reset Path</button>
+          <button pButton pRipple type="button" class="p-button-outlined" id="remove_walls_button" style="margin-right: 20px;flex: 1" [disabled]="globals.inProgress || boardLoading" (click)="resetTiles()">Remove Walls</button>
+          <button pButton pRipple type="button" class="p-button-outlined" id="settings_button" style="margin-right: 20px;flex: 1" [matMenuTriggerFor]="algorithmMenu">
             Settings
             <mat-icon>settings</mat-icon>
           </button>
@@ -31,7 +31,7 @@
     </section>
 
     <section class="main-bar-component" style="font-size: 15px">
-      <button mat-stroked-button id="cancel_visualization_button" [disabled]="!globals.inProgress" (click)="cancel()">Cancel</button>
+      <button pButton pRipple type="button" class="p-button-outlined" id="cancel_visualization_button" [disabled]="!globals.inProgress" (click)="cancel()">Cancel</button>
     </section>
 
   </mat-toolbar>
@@ -179,10 +179,10 @@
   </div>
 
   <div class="sheet-main-buttons">
-    <button mat-stroked-button *ngIf="!globals.inProgress" style="margin-right: 8px" [disabled]="boardLoading" (click)="visualize(delay.delay)">Visualize</button>
-    <button mat-stroked-button *ngIf="!globals.inProgress" style="margin-right: 8px" [disabled]="boardLoading" (click)="resetPath()">Reset Path</button>
-    <button mat-stroked-button *ngIf="!globals.inProgress" [disabled]="boardLoading" (click)="resetTiles()">Remove Walls</button>
-    <button mat-stroked-button *ngIf="globals.inProgress" (click)="cancel()">Cancel</button>
+    <button pButton pRipple type="button" class="p-button-outlined" *ngIf="!globals.inProgress" style="margin-right: 8px" [disabled]="boardLoading" (click)="visualize(delay.delay)">Visualize</button>
+    <button pButton pRipple type="button" class="p-button-outlined" *ngIf="!globals.inProgress" style="margin-right: 8px" [disabled]="boardLoading" (click)="resetPath()">Reset Path</button>
+    <button pButton pRipple type="button" class="p-button-outlined" *ngIf="!globals.inProgress" [disabled]="boardLoading" (click)="resetTiles()">Remove Walls</button>
+    <button pButton pRipple type="button" class="p-button-outlined" *ngIf="globals.inProgress" (click)="cancel()">Cancel</button>
   </div>
 
   <div style="width: 325px; margin: 0 auto">
