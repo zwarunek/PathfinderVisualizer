@@ -217,19 +217,19 @@ export const gridHexTrigger = trigger('gridHex', [
   transition('blank => searched', [
     animate('1s', keyframes([
       style({
-        transform: 'matrix(.95, 0, 0, .95, 0, 0) rotate(0deg)',
+        transform: 'matrix(.95, 0, 0, .95, 0, 0)',
         'background-color': Colors.background,
         offset: 0}),
       style({
-        transform: 'matrix(.01, 0, 0, .01, 0, 0) rotate(90deg)',
+        transform: 'matrix(.01, 0, 0, .01, 0, 0)',
         'background-color': Colors.background,
         offset: .25}),
       style({
-        transform: 'matrix(.01, 0, 0, .01, 0, 0) rotate(90deg)',
+        transform: 'matrix(.01, 0, 0, .01, 0, 0)',
         'background-color': Colors.searchColorDark,
         offset: .26}),
       style({
-        transform: 'matrix(.95, 0, 0, .95, 0, 0) rotate(180deg)',
+        transform: 'matrix(.95, 0, 0, .95, 0, 0)',
         'background-color': Colors.searchColor,
         offset: 1})
     ]))

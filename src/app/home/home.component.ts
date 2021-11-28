@@ -78,6 +78,7 @@ export class HomeComponent implements OnInit {
   heuristicsSquare: any[] = [
     {label: 'Manhattan', value: 'manhattan'},
     {label: 'Euclidean', value: 'euclidean'},
+    {label: 'Octile', value: 'octile'},
   ];
   heuristicsHex: any[] = [
     {label: 'Manhattan', value: 'hex'},

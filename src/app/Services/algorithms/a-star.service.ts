@@ -140,7 +140,7 @@ export class AStarService {
     else if (heuristic === 'hex'){
       const a = this.oddq_to_cube(row, col);
       const b = this.oddq_to_cube(target[0], target[1]);
-      return (Math.abs(a.x - b.x) + Math.abs(a.y - b.y) + Math.abs(a.z - b.z)) / 2;
+      return (Math.abs(a.q - b.q) + Math.abs(a.r - b.r) + Math.abs(a.s - b.s)) / 2;
     }
     else if (heuristic === 'euclidean'){
       return Math.sqrt(Math.pow(col - target[1], 2) + Math.pow(row - target[0], 2));
@@ -154,12 +154,12 @@ export class AStarService {
       return (Math.abs(col - target[1]) + Math.abs(row - target[0])) + cross * 0.001;
     }
   }
-
+  // https://www.redblobgames.com/grids/hexagons/#conversions
   private oddq_to_cube(row, col): any {
-    const x = col;
+    const q = col;
     // tslint:disable-next-line:no-bitwise
-    const z = row - (col - (col & 1)) / 2;
-    const y = -x - z;
-    return {x, y, z};
+    const r = row - (col - (col & 1)) / 2;
+    const s = -q - r;
+    return {q, r, s};
   }
 }
