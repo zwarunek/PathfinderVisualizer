@@ -61,18 +61,30 @@ export const gridSquareTrigger = trigger('gridSquare', [
   {
     return fromState === 'blank grid-show' && toState === 'searched grid-show';
   }, [
-    animate('1s', keyframes([
+    animate('.5s', keyframes([
       style({
         'z-index': 100,
-        transform: 'matrix(.1, 0, 0, .1, 0, 0)',
-        'background-color': Colors.searchColorDark,
+        transform: 'matrix(1, 0, 0, 1, 0, 0)',
+        'background-color': 'yellow',
         offset: 0
       }),
       style({
         'z-index': 100,
         transform: 'matrix(1, 0, 0, 1, 0, 0)',
-        'background-color': 'red',
-        offset: .5
+        'background-color': Colors.background,
+        offset: .02
+      }),
+      style({
+        'z-index': 100,
+        transform: 'matrix(.1, 0, 0, .1, 0, 0)',
+        'background-color': Colors.searchColorDark,
+        offset: .05
+      }),
+      style({
+        'z-index': 100,
+        transform: 'matrix(1, 0, 0, 1, 0, 0)',
+        'background-color': Colors.searchColorDark,
+        offset: .65
       }),
       style({
         'z-index': 100,
@@ -86,21 +98,34 @@ export const gridSquareTrigger = trigger('gridSquare', [
   {
     return fromState === 'blank grid-hide' && toState === 'searched grid-hide';
   }, [
-    animate('1s', keyframes([
+    animate('.5s', keyframes([
       style({
         'z-index': 100,
-        transform: 'matrix(.1, 0, 0, .1, 0, 0)',
-        'background-color': Colors.searchColorDark,
+        transform: 'matrix(1, 0, 0, 1, 0, 0)',
+        'background-color': 'yellow',
         offset: 0
       }),
       style({
         'z-index': 100,
         transform: 'matrix(1, 0, 0, 1, 0, 0)',
-        'background-color': Colors.searchColorDark,
-        offset: .5
+        'background-color': Colors.background,
+        offset: .02
       }),
       style({
         'z-index': 100,
+        transform: 'matrix(.1, 0, 0, .1, 0, 0)',
+        'background-color': Colors.searchColorDark,
+        offset: .05
+      }),
+      style({
+        'z-index': 100,
+        transform: 'matrix(1, 0, 0, 1, 0, 0)',
+        'background-color': Colors.searchColorDark,
+        offset: .65
+      }),
+      style({
+        'z-index': 100,
+        transform: 'matrix(1, 0, 0, 1, 0, 0)',
         'background-color': Colors.searchColor,
         offset: 1
       })

@@ -8,7 +8,7 @@ import {GraphUtilsService} from '../Services/graph-utils.service';
 import {WindowRefService} from '../Services/window-ref.service';
 import {isPlatformBrowser} from '@angular/common';
 import {gridHexTrigger, gridSquareTrigger} from '../animations';
-import {MenuItem} from 'primeng/api';
+import {MenuItem, PrimeIcons} from 'primeng/api';
 
 export interface Tile {
   type: any;
@@ -108,11 +108,11 @@ export class HomeComponent implements OnInit {
 
     this.delayOptions = [
       {
-        delay: 50,
+        delay: 40,
         label: 'Slow'
       },
       {
-        delay: 20,
+        delay: 15,
         label: 'Normal'
       },
       {
@@ -147,7 +147,6 @@ export class HomeComponent implements OnInit {
         localStorage.setItem('boardType', '0');
       }
       this.boardType = this.boardTypeOptions[parseInt(localStorage.getItem('boardType'), 10)];
-      console.log(this.boardType);
       this.loadedBoardType = this.boardType.value;
       const bottomOffset = window.innerWidth > 991 ? 0 : this.sheetCloseHeight;
       if (this.boardType.value === 'square') {
@@ -155,14 +154,12 @@ export class HomeComponent implements OnInit {
         this.rows = Math.floor(
           (window.innerHeight - bottomOffset - 104) / 29) -
           (Math.floor((window.innerHeight - bottomOffset - 104) / 29) % 2 === 1 ? 0 : 1);
-        console.log(this.cols, this.rows);
       } else if (this.boardType.value === 'hex') {
-        this.cols = Math.floor((window.innerWidth - 40) / 35) - (Math.floor((window.innerWidth - 40) / 35) % 2 === 1 ? 0 : 1);
+        this.cols = Math.floor((window.innerWidth - 40) / 32) - (Math.floor((window.innerWidth - 40) / 32) % 2 === 1 ? 0 : 1);
         this.rows = Math.floor(
-          (window.innerHeight - bottomOffset - 104) / 40) -
-          (Math.floor((window.innerHeight - bottomOffset - 104) / 40) % 2 === 1 ? 0 : 1);
+          (window.innerHeight - bottomOffset - 104) / 35) -
+          (Math.floor((window.innerHeight - bottomOffset - 104) / 35) % 2 === 1 ? 0 : 1);
       }
-      console.log(this.rows, this.cols, window.innerHeight, window.innerWidth);
       this.numTiles = this.rows * this.cols;
 
       this.tiles = [];
@@ -173,9 +170,7 @@ export class HomeComponent implements OnInit {
         }
       }
       this.startTile = {row: Math.floor(this.rows / 2) - 1, col: Math.floor(this.cols / 6)};
-      this.tiles[this.startTile.row][this.startTile.col].type = 'start';
       this.endTile = {row: Math.floor(this.rows / 2) - 1, col: this.cols - Math.floor(this.cols / 6) - 1};
-      this.tiles[this.endTile.row][this.endTile.col].type = 'end';
 
       if (localStorage.getItem('delay') === null) {
         localStorage.setItem('delay', '1');
@@ -273,7 +268,7 @@ export class HomeComponent implements OnInit {
   }
 
   mouseEnter(e: any, row: any, col: any): void {
-    if (this.globals.inProgress || (e.type.includes('mouse') && e.sourceCapabilities.firesTouchEvents)) {
+    if (this.globals.inProgress || (e.type.includes('mouse') && e.sourceCapabilities !== undefined && e.sourceCapabilities.firesTouchEvents)) {
       return;
     }
     e.preventDefault();
@@ -323,7 +318,7 @@ export class HomeComponent implements OnInit {
   }
 
   mouseDown(e: any, row: any, col: any): void {
-    if (this.globals.inProgress || (e.type.includes('mouse') && e.sourceCapabilities.firesTouchEvents)) {
+    if (this.globals.inProgress || (e.type.includes('mouse') && e.sourceCapabilities !== undefined && e.sourceCapabilities.firesTouchEvents)) {
       return;
     }
     e.preventDefault();
@@ -351,7 +346,7 @@ export class HomeComponent implements OnInit {
 
   mouseLeave(e: any, row: any, col: any): void {
     e.preventDefault();
-    if (this.globals.inProgress || (e.type.includes('mouse') && e.sourceCapabilities.firesTouchEvents)) {
+    if (this.globals.inProgress || (e.type.includes('mouse') && e.sourceCapabilities !== undefined && e.sourceCapabilities.firesTouchEvents)) {
       return;
     }
     if ((this.draggingStart && JSON.stringify(this.endTile) !== JSON.stringify({row, col})) ||
@@ -492,7 +487,7 @@ export class HomeComponent implements OnInit {
         JSON.stringify(this.endTile) !== JSON.stringify({row: tile.row, col: tile.col})) {
         this.tiles[tile.row][tile.col].animate = delay !== 0;
         this.tiles[tile.row][tile.col].type = 'searched';
-        if (delay > 0) {
+        if (delay > 1 || (delay === 1 && path.steps.indexOf(step) % 4 === 0)) {
           await this.sleep(delay);
         }
       }
@@ -525,7 +520,6 @@ export class HomeComponent implements OnInit {
   changeSpeed(): void {
     if (this.delay !== this.sliderValue){
       this.delay = this.sliderValue.delay;
-      console.log(String(this.delayOptions.indexOf(this.sliderValue)));
       localStorage.setItem('delay', String(this.delayOptions.indexOf(this.sliderValue)));
     }
   }
@@ -553,7 +547,6 @@ export class HomeComponent implements OnInit {
     this.boardLoading = true;
     this.resetPath();
     this.resetTiles();
-    console.log(this.selectedBoard);
     if (this.selectedBoard === null) {
       this.resetTiles();
       this.boardLoading = false;
@@ -565,7 +558,9 @@ export class HomeComponent implements OnInit {
       if (JSON.stringify(this.startTile) !== JSON.stringify({row: wall[0], col: wall[1]}) &&
         JSON.stringify(this.endTile) !== JSON.stringify({row: wall[0], col: wall[1]})) {
         this.setWall(wall[0], wall[1], true);
-        await this.sleep(1);
+        if (walls.indexOf(wall) % 5 === 0) {
+          await this.sleep(1);
+        }
       }
     }
     this.boardLoading = false;

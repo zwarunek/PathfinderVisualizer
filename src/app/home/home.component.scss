@@ -8,12 +8,6 @@ $wall-color: $primary-background-hover;
 $start-color: #32cd32;
 $end-color: orangered;
 $searched-color: $secondary-background;
-.noTransition {
-  -webkit-transition: none !important;
-  -moz-transition: none !important;
-  -o-transition: none !important;
-  transition: none !important;
-}
 .main-menubar {
   background-color: $primary-background;
 }
@@ -38,12 +32,6 @@ $searched-color: $secondary-background;
 .settings-overlay {
   width: 340px
 }
-//::ng-deep .p-overlaypanel:after{
-//  border-bottom-color: $primary-background;
-//}
-//::ng-deep .p-overlaypanel{
-//  background-color: $primary-background;
-//}
 ::ng-deep .p-slider .p-slider-range{
   background-color: $primary-background-focus;
 }
@@ -87,9 +75,6 @@ $searched-color: $secondary-background;
   background-color: $end-color !important;
 }
 .wall{
-  //background-image: radial-gradient($wall-color 5%, $background 99%);
-  //background-size: 190% 100%;
-  //background-position: center;
   background-color: $wall-color;
 }
 .searched {
@@ -110,13 +95,10 @@ $searched-color: $secondary-background;
 .grid-hide{
   width: 28px;
   height: 28px;
-  backface-visibility: hidden
 }
 .grid-show{
-  //border: solid 1px #303030;
   width: 27px;
   height: 27px;
-  backface-visibility: hidden
 }
 .grid-cell-container{
   display: inline-table;
@@ -136,121 +118,8 @@ $searched-color: $secondary-background;
   height: 100%;
   cursor: pointer
 }
-@keyframes pathfindingGridCell {
-  0%{
-    background-color: yellow;
-  }
-  2%{
-    background-color: $background;
-  }
-  5%{
-    transform:  scale(.3) translate(0px, -1px);
-    background-color: darken($searched-color, 40%);
-  }
-  100%{
-    transform: scale(1) translate(0px, -1px);
-    background-color: $searched-color;
-  }
-}
-@keyframes pathfindingFastGridCell {
-  0%{
-    background-color: darken($searched-color, 30%);
-
-  }
-  100%{
-    background-color: $searched-color;
-  }
-}
-//.grid-cell.searched.fast{
-//  animation: pathfindingFastGridCell 2s;
-//}
-//.grid-cell.searched.medium, .grid-cell.searched.slow{
-//  animation: pathfindingGridCell 2s;
-//}
 $hexagon-height: 32px;
 $hexagon-width: $hexagon-height / math.sqrt(3);
-//.hexagon.wall {
-//  animation-name: hexBlankToWall;
-//  animation-duration: .5s;
-//  animation-iteration-count: 1;
-//  animation-timing-function: linear;
-//  //  animation-fill-mode: forwards;
-//}
-//.hexagon.blank {
-//  animation-name: hexWallToBlank;
-//  animation-duration: .5s;
-//  animation-iteration-count: 1;
-//  animation-timing-function: linear;
-//  //  animation-fill-mode: forwards;
-//}
-
-@keyframes hexBlankToWall {
-
-  0%{
-    transform: scale(.95, .95);
-    background-color: $background;
-  }
-  50%{
-    transform: scale(0, 0);
-    background-color: $background;
-  }
-  51%{
-    transform: scale(0, 0);
-    background-color: $wall-color;
-  }
-  100%{
-    transform: scale(.95, .95);
-    background-color: $wall-color;
-  }
-}
-@keyframes hexWallToBlank {
-
-  0%{
-    transform: scale(.95, .95);
-    background-color: $wall-color;
-  }
-  50%{
-    transform: scale(0, 0);
-    background-color: $wall-color;
-  }
-  51%{
-    transform: scale(0, 0);
-    background-color: $background;
-  }
-  100%{
-    transform: scale(.95, .95);
-    background-color: $background;
-  }
-}
-@keyframes hexBlankToWallBeforeAfter {
-
-  0%{
-    top: -$hexagon-height/2;
-  }
-  50%{
-    top: 0;
-  }
-  51%{
-    top: 0;
-  }
-  100%{
-    top: -$hexagon-height/2;
-  }
-}
-@keyframes hexWallToBlankBeforeAfter {
-  0%{
-    top: -$hexagon-height/2;
-  }
-  50%{
-    top: 0;
-  }
-  51%{
-    top: 0;
-  }
-  100%{
-    top: -$hexagon-height/2;
-  }
-}
 .hex-container{
   padding-block: $hexagon-height/2;
   padding-inline: $hexagon-width*(3/4);
@@ -261,9 +130,6 @@ $hexagon-width: $hexagon-height / math.sqrt(3);
 
   width: $hexagon-width;
   height: $hexagon-height;
-  //background-color: $background;
-  //background-image: linear-gradient(90deg, $hexagon-color-1, $hexagon-color-2);
-  //border-radius: ($hexagon-size / 10);
   position: absolute;
   left: $hexagon-width/4;
   top: 0;

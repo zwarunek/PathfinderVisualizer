@@ -37,7 +37,7 @@
       <p-dropdown [options]="algorithmList" [(ngModel)]="algorithm"  [ngStyle]="{'display': 'contents'}" (onChange)="algorithmChange()"></p-dropdown>
     </div>
     <div style="display: grid; padding-block: .5rem" *ngIf="algorithm == 'A* Algorithm'">
-      <p-dropdown [options]="boardType == 'square' ? heuristicsSquare : heuristicsHex" [(ngModel)]="heuristic"  [ngStyle]="{'display': 'contents'}" (onChange)="heuristicChanged()"></p-dropdown>
+      <p-dropdown [options]="boardType.value == 'square' ? heuristicsSquare : heuristicsHex" [(ngModel)]="heuristic"  [ngStyle]="{'display': 'contents'}" (onChange)="heuristicChanged()"></p-dropdown>
     </div>
     <div style="display: grid; padding-block: .5rem" *ngIf="boardType.value == 'square'">
       <p-checkbox [(ngModel)]="diagonal" binary="true" inputId="binary" (onChange)="diagonalChange()" label="Diagonal"></p-checkbox>
@@ -52,7 +52,7 @@
   </div>
 </p-overlayPanel>
 <div class="disable-select" style="padding: 20px; width: fit-content; margin: auto;" appNoRightClick *ngIf="loadedBoardType === 'square'">
-  <table style="border-spacing: 0px" [ngClass]="{'table-grid-show': showGrid}">
+  <table style="border-spacing: 0" [ngClass]="{'table-grid-show': showGrid}">
     <tbody>
       <tr *ngFor="let row of tiles; let y = index" style="background-color: #d4d4d4; border: none; ">
         <td *ngFor="let tile of row; let x = index" style="padding: 0; margin: 0;">
@@ -62,10 +62,10 @@
                          searched: tile.type === 'searched',
                          start: startTile.row === y && startTile.col === x,
                          end: endTile.row === y && endTile.col === x,
-                         instant: delay === delayOptions[0].delay,
-                         fast: delay === delayOptions[1].delay,
-                         medium: delay === delayOptions[2].delay,
-                         slow: delay === delayOptions[3].delay
+                         instant: delay === delayOptions[3],
+                         fast: delay === delayOptions[2],
+                         medium: delay === delayOptions[1],
+                         slow: delay === delayOptions[0]
                          }"
                (mouseenter)="mouseEnter($event, y, x)"
                (mouseleave)="mouseLeave($event, y, x)"
@@ -120,77 +120,6 @@
         stroke-linecap="round"
         style="z-index: 900"/>
 </svg>
-<!--<mat-menu #algorithmMenu="matMenu" class="custom-menu">-->
-<!--  <div (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" class="drop-down-menu">-->
-<!--    <div style="width: 325px; margin: 0 auto">-->
-<!--      <div style="text-align: center; display: flex; justify-content: space-between">-->
-<!--        <span>Slow</span>-->
-<!--        <span>Normal</span>-->
-<!--        <span>Fast</span>-->
-<!--        <span>Instant</span>-->
-<!--      </div>-->
-<!--    </div>-->
-
-<!--    <div style="width: 100%; text-align: center; display: flex; justify-content: space-around; margin: -10px auto">-->
-<!--      <mat-slider-->
-<!--        style="width: 325px; padding: 0"-->
-<!--        class="example-margin"-->
-<!--        [disabled]="globals.inProgress || boardLoading"-->
-<!--        [max]="3"-->
-<!--        [min]="0"-->
-<!--        [step]="1"-->
-<!--        [tickInterval]="1"-->
-<!--        value="{{delaySliderOptions.indexOf(delay)}}"-->
-<!--        (change)="resetPath(); changeSpeed()">-->
-<!--      </mat-slider>-->
-<!--    </div>-->
-
-<!--    <mat-form-field appearance="fill" style="font-size: 10px; margin: 0 auto; padding-top: 8px; width: 325px">-->
-<!--      <mat-label style="font-size: 15px">Select Board</mat-label>-->
-<!--      <mat-select [(value)]="selectedBoard"   [disabled]="boardLoading || globals.inProgress" style="font-size: 15px;">-->
-<!--        <mat-option (click)="loadBoard()" value="None">None</mat-option>-->
-<!--        <mat-option (click)="loadBoard()" *ngFor="let board of boards; let i = index" value="{{board}}">{{board}}</mat-option>-->
-<!--      </mat-select>-->
-<!--    </mat-form-field>-->
-
-<!--    <mat-accordion style="width: 325px; margin: 0 auto">-->
-<!--      <mat-expansion-panel (opened)="algorithmChange()">-->
-<!--        <mat-expansion-panel-header>-->
-<!--          <mat-panel-title>-->
-<!--            Dijkstra's Algorithm-->
-<!--          </mat-panel-title>-->
-<!--          <mat-panel-description>-->
-<!--            {{algorithm === 'Dijkstra\'s Algorithm' ? 'Selected' : ''}}-->
-<!--          </mat-panel-description>-->
-<!--        </mat-expansion-panel-header>-->
-<!--      </mat-expansion-panel>-->
-
-<!--      <mat-expansion-panel  (opened)="algorithmChange()">-->
-<!--        <mat-expansion-panel-header >-->
-<!--          <mat-panel-title>-->
-<!--            A* Algorithm-->
-<!--          </mat-panel-title>-->
-<!--          <mat-panel-description>-->
-<!--            {{algorithm === 'A* Algorithm' ? 'Selected' : ''}}-->
-<!--          </mat-panel-description>-->
-<!--        </mat-expansion-panel-header>-->
-<!--        <mat-radio-group-->
-<!--          aria-labelledby="example-radio-group-label"-->
-<!--          class="heuristic-button-group"-->
-<!--          [(ngModel)]="heuristic">-->
-<!--          <div *ngFor="let h of heuristics">-->
-<!--            <mat-radio-button *ngIf="h.boardType === boardType || h.boardType === 'both'" style="margin: 5px" [value]="h.value" (change)="heuristicChanged(h.value)">-->
-<!--              {{h.label}}-->
-<!--            </mat-radio-button>-->
-<!--          </div>-->
-<!--        </mat-radio-group>-->
-<!--      </mat-expansion-panel>-->
-
-<!--    </mat-accordion>-->
-<!--    <mat-checkbox *ngIf="boardType === 'square'" style="margin-top: 10px; margin-left: 5px" [color]="'accent'" [(ngModel)]="diagonal" (change)="diagonalChange()" [disabled]="globals.inProgress || boardLoading">Diagonal</mat-checkbox>-->
-<!--    <mat-checkbox style="margin-top: 10px; margin-left: 5px" [color]="'accent'" [(ngModel)]="showGrid" (change)="gridChange()">Show Grid</mat-checkbox>-->
-<!--  </div>-->
-<!--</mat-menu>-->
 <div id="sheet" class="bottom-sheet-bg disable-select" draggable="false" (touchmove)="testSheet($event)" (touchend)="testSheetClick()" (touchstart)="touchStart($event)" (mousemove)="testSheet($event)" (mouseup)="testSheetClick()" (mousedown)="touchStart($event)">
 
   <div class="sheet-handle">
