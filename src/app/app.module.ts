@@ -30,6 +30,16 @@ import {WindowRefService} from './Services/window-ref.service';
 import {SeoService} from './Services/seo-servce.service';
 import {ButtonModule} from 'primeng/button';
 import {RippleModule} from 'primeng/ripple';
+import {MenubarModule} from 'primeng/menubar';
+import {InputTextModule} from 'primeng/inputtext';
+import {SharedModule} from 'primeng/api';
+import {MenuModule} from 'primeng/menu';
+import {OverlayPanelModule} from 'primeng/overlaypanel';
+import {SliderModule} from 'primeng/slider';
+import {DropdownModule} from 'primeng/dropdown';
+import {CheckboxModule} from 'primeng/checkbox';
+import {RadioButtonModule} from 'primeng/radiobutton';
+import {SelectButtonModule} from 'primeng/selectbutton';
 
 
 @NgModule({
@@ -61,7 +71,17 @@ import {RippleModule} from 'primeng/ripple';
     MatCardModule,
     MatRadioModule,
     ButtonModule,
-    RippleModule
+    RippleModule,
+    MenubarModule,
+    InputTextModule,
+    SharedModule,
+    MenuModule,
+    OverlayPanelModule,
+    SliderModule,
+    DropdownModule,
+    CheckboxModule,
+    RadioButtonModule,
+    SelectButtonModule
   ],
   providers: [
     Globals,

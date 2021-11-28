@@ -1,94 +1,113 @@
 <div style="width: 100%">
-  <mat-toolbar color="primary" style="justify-content: space-between;">
-    <section class="title-section" style="font-size: 15px; cursor: pointer" routerLink="/" id="home_button">
-        <div style="font-size: 20px; white-space: break-spaces; text-align: center;">Pathfinding Algorithm Visualizer</div>
-    </section>
+  <div class="p-menubar main-menubar p-element" style="display: flex; justify-content: space-between;">
+    <div style=" display: inline-flex; align-items: center;">
+      <span style="font-size: 20px; font-weight: bold; white-space: break-spaces; text-align: center;">Pathfinding Algorithm Visualizer</span>
+    </div>
+    <div style="display: flex; justify-content: center">
+      <ul role="menubar" class="p-menubar-list p-menubar-root-list">
+        <li class="p-element p-menuitem menu-item">
+          <button pButton pRipple type="button" class="menu-button" id="visualize_button" [disabled]="globals.inProgress || boardLoading" (click)="visualize(sliderValue.delay)">Visualize</button>
+        </li>
+        <li class="p-element p-menuitem menu-item">
+          <button pButton pRipple type="button" class="menu-button" id="reset_path_button" [disabled]="globals.inProgress || boardLoading" (click)="resetPath()">Reset Path</button>
+        </li>
+        <li class="p-element p-menuitem menu-item">
+          <button pButton pRipple type="button" class="menu-button" id="remove_walls_button" [disabled]="globals.inProgress || boardLoading" (click)="resetTiles()">Remove Walls</button>
+        </li>
+        <li class="p-element p-menuitem menu-item">
+          <button pButton pRipple type="button" class="menu-button" id="settings_button" icon="pi pi-angle-down" label="Settings" iconPos="right" [disabled]="globals.inProgress || boardLoading" (click)="settingsOverlay.toggle($event)"></button>
+        </li>
+      </ul>
 
-    <section class="main-bar-component" style="font-size: 15px; height: 100%">
-      <div style="display: flex; justify-content: center; flex-direction: column;">
-        <div style="height: fit-content">
-          <button pButton pRipple type="button" class="p-button-outlined" id="visualize_button" style="margin-right: 20px;flex: 1" [disabled]="globals.inProgress || boardLoading" (click)="visualize(delay.delay)">Visualize</button>
-          <button pButton pRipple type="button" class="p-button-outlined" id="reset_path_button" style="margin-right: 20px;flex: 1" [disabled]="globals.inProgress || boardLoading" (click)="resetPath()">Reset Path</button>
-          <button pButton pRipple type="button" class="p-button-outlined" id="remove_walls_button" style="margin-right: 20px;flex: 1" [disabled]="globals.inProgress || boardLoading" (click)="resetTiles()">Remove Walls</button>
-          <button pButton pRipple type="button" class="p-button-outlined" id="settings_button" style="margin-right: 20px;flex: 1" [matMenuTriggerFor]="algorithmMenu">
-            Settings
-            <mat-icon>settings</mat-icon>
-          </button>
-        </div>
-      </div>
-      <div style="display: flex; flex-direction: row; height: 100% ;width: 211px;">
-        <div style="display: flex; flex-direction: column; justify-content: space-evenly; height: 100%; margin-right: 10px; font-size: 15px; line-height: 10px;">
-          <span>Time: </span>
-          <span>Tiles Searched: </span>
-          <span>Path Length: </span>
-        </div>
-        <div style="display: flex; flex-direction: column; justify-content: space-evenly; height: 100%; font-weight: lighter; font-size: 15px; line-height: 10px;">
-          <span>{{timeStat}}</span>
-          <span>{{tilesSearchedStat}}</span>
-          <span>{{pathLengthStat}}</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="main-bar-component" style="font-size: 15px">
-      <button pButton pRipple type="button" class="p-button-outlined" id="cancel_visualization_button" [disabled]="!globals.inProgress" (click)="cancel()">Cancel</button>
-    </section>
-
-  </mat-toolbar>
+    </div>
+    <div>
+      <button pButton pRipple type="button" class="menu-button" id="cancel_visualization_button" [disabled]="!globals.inProgress" (click)="cancel()">Cancel</button>
+    </div>
+  </div>
 </div>
-
-<div class="disable-select" style="padding: 20px; width: fit-content; margin: auto;" appNoRightClick *ngIf="boardType === 'square'">
-  <table style="border-spacing: 0;border-collapse: collapse;">
+<p-overlayPanel #settingsOverlay>
+  <div class="settings-overlay" style="display: flex; flex-direction: column;">
+    <div style="display: grid; padding-block: .5rem">
+      <p-selectButton [style]="{'width':'100%', 'display':'flex'}" [options]="delayOptions" [(ngModel)]="sliderValue" optionLabel="label" (onChange)="changeSpeed()"></p-selectButton>
+    </div>
+    <div style="display: grid; padding-block: .5rem">
+      <p-dropdown [options]="boards" [(ngModel)]="selectedBoard" placeholder="Select Board" [showClear]="true" [ngStyle]="{'display': 'contents'}" (onChange)="loadBoard()"></p-dropdown>
+    </div>
+    <div style="display: grid; padding-block: .5rem">
+      <p-dropdown [options]="algorithmList" [(ngModel)]="algorithm"  [ngStyle]="{'display': 'contents'}" (onChange)="algorithmChange()"></p-dropdown>
+    </div>
+    <div style="display: grid; padding-block: .5rem" *ngIf="algorithm == 'A* Algorithm'">
+      <p-dropdown [options]="boardType == 'square' ? heuristicsSquare : heuristicsHex" [(ngModel)]="heuristic"  [ngStyle]="{'display': 'contents'}" (onChange)="heuristicChanged()"></p-dropdown>
+    </div>
+    <div style="display: grid; padding-block: .5rem" *ngIf="boardType.value == 'square'">
+      <p-checkbox [(ngModel)]="diagonal" binary="true" inputId="binary" (onChange)="diagonalChange()" label="Diagonal"></p-checkbox>
+    </div>
+    <hr class="setting-popup-divider">
+    <div style="display: grid; padding-block: .5rem" *ngIf="boardType.value == 'square'">
+      <p-checkbox [(ngModel)]="showGrid" binary="true" inputId="binary" (onChange)="gridChange()" label="Show Grid"></p-checkbox>
+    </div>
+    <div style="display: grid; padding-block: .5rem">
+      <p-selectButton [style]="{'width':'100%', 'display':'flex'}" [options]="boardTypeOptions" [(ngModel)]="boardType" optionLabel="label" (onChange)="changeBoardType()"></p-selectButton>
+    </div>
+  </div>
+</p-overlayPanel>
+<div class="disable-select" style="padding: 20px; width: fit-content; margin: auto;" appNoRightClick *ngIf="loadedBoardType === 'square'">
+  <table style="border-spacing: 0px" [ngClass]="{'table-grid-show': showGrid}">
     <tbody>
-    <tr *ngFor="let row of tiles; let y = index" style="background-color: #d4d4d4; border: none; ">
-      <td [@gridSquare]="tile.type" class="{{grid}} grid-cell" *ngFor="let tile of row; let x = index"  [attr.id]="'tile-'+y+':'+x"
-              [ngClass]="{ wall: tile.type === 'wall',
-                       blank: tile.type === 'blank',
-                       searched: tile.type === 'searched',
-                       start: startTile.row === y && startTile.col === x,
-                       end: endTile.row === y && endTile.col === x,
-                       fast: delay.delay === 1,
-                       medium: delay.delay === 20,
-                       slow: delay.delay === 50,
-                       instant: delay.delay === 0
-                       }"
-              (mouseenter)="mouseEnter($event, y, x)"
-              (mousedown)="mouseDown($event, y, x)"
-              (mouseup)="mouseUp()"
-              (mouseleave)="mouseLeave($event, y, x)"
-             (touchstart)="mouseDown($event, y, x)"
-             (touchend)="mouseUp()">
-      </td>
-    </tr>
+      <tr *ngFor="let row of tiles; let y = index" style="background-color: #d4d4d4; border: none; ">
+        <td *ngFor="let tile of row; let x = index" style="padding: 0; margin: 0;">
+          <div [@.disabled]="!tile.animate" [@gridSquare]="tile.type + ' ' +  grid" class="{{grid}} grid-cell"  [attr.id]="'tile-'+y+':'+x"
+               [ngClass]="{ wall: tile.type === 'wall',
+                         blank: tile.type === 'blank',
+                         searched: tile.type === 'searched',
+                         start: startTile.row === y && startTile.col === x,
+                         end: endTile.row === y && endTile.col === x,
+                         instant: delay === delayOptions[0].delay,
+                         fast: delay === delayOptions[1].delay,
+                         medium: delay === delayOptions[2].delay,
+                         slow: delay === delayOptions[3].delay
+                         }"
+               (mouseenter)="mouseEnter($event, y, x)"
+               (mouseleave)="mouseLeave($event, y, x)"
+               (mousedown)="mouseDown($event, y, x)"
+               (mouseup)="mouseUp()"
+               (touchstart)="mouseDown($event, y, x)"
+               (touchend)="mouseUp()">
+
+          </div>
+        </td>
+      </tr>
     </tbody>
   </table>
 </div>
-<div class="disable-select" style="width: 100%" [ngStyle]="{}" appNoRightClick *ngIf="boardType === 'hex'" >
-  <div class="" style="display: table; margin: 20px auto 0; padding: 10px 12px 15px 8px;">
-    <div class="hex-row" *ngFor="let row of tiles; let y = index" style="display: block">
-      <div [@hex]="tile.type" class="newhex {{grid}}" *ngFor="let tile of row; let x = index" [attr.id]="'tile-'+y+':'+x" style="display: block; position: relative;"
-           [ngClass]="{ even: (x%2)===1,
-                        wall: tile.type === 'wall',
-                        blank: tile.type === 'blank',
-                        searched: tile.type === 'searched',
-                        start: startTile.row === y && startTile.col === x,
-                        end: endTile.row === y && endTile.col === x,
-                        fast: delay.delay === 1,
-                        medium: delay.delay === 20,
-                        slow: delay.delay === 50,
-                        instant: delay.delay === 0
-           }"
-           (mouseenter)="mouseEnter($event, y, x)"
-           (mousedown)="mouseDown($event, y, x)"
-           (mouseup)="mouseUp()"
-           (mouseleave)="mouseLeave($event, y, x)"
-           (touchstart)="mouseDown($event, y, x)"
-           (touchend)="mouseUp()"
-      >
+<div class="disable-select" style="padding: 20px; width: fit-content; margin: auto;" appNoRightClick *ngIf="loadedBoardType === 'hex'">
+  <table style="border-spacing: 0;border-collapse: collapse;">
+    <tbody>
+      <tr *ngFor="let row of tiles; let y = index" style=" border: none; ">
+        <td *ngFor="let tile of row; let x = index" class="hex-container"
+            style="position: relative" [ngClass]="{ 'container-even': (x%2)===1}">
+          <div [@.disabled]="!tile.animate" [@gridHex]="tile.type" class="hexagon inline"  [attr.id]="'tile-'+y+':'+x" [ngClass]="{ even: (x%2)===1,
 
-      </div>
-    </div>
-  </div>
+                         start: startTile.row === y && startTile.col === x,
+                         end: endTile.row === y && endTile.col === x,
+                         wall: tile.type === 'wall',
+                         blank: tile.type === 'blank',
+                         searched: tile.type === 'searched',instant: delay === delayOptions[0].delay,
+                         fast: delay === delayOptions[1].delay,
+                         medium: delay === delayOptions[2].delay,
+                         slow: delay === delayOptions[3].delay}"
+                         (mouseenter)="mouseEnter($event, y, x)"
+                         (mouseleave)="mouseLeave($event, y, x)"
+                         (mousedown)="mouseDown($event, y, x)"
+                         (mouseup)="mouseUp()"
+                         (touchstart)="mouseDown($event, y, x)"
+                         (touchend)="mouseUp()">
+          </div>
+
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div>
 <svg width="100%" height="100%" style="top: 0; left: 0; position:absolute;pointer-events: none">
   <line [id]="lines" *ngFor="let line of lines" class="line"
@@ -101,85 +120,85 @@
         stroke-linecap="round"
         style="z-index: 900"/>
 </svg>
-<mat-menu #algorithmMenu="matMenu" class="custom-menu">
-  <div (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" class="drop-down-menu">
-    <div style="width: 325px; margin: 0 auto">
-      <div style="text-align: center; display: flex; justify-content: space-between">
-        <span>Slow</span>
-        <span>Normal</span>
-        <span>Fast</span>
-        <span>Instant</span>
-      </div>
-    </div>
+<!--<mat-menu #algorithmMenu="matMenu" class="custom-menu">-->
+<!--  <div (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" class="drop-down-menu">-->
+<!--    <div style="width: 325px; margin: 0 auto">-->
+<!--      <div style="text-align: center; display: flex; justify-content: space-between">-->
+<!--        <span>Slow</span>-->
+<!--        <span>Normal</span>-->
+<!--        <span>Fast</span>-->
+<!--        <span>Instant</span>-->
+<!--      </div>-->
+<!--    </div>-->
 
-    <div style="width: 100%; text-align: center; display: flex; justify-content: space-around; margin: -10px auto">
-      <mat-slider
-        style="width: 325px; padding: 0"
-        class="example-margin"
-        [disabled]="globals.inProgress || boardLoading"
-        [max]="3"
-        [min]="0"
-        [step]="1"
-        [tickInterval]="1"
-        value="{{delaySliderOptions.indexOf(delay)}}"
-        (change)="resetPath(); changeSpeed($event.value)">
-      </mat-slider>
-    </div>
+<!--    <div style="width: 100%; text-align: center; display: flex; justify-content: space-around; margin: -10px auto">-->
+<!--      <mat-slider-->
+<!--        style="width: 325px; padding: 0"-->
+<!--        class="example-margin"-->
+<!--        [disabled]="globals.inProgress || boardLoading"-->
+<!--        [max]="3"-->
+<!--        [min]="0"-->
+<!--        [step]="1"-->
+<!--        [tickInterval]="1"-->
+<!--        value="{{delaySliderOptions.indexOf(delay)}}"-->
+<!--        (change)="resetPath(); changeSpeed()">-->
+<!--      </mat-slider>-->
+<!--    </div>-->
 
-    <mat-form-field appearance="fill" style="font-size: 10px; margin: 0 auto; padding-top: 8px; width: 325px">
-      <mat-label style="font-size: 15px">Select Board</mat-label>
-      <mat-select [(value)]="selectedBoard"   [disabled]="boardLoading || globals.inProgress" style="font-size: 15px;">
-        <mat-option (click)="loadBoard()" value="None">None</mat-option>
-        <mat-option (click)="loadBoard()" *ngFor="let board of boards; let i = index" value="{{board}}">{{board}}</mat-option>
-      </mat-select>
-    </mat-form-field>
+<!--    <mat-form-field appearance="fill" style="font-size: 10px; margin: 0 auto; padding-top: 8px; width: 325px">-->
+<!--      <mat-label style="font-size: 15px">Select Board</mat-label>-->
+<!--      <mat-select [(value)]="selectedBoard"   [disabled]="boardLoading || globals.inProgress" style="font-size: 15px;">-->
+<!--        <mat-option (click)="loadBoard()" value="None">None</mat-option>-->
+<!--        <mat-option (click)="loadBoard()" *ngFor="let board of boards; let i = index" value="{{board}}">{{board}}</mat-option>-->
+<!--      </mat-select>-->
+<!--    </mat-form-field>-->
 
-    <mat-accordion style="width: 325px; margin: 0 auto">
-      <mat-expansion-panel (opened)="algorithmChange('Dijkstra\'s Algorithm')">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            Dijkstra's Algorithm
-          </mat-panel-title>
-          <mat-panel-description>
-            {{algorithm === 'Dijkstra\'s Algorithm' ? 'Selected' : ''}}
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-      </mat-expansion-panel>
+<!--    <mat-accordion style="width: 325px; margin: 0 auto">-->
+<!--      <mat-expansion-panel (opened)="algorithmChange()">-->
+<!--        <mat-expansion-panel-header>-->
+<!--          <mat-panel-title>-->
+<!--            Dijkstra's Algorithm-->
+<!--          </mat-panel-title>-->
+<!--          <mat-panel-description>-->
+<!--            {{algorithm === 'Dijkstra\'s Algorithm' ? 'Selected' : ''}}-->
+<!--          </mat-panel-description>-->
+<!--        </mat-expansion-panel-header>-->
+<!--      </mat-expansion-panel>-->
 
-      <mat-expansion-panel  (opened)="algorithmChange('A* Algorithm')">
-        <mat-expansion-panel-header >
-          <mat-panel-title>
-            A* Algorithm
-          </mat-panel-title>
-          <mat-panel-description>
-            {{algorithm === 'A* Algorithm' ? 'Selected' : ''}}
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-        <mat-radio-group
-          aria-labelledby="example-radio-group-label"
-          class="heuristic-button-group"
-          [(ngModel)]="heuristic">
-          <div *ngFor="let h of heuristics">
-            <mat-radio-button *ngIf="h.boardType === boardType || h.boardType === 'both'" style="margin: 5px" [value]="h.value" (change)="heuristicChanged(h.value)">
-              {{h.label}}
-            </mat-radio-button>
-          </div>
-        </mat-radio-group>
-      </mat-expansion-panel>
+<!--      <mat-expansion-panel  (opened)="algorithmChange()">-->
+<!--        <mat-expansion-panel-header >-->
+<!--          <mat-panel-title>-->
+<!--            A* Algorithm-->
+<!--          </mat-panel-title>-->
+<!--          <mat-panel-description>-->
+<!--            {{algorithm === 'A* Algorithm' ? 'Selected' : ''}}-->
+<!--          </mat-panel-description>-->
+<!--        </mat-expansion-panel-header>-->
+<!--        <mat-radio-group-->
+<!--          aria-labelledby="example-radio-group-label"-->
+<!--          class="heuristic-button-group"-->
+<!--          [(ngModel)]="heuristic">-->
+<!--          <div *ngFor="let h of heuristics">-->
+<!--            <mat-radio-button *ngIf="h.boardType === boardType || h.boardType === 'both'" style="margin: 5px" [value]="h.value" (change)="heuristicChanged(h.value)">-->
+<!--              {{h.label}}-->
+<!--            </mat-radio-button>-->
+<!--          </div>-->
+<!--        </mat-radio-group>-->
+<!--      </mat-expansion-panel>-->
 
-    </mat-accordion>
-    <mat-checkbox *ngIf="boardType === 'square'" style="margin-top: 10px; margin-left: 5px" [color]="'accent'" [(ngModel)]="diagonal" (change)="diagonalChange()" [disabled]="globals.inProgress || boardLoading">Diagonal</mat-checkbox>
-    <mat-checkbox style="margin-top: 10px; margin-left: 5px" [color]="'accent'" [(ngModel)]="showGrid" (change)="gridChange()">Show Grid</mat-checkbox>
-  </div>
-</mat-menu>
-<div id="sheet" class="bottom-sheet-bg disable-select" draggable="false" (touchmove)="testSheet($event)" (touchend)="testSheetClick($event)" (touchstart)="touchStart($event)" (mousemove)="testSheet($event)" (mouseup)="testSheetClick($event)" (mousedown)="touchStart($event)">
+<!--    </mat-accordion>-->
+<!--    <mat-checkbox *ngIf="boardType === 'square'" style="margin-top: 10px; margin-left: 5px" [color]="'accent'" [(ngModel)]="diagonal" (change)="diagonalChange()" [disabled]="globals.inProgress || boardLoading">Diagonal</mat-checkbox>-->
+<!--    <mat-checkbox style="margin-top: 10px; margin-left: 5px" [color]="'accent'" [(ngModel)]="showGrid" (change)="gridChange()">Show Grid</mat-checkbox>-->
+<!--  </div>-->
+<!--</mat-menu>-->
+<div id="sheet" class="bottom-sheet-bg disable-select" draggable="false" (touchmove)="testSheet($event)" (touchend)="testSheetClick()" (touchstart)="touchStart($event)" (mousemove)="testSheet($event)" (mouseup)="testSheetClick()" (mousedown)="touchStart($event)">
 
   <div class="sheet-handle">
     <div class="sheet-knob"></div>
   </div>
 
   <div class="sheet-main-buttons">
-    <button pButton pRipple type="button" class="p-button-outlined" *ngIf="!globals.inProgress" style="margin-right: 8px" [disabled]="boardLoading" (click)="visualize(delay.delay)">Visualize</button>
+    <button pButton pRipple type="button" class="p-button-outlined" *ngIf="!globals.inProgress" style="margin-right: 8px" [disabled]="boardLoading" (click)="visualize(delay)">Visualize</button>
     <button pButton pRipple type="button" class="p-button-outlined" *ngIf="!globals.inProgress" style="margin-right: 8px" [disabled]="boardLoading" (click)="resetPath()">Reset Path</button>
     <button pButton pRipple type="button" class="p-button-outlined" *ngIf="!globals.inProgress" [disabled]="boardLoading" (click)="resetTiles()">Remove Walls</button>
     <button pButton pRipple type="button" class="p-button-outlined" *ngIf="globals.inProgress" (click)="cancel()">Cancel</button>
@@ -204,7 +223,7 @@
       [step]="1"
       [tickInterval]="1"
       value="2"
-      (change)="resetPath(); changeSpeed($event.value)">
+      (change)="resetPath(); changeSpeed()">
     </mat-slider>
   </div>
 
@@ -243,7 +262,7 @@
         aria-labelledby="example-radio-group-label"
         class="heuristic-button-group"
         [(ngModel)]="heuristic">
-        <mat-radio-button style="margin: 5px" *ngFor="let h of heuristics" [value]="h.value">
+        <mat-radio-button style="margin: 5px" *ngFor="let h of heuristicsHex" [value]="h.value">
           {{h.label}}
         </mat-radio-button>
       </mat-radio-group>

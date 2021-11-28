@@ -1,3 +1,4 @@
+@use "sass:math";
 @import "src/styles";
 
 $primary-color: var(--primary-color);
@@ -7,16 +8,63 @@ $wall-color: $primary-background-hover;
 $start-color: #32cd32;
 $end-color: orangered;
 $searched-color: $secondary-background;
+.noTransition {
+  -webkit-transition: none !important;
+  -moz-transition: none !important;
+  -o-transition: none !important;
+  transition: none !important;
+}
+.main-menubar {
+  background-color: $primary-background;
+}
+.p-menubar-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+}
+.menu-item{
+  margin-inline: .5rem;
+}
+.menu-button{
+  border-color: white;
+}
+.menu-button:enabled:hover{
+  border-color: darken(white, 15%);
+}
+.menu-button:enabled:active{
+  border-color: darken(white, 25%);
+}
+.settings-overlay {
+  width: 340px
+}
+//::ng-deep .p-overlaypanel:after{
+//  border-bottom-color: $primary-background;
+//}
+//::ng-deep .p-overlaypanel{
+//  background-color: $primary-background;
+//}
+::ng-deep .p-slider .p-slider-range{
+  background-color: $primary-background-focus;
+}
+::ng-deep .p-slider:not(.p-disabled) .p-slider-handle:hover{
+  background-color: $primary-background;
+  border-color: $primary-background;
+}
+::ng-deep .p-slider .p-slider-handle{
+  border-color: $primary-background;
+}
+.setting-popup-divider{
+  width: -webkit-fill-available;
+  border: 1px solid $form-filled-background;
+  border-radius: 5px;
 
-@mixin my-theme($my-theme) {
-  $primary: map-get($my-theme, primary);
-  $accent: map-get($my-theme, accent);
-
-  .mat-tab-label-active{
-    .mat-tab-icon {
-      background-color: $primary-background;
-    }
-  }
+}
+::ng-deep .p-radiobutton .p-radiobutton-box .p-radiobutton-icon{
+  background-color: $surface-content;
+}
+::ng-deep .p-buttonset .p-button{
+  flex: 1;
 }
 .mat-expansion-panel::ng-deep{
   background: #ffffff1a;
@@ -27,21 +75,24 @@ $searched-color: $secondary-background;
   }
 }
 ::ng-deep .custom-menu {
-  background-color: $primary-background;
+  background-color: $background
 }
-.grid-cell.blank {
+.blank {
   background-color: $background;
 }
-.grid-cell.start {
-  background-color: $start-color;
+.start {
+  background-color: $start-color !important;
 }
-.grid-cell.end {
-  background-color: $end-color;
+.end {
+  background-color: $end-color !important;
 }
-.grid-cell.wall{
+.wall{
+  //background-image: radial-gradient($wall-color 5%, $background 99%);
+  //background-size: 190% 100%;
+  //background-position: center;
   background-color: $wall-color;
 }
-.grid-cell.searched {
+.searched {
   background-color: $searched-color;
 }
 .disable-select {
@@ -57,20 +108,24 @@ $searched-color: $secondary-background;
   display: grid;
 }
 .grid-hide{
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
+  backface-visibility: hidden
 }
 .grid-show{
-  border: solid 1px #303030;
-  width: 25px;
-  height: 25px;
+  //border: solid 1px #303030;
+  width: 27px;
+  height: 27px;
+  backface-visibility: hidden
 }
 .grid-cell-container{
   display: inline-table;
   border-bottom: 1px solid #303030;
   border-right: 1px solid #303030;
 }
-
+.table-grid-show{
+  border-spacing: 1px!important;
+}
 .dragdrop-cell{
   position: absolute;
   top: 0;
@@ -106,229 +161,158 @@ $searched-color: $secondary-background;
     background-color: $searched-color;
   }
 }
-.grid-cell.searched.fast{
-  animation: pathfindingFastGridCell 2s;
-}
-.grid-cell.searched.medium, .grid-cell.searched.slow{
-  animation: pathfindingGridCell 2s;
-}
+//.grid-cell.searched.fast{
+//  animation: pathfindingFastGridCell 2s;
+//}
+//.grid-cell.searched.medium, .grid-cell.searched.slow{
+//  animation: pathfindingGridCell 2s;
+//}
+$hexagon-height: 32px;
+$hexagon-width: $hexagon-height / math.sqrt(3);
+//.hexagon.wall {
+//  animation-name: hexBlankToWall;
+//  animation-duration: .5s;
+//  animation-iteration-count: 1;
+//  animation-timing-function: linear;
+//  //  animation-fill-mode: forwards;
+//}
+//.hexagon.blank {
+//  animation-name: hexWallToBlank;
+//  animation-duration: .5s;
+//  animation-iteration-count: 1;
+//  animation-timing-function: linear;
+//  //  animation-fill-mode: forwards;
+//}
 
-@keyframes pathfindingHex {
+@keyframes hexBlankToWall {
+
   0%{
-    background-color: yellow;
-  }
-  2%{
+    transform: scale(.95, .95);
     background-color: $background;
   }
-  5%{
-    transform: scale(.3);
-    background-color: darken($searched-color, 40%);
+  50%{
+    transform: scale(0, 0);
+    background-color: $background;
   }
-  40%{
-    transform: scale(.6) rotate(90deg);
+  51%{
+    transform: scale(0, 0);
+    background-color: $wall-color;
   }
   100%{
-    transform: scale(1) rotate(90deg);;
-    background-color: $searched-color;
+    transform: scale(.95, .95);
+    background-color: $wall-color;
   }
 }
-@keyframes pathfindingFastHex {
+@keyframes hexWallToBlank {
+
   0%{
-    background-color: darken($searched-color, 30%);
-
+    transform: scale(.95, .95);
+    background-color: $wall-color;
+  }
+  50%{
+    transform: scale(0, 0);
+    background-color: $wall-color;
+  }
+  51%{
+    transform: scale(0, 0);
+    background-color: $background;
   }
   100%{
-    background-color: $searched-color;
+    transform: scale(.95, .95);
+    background-color: $background;
   }
 }
-.newhex.searched.fast{
-  animation: pathfindingFastHex 2s;
-}
-.newhex.searched.medium{
-  animation: pathfindingHex 3s;
-}
-.newhex.searched.slow{
-  animation: pathfindingHex 3s;
-}
-@keyframes pathfindingAfter {
+@keyframes hexBlankToWallBeforeAfter {
+
   0%{
-    border-top-color: yellow;
+    top: -$hexagon-height/2;
   }
-  2%{
-    border-top-color: $background;
+  50%{
+    top: 0;
   }
-  5%{
-    border-top-color: darken($searched-color, 40%);
-
+  51%{
+    top: 0;
   }
   100%{
-    border-top-color: $searched-color;
+    top: -$hexagon-height/2;
   }
 }
-@keyframes pathfindingFastAfter {
+@keyframes hexWallToBlankBeforeAfter {
   0%{
-    border-top-color: darken($searched-color, 30%);
-
+    top: -$hexagon-height/2;
+  }
+  50%{
+    top: 0;
+  }
+  51%{
+    top: 0;
   }
   100%{
-    border-top-color: $searched-color;
+    top: -$hexagon-height/2;
   }
 }
-@keyframes pathfindingBefore {
-  0%{
-    border-bottom-color: yellow;
-  }
-  2%{
-    border-bottom-color: $background;
-  }
-  5%{
-    border-bottom-color: darken($searched-color, 40%);
+.hex-container{
+  padding-block: $hexagon-height/2;
+  padding-inline: $hexagon-width*(3/4);
+}
+.hexagon {
+  $hexagon-color-1: #00ffb8;
+  $hexagon-color-2: #13ce9a;
 
-  }
-  100%{
-    border-bottom-color: $searched-color;
-  }
-}
-@keyframes pathfindingFastBefore {
-  0%{
-    border-bottom-color: darken($searched-color, 30%);
-
-  }
-  100%{
-    border-bottom-color: $searched-color;
-  }
-}
-.newhex.searched.fast::after{
-  animation: pathfindingFastAfter 2s;
-}
-.newhex.searched.medium::after, .newhex.searched.slow::after{
-  animation: pathfindingAfter 3s;
-}
-.newhex.searched.fast::before{
-  animation: pathfindingFastBefore 2s;
-}
-.newhex.searched.medium::before, .newhex.searched.slow::before{
-  animation: pathfindingBefore 3s;
-}
-
-
-.newhex.blank {
-  background-color: $background;
-}
-.newhex.blank::after {
-  border-top-color: $background;
-}
-.newhex.blank::before {
-  border-bottom-color: $background;
-}
-.newhex.start {
-  background-color: $start-color;
-}
-.newhex.start::after {
-  border-top-color: $start-color;
-}
-.newhex.start::before {
-  border-bottom-color: $start-color;
-}
-.newhex.end {
-  background-color: $end-color;
-}
-.end.newhex::after {
-  border-top-color: $end-color;
-}
-.end.newhex::before {
-  border-bottom-color: $end-color;
-}
-.newhex.wall{
-  background-color: $wall-color;
-}
-.newhex.wall::after {
-  border-top-color: $wall-color;
-}
-.newhex.wall::before {
-  border-bottom-color: $wall-color;
-}
-.newhex.searched {
-  background-color: $searched-color;
-}
-.newhex.searched::after {
-  border-top-color: $searched-color;
-}
-.newhex.searched::before {
-  border-bottom-color: $searched-color;
-}
-
-.newhex {
-  transform: rotate(
-      90deg
-  );
-  float: left;
-  min-width: 30px;
-  height: 18px;
-  position: relative;
-  margin-top: 0;
-  margin-right: -4px;
-  margin-bottom: -4px;
-}
-.newhex.grid-hide{
-  min-width: 32px;
-  height: 20px;
-}
-.newhex.grid-show{
-  min-width: 30px;
-  height: 18px;
-}
-.newhex:before {
-  content: " ";
-  width: 0; height: 0;
+  width: $hexagon-width;
+  height: $hexagon-height;
+  //background-color: $background;
+  //background-image: linear-gradient(90deg, $hexagon-color-1, $hexagon-color-2);
+  //border-radius: ($hexagon-size / 10);
   position: absolute;
-  top: -9px;
-  border-bottom: 9px solid $background;
+  left: $hexagon-width/4;
+  top: 0;
+  box-sizing: border-box;
+  &:before,
+  &:after {
+    content: '';
+    display: block;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: inherit;
+    height: inherit;
+    background: inherit;
+    background-size: inherit;
+    border-radius: inherit;
+    position: inherit;
+    box-sizing: inherit;
+    border: inherit;
+  }
 
-}
-.newhex.grid-show:before, .newhex.grid-show:after {
-  border-left: 15px solid transparent;
-  border-right: 15px solid transparent;
-}
-.newhex.grid-hide:before, .newhex.grid-hide:after {
-  border-left: 16px solid transparent;
-  border-right: 16px solid transparent;
-}
-.newhex:after {
-  content: "";
-  width: 0;
-  position: absolute;
-  bottom: -9px;
-  border-top: 9px solid $background;
+  &:before {
+    transform: rotate(60deg);
+  }
 
+  &:after {
+    transform: rotate(-60deg);
+  }
 }
-.newhex.even {
-  margin-top: 16px;
+.inline{
+  -webkit-transform: scale(.95, .95);
+  -moz-transform: scale(.95, .95);
+  transform: scale(.95, .95);
 }
-.newhex.noTransition, .newhex.noTransition:after, .newhex.noTransition:before, .noTransition{
-  -webkit-transition: none !important;
-  -moz-transition: none !important;
-  -o-transition: none !important;
-  transition: none !important;
-  -webkit-animation: none !important;
-  -moz-animation: none !important;
-  -o-animation: none !important;
-  animation: none !important;
+.dark{
+  background-color: $surface-content;
 }
-.hex-row {
-  clear: left;
+$hex-grid-hide-side-length: 20px;
+$hex-grid-hide-short-leg: math.sqrt(3) * $hex-grid-hide-side-length;
+$hex-grid-hide-before-after-length: math.div($hex-grid-hide-side-length, 2);
+
+$hex-grid-show-side-length: 18px;
+$hex-grid-show-short-leg: math.sqrt(3) * $hex-grid-show-side-length;
+$hex-grid-show-before-after-length: math.div($hex-grid-show-side-length, 2);
+.container-even{
+  top: $hexagon-height/2
 }
-::ng-deep.mat-menu-panel {
-  max-width: none !important;
-}
-.mat-menu-content{
-  background: $primary-background;
-}
-.heuristic-button-group {
-  display: flex;
-  flex-direction: column;
-  margin: 15px 0;
-}
+.hexagon.even {}
 .drop-down-menu{
   padding: 10px;
   height: 200%;

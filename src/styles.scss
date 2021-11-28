@@ -98,10 +98,6 @@ $purple-600:#852196;
 $purple-700:#6d1b7b;
 $purple-800:#561561;
 $purple-900:#3e1046;
-$surface-content:#1e1e1e;
-$text-color:rgba(255, 255, 255, 0.87);
-$text-color-secondary:rgba(255, 255, 255, 0.6);
-$primary-color-text:#212529;
 $surface-0: #121212;
 $surface-50: #2a2a2a;
 $surface-100: #414141;
@@ -123,6 +119,10 @@ $gray-600: #595959;
 $gray-700: #414141;
 $gray-800: #2a2a2a;
 $gray-900: #121212;
+$surface-content:#1e1e1e;
+$text-color:rgba(255, 255, 255, 0.87);
+$text-color-secondary:rgba(255, 255, 255, 0.6);
+$primary-color-text: #ffffff;
 $surface-ground:#121212;
 $surface-section:#121212;
 $surface-border:#383838;
@@ -157,53 +157,53 @@ $message-error-border:#E60017;
 $message-error-color:#73000C;
 
 $primary-background: #008081;
-$primary-background-hover:darken($primary-background, 13%);
-$primary-background-focus:0 0 0 1px lighten($primary-background, 15%);
-$primary-background-active:darken($primary-background, 25%);
-$primary-background-outline-hover:transparentize($primary-background, .04);
-$primary-background-outline-active:transparentize($primary-background, .16);
+$primary-background-hover:darken($primary-background, 3%);
+$primary-background-focus:0 0 0 1px lighten($primary-background, 5%);
+$primary-background-active:darken($primary-background, 6%);
+$primary-background-outline-hover:transparentize($primary-background, .96);
+$primary-background-outline-active:transparentize($primary-background, .84);
 
 $secondary-background: #d39eff;
-$secondary-background-hover:darken($secondary-background, 13%);
-$secondary-background-focus:0 0 0 1px lighten($secondary-background, 15%);
+$secondary-background-hover:darken($secondary-background, 3%);
+$secondary-background-focus:0 0 0 1px lighten($secondary-background, 5%);
 $secondary-background-active:darken($secondary-background, 25%);
-$secondary-background-outline-hover:transparentize($secondary-background, .04);
-$secondary-background-outline-active:transparentize($secondary-background, .16);
+$secondary-background-outline-hover:transparentize($secondary-background, .96);
+$secondary-background-outline-active:transparentize($secondary-background, .84);
 
 $info-background:#81D4FA;
-$info-background-hover:darken($info-background, 13%);
-$info-background-focus:0 0 0 1px lighten($info-background, 15%);
-$info-background-active:darken($info-background, 25%);
-$info-background-outline-hover:transparentize($info-background, .04);
-$info-background-activee-active:transparentize($info-background, .16);
+$info-background-hover:darken($info-background, 3%);
+$info-background-focus:0 0 0 1px lighten($info-background, 5%);
+$info-background-active:darken($info-background, 6%);
+$info-background-outline-hover:transparentize($info-background, .96);
+$info-background-activee-active:transparentize($info-background, .84);
 
 $success-background:#C5E1A5;
-$success-background-hover:darken($success-background, 13%);
-$success-background-focus:0 0 0 1px lighten($success-background, 15%);
-$success-background-active:darken($success-background, 25%);
-$success-background-outline-hover:transparentize($success-background, .04);
-$success-background-outline-active:transparentize($success-background, .16);
+$success-background-hover:darken($success-background, 3%);
+$success-background-focus:0 0 0 1px lighten($success-background, 5%);
+$success-background-active:darken($success-background, 6%);
+$success-background-outline-hover:transparentize($success-background, .96);
+$success-background-outline-active:transparentize($success-background, .84);
 
 $warning-background:#FFE082;
-$warning-background-hover:darken($warning-background, 13%);
-$warning-background-focus:0 0 0 1px lighten($warning-background, 15%);
-$warning-background-active:darken($warning-background, 25%);
-$warning-background-outline-hover:transparentize($warning-background, .04);
-$warning-background-activee-active:transparentize($warning-background, .16);
+$warning-background-hover:darken($warning-background, 3%);
+$warning-background-focus:0 0 0 1px lighten($warning-background, 5%);
+$warning-background-active:darken($warning-background, 6%);
+$warning-background-outline-hover:transparentize($warning-background, .96);
+$warning-background-activee-active:transparentize($warning-background, .84);
 
 $help-background:#CE93D8;
-$help-background-hover:darken($help-background, 13%);
-$help-background-focus:0 0 0 1px lighten($help-background, 15%);
-$help-background-active:darken($help-background, 25%);
-$help-background-outline-hover:transparentize($help-background, .04);
-$help-background-activee-active:transparentize($help-background, .16);
+$help-background-hover:darken($help-background, 3%);
+$help-background-focus:0 0 0 1px lighten($help-background, 5%);
+$help-background-active:darken($help-background, 6%);
+$help-background-outline-hover:transparentize($help-background, .96);
+$help-background-activee-active:transparentize($help-background, .84);
 
 $danger-background:#F48FB1;
-$danger-background-hover:darken($danger-background, 13%);
-$danger-background-focus:0 0 0 1px lighten($danger-background, 15%);
-$danger-background-active:darken($danger-background, 25%);
-$danger-background-outline-hover:transparentize($danger-background, .04);
-$danger-background-activee-active:transparentize($danger-background, .16);
+$danger-background-hover:darken($danger-background, 3%);
+$danger-background-focus:0 0 0 1px lighten($danger-background, 5%);
+$danger-background-active:darken($danger-background, 6%);
+$danger-background-outline-hover:transparentize($danger-background, .96);
+$danger-background-activee-active:transparentize($danger-background, .84);
 
 
 
@@ -211,11 +211,21 @@ $danger-background-activee-active:transparentize($danger-background, .16);
 
 :root{
   --primary-background: #{$primary-background};
-  --primary-background-active: #{$primary-background-active};
+  --primary-background-active: #{$primary-background-hover};
   --secondary-background: #{$secondary-background};
   --secondary-background-active: #{$secondary-background-active};
 }
 
+body, html{
+  //height: 100%;
+  background-color: $surface-content;
+  font-family: $font-family;
+  //margin: 0;
+}
+html{
+  height: 100%;
+
+}
 * {
   box-sizing: border-box;
 }

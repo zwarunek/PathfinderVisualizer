@@ -7,11 +7,13 @@ import {MatSnackBar, MatSnackBarRef} from '@angular/material/snack-bar';
 import {GraphUtilsService} from '../Services/graph-utils.service';
 import {WindowRefService} from '../Services/window-ref.service';
 import {isPlatformBrowser} from '@angular/common';
-import {gridSquareTrigger, hexTrigger} from '../animations';
+import {gridHexTrigger, gridSquareTrigger} from '../animations';
+import {MenuItem} from 'primeng/api';
 
 export interface Tile {
   type: any;
   distance: any;
+  animate: any;
 }
 export interface Line{
   weight: number;
@@ -30,7 +32,7 @@ export interface Coords {
   styleUrls: ['./home.component.scss'],
   animations: [
     gridSquareTrigger,
-    hexTrigger
+    gridHexTrigger
   ]
 })
 
@@ -41,13 +43,15 @@ export class HomeComponent implements OnInit {
   draggingStart = false;
   draggingEnd = false;
   boards: any[];
+  algorithmList: any[];
   boardLoading = false;
   algorithm = 'Dijkstra\'s Algorithm';
 
   lines: any[] = [];
 
   delay: any;
-  delaySliderOptions: any[];
+  delayOptions: any[];
+  sliderValue: any;
   statsSnackbar: MatSnackBarRef<any>;
 
   startTile: { row: any, col: any };
@@ -60,18 +64,24 @@ export class HomeComponent implements OnInit {
   tileGraph: number[][];
   adjList: any[][] = [];
   diagonal = false;
+  items: MenuItem[];
   // temp: any[][] = [];
 
 // 12x12 12x52
   grid: any;
   showGrid: boolean;
-  selectedBoard = 'None';
+  selectedBoard: any;
+  boardTypeOptions: any[];
   boardType: any;
+  loadedBoardType: any;
   heuristic: string;
-  heuristics: any[] = [
-    {label: 'Manhattan', value: 'manhattan', boardType: 'square'},
-    {label: 'Manhattan', value: 'hex', boardType: 'hex'},
-    {label: 'Euclidean', value: 'euclidean', boardType: 'both'},
+  heuristicsSquare: any[] = [
+    {label: 'Manhattan', value: 'manhattan'},
+    {label: 'Euclidean', value: 'euclidean'},
+  ];
+  heuristicsHex: any[] = [
+    {label: 'Manhattan', value: 'hex'},
+    {label: 'Euclidean', value: 'euclidean'},
   ];
   sheetOpenPos: number;
   sheetCloseHeight = 82;
@@ -96,26 +106,32 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
 
 
-    this.delaySliderOptions = [
+    this.delayOptions = [
       {
         delay: 50,
-        label: 'Slow',
-        value: 1
+        label: 'Slow'
       },
       {
         delay: 20,
-        label: 'Normal',
-        value: 2
+        label: 'Normal'
       },
       {
         delay: 1,
-        label: 'Fast',
-        value: 3
+        label: 'Fast'
       },
       {
         delay: 0,
-        label: 'Instant',
-        value: 4
+        label: 'Instant'
+      }
+    ];
+    this.boardTypeOptions = [
+      {
+        label: 'Square',
+        value: 'square'
+      },
+      {
+        label: 'Hex',
+        value: 'hex'
       }
     ];
 
@@ -127,26 +143,33 @@ export class HomeComponent implements OnInit {
       this.sheetOpenPos = window.innerHeight * .2;
 
       // this.boardType = this.route.snapshot.paramMap.get('boardType');
-      this.boardType = 'square';
+      if (localStorage.getItem('boardType') === null) {
+        localStorage.setItem('boardType', '0');
+      }
+      this.boardType = this.boardTypeOptions[parseInt(localStorage.getItem('boardType'), 10)];
+      console.log(this.boardType);
+      this.loadedBoardType = this.boardType.value;
       const bottomOffset = window.innerWidth > 991 ? 0 : this.sheetCloseHeight;
-      if (this.boardType === 'square') {
-        this.cols = Math.floor((window.innerWidth - 40) / 28) - (Math.floor((window.innerWidth - 40) / 28) % 2 === 1 ? 0 : 1);
-        this.rows = Math.floor(
-          (window.innerHeight - bottomOffset - 104) / 28) -
-          (Math.floor((window.innerHeight - bottomOffset - 104) / 28) % 2 === 1 ? 0 : 1);
-      } else if (this.boardType === 'hex') {
+      if (this.boardType.value === 'square') {
         this.cols = Math.floor((window.innerWidth - 40) / 29) - (Math.floor((window.innerWidth - 40) / 29) % 2 === 1 ? 0 : 1);
         this.rows = Math.floor(
-          (window.innerHeight - this.sheetCloseHeight - 104) / 31) -
-          (Math.floor((window.innerHeight - this.sheetCloseHeight - 104) / 31) % 2 === 1 ? 0 : 1);
+          (window.innerHeight - bottomOffset - 104) / 29) -
+          (Math.floor((window.innerHeight - bottomOffset - 104) / 29) % 2 === 1 ? 0 : 1);
+        console.log(this.cols, this.rows);
+      } else if (this.boardType.value === 'hex') {
+        this.cols = Math.floor((window.innerWidth - 40) / 35) - (Math.floor((window.innerWidth - 40) / 35) % 2 === 1 ? 0 : 1);
+        this.rows = Math.floor(
+          (window.innerHeight - bottomOffset - 104) / 40) -
+          (Math.floor((window.innerHeight - bottomOffset - 104) / 40) % 2 === 1 ? 0 : 1);
       }
+      console.log(this.rows, this.cols, window.innerHeight, window.innerWidth);
       this.numTiles = this.rows * this.cols;
 
       this.tiles = [];
       for (let i = 0; i < this.rows; i++) {
         this.tiles[i] = [];
         for (let j = 0; j < this.cols; j++) {
-          this.tiles[i][j] = {type: 'blank', distance: 1};
+          this.tiles[i][j] = {type: 'blank', distance: 1, animate: true};
         }
       }
       this.startTile = {row: Math.floor(this.rows / 2) - 1, col: Math.floor(this.cols / 6)};
@@ -155,10 +178,10 @@ export class HomeComponent implements OnInit {
       this.tiles[this.endTile.row][this.endTile.col].type = 'end';
 
       if (localStorage.getItem('delay') === null) {
-        localStorage.setItem('delay', '2');
+        localStorage.setItem('delay', '1');
       }
-      this.delay = this.delaySliderOptions[localStorage.getItem('delay')];
-
+      this.sliderValue = this.delayOptions[parseInt(localStorage.getItem('delay'), 10)];
+      this.delay = this.sliderValue;
       if (localStorage.getItem('grid') === null) {
         localStorage.setItem('grid', String(true));
       }
@@ -180,6 +203,7 @@ export class HomeComponent implements OnInit {
     this.lines = [];
 
     this.boards = ['Recursive Maze'];
+    this.algorithmList = ['Dijkstra\'s Algorithm', 'A* Algorithm'];
   }
 
   setGraph(): void {
@@ -230,7 +254,7 @@ export class HomeComponent implements OnInit {
           this.tiles[Math.floor(i / this.cols)][i % this.cols].distance * Math.sqrt(2);
       }
     }
-    if (this.boardType === 'hex') {
+    if (this.boardType.value === 'hex') {
       if (i > this.cols && c > 0 && c % 2 !== 1) {
         this.tileGraph[i - this.cols - 1][i] = this.tileGraph[i][i - this.cols - 1] =
           this.tiles[Math.floor((i - this.cols - 1) / this.cols)][(i - this.cols - 1) % this.cols].distance *
@@ -268,14 +292,19 @@ export class HomeComponent implements OnInit {
 
     if (this.draggingStart && JSON.stringify(this.endTile) !== JSON.stringify({row, col})) {
       this.startTile = {row, col};
-      this.setNonWall('start', row, col, false);
-
-    } else if (this.draggingEnd && JSON.stringify(this.startTile) !== JSON.stringify({row, col})) {
+      if (this.tiles[row][col].type === 'wall'){
+        this.setNonWall('wall', row, col, true);
+      }
+    }
+    //
+    else if (this.draggingEnd && JSON.stringify(this.startTile) !== JSON.stringify({row, col})) {
       this.endTile = {row, col};
-      this.setNonWall('end', row, col, false);
-
-    } else if (this.draggingWall && JSON.stringify(this.startTile) !== JSON.stringify({row, col}) &&
-      JSON.stringify(this.endTile) !== JSON.stringify({row, col})) {
+      if (this.tiles[row][col].type === 'wall'){
+        this.setNonWall('wall', row, col, true);
+      }
+    }
+    if (this.draggingWall && JSON.stringify(this.startTile) !== JSON.stringify({row, col}) &&
+    JSON.stringify(this.endTile) !== JSON.stringify({row, col})) {
 
       if (this.tiles[row][col].type !== 'wall') {
         this.setWall(row, col, !this.globals.finished);
@@ -327,7 +356,12 @@ export class HomeComponent implements OnInit {
     }
     if ((this.draggingStart && JSON.stringify(this.endTile) !== JSON.stringify({row, col})) ||
       (this.draggingEnd && JSON.stringify(this.startTile) !== JSON.stringify({row, col}))) {
-      this.setNonWall('blank', row, col, false);
+      if (this.tiles[row][col].type === 'blank') {
+        this.setNonWall('blank', row, col, false);
+      }
+      else if (this.tiles[row][col].type === 'wall') {
+        this.setWall(row, col, !this.globals.finished);
+ }
     }
   }
 
@@ -336,13 +370,7 @@ export class HomeComponent implements OnInit {
   }
 
   setWall(row, col, animation): void {
-    const tile = document.getElementById('tile-' + row + ':' + col);
-
-    if (animation) {
-      tile.classList.remove('noTransition');
-    } else {
-      tile.classList.add('noTransition');
-    }
+    this.tiles[row][col].animate = animation;
     this.tiles[row][col].type = 'wall';
     this.tiles[row][col].distance = 0;
     this.removeFromGraph(row * this.cols + col);
@@ -351,23 +379,18 @@ export class HomeComponent implements OnInit {
   setNonWall(type: any, row, col, animation): void {
     this.tiles[row][col].type = type;
     this.tiles[row][col].distance = 1;
-    const tile = document.getElementById('tile-' + row + ':' + col);
-    if (animation) {
-      tile.classList.remove('noTransition');
-    } else {
-      tile.classList.add('noTransition');
-    }
+    this.tiles[row][col].animate = animation;
     let neighbors;
-    if (this.boardType === 'square') {
+    if (this.boardType.value === 'square') {
       neighbors = this.graphUtils.findNeighborsSquare(row, col, this.rows, this.cols, this.diagonal);
-    } else if (this.boardType === 'hex') {
+    } else if (this.boardType.value === 'hex') {
       neighbors = this.graphUtils.findNeighborsHex(row, col, this.rows, this.cols);
     }
     for (const neighbor of neighbors) {
       if (this.tiles[neighbor.row][neighbor.col].distance > 0) {
         this.addEdge(parseInt(row, 10) * this.cols + parseInt(col, 10),
           neighbor.row * this.cols + neighbor.col,
-          neighbor.col !== col && neighbor.row !== row && this.boardType === 'square' ? Math.sqrt(2) : 1);
+          neighbor.col !== col && neighbor.row !== row && this.boardType.value === 'square' ? Math.sqrt(2) : 1);
       }
     }
   }
@@ -375,8 +398,8 @@ export class HomeComponent implements OnInit {
   getOffset(el): any {
     const rect = el.getBoundingClientRect();
     return {
-      left: rect.left + window.pageXOffset,
-      top: rect.top + window.pageYOffset,
+      left: rect.left + window.scrollX,
+      top: rect.top + window.scrollY,
       width: rect.width || el.offsetWidth,
       height: rect.height || el.offsetHeight
     };
@@ -409,7 +432,7 @@ export class HomeComponent implements OnInit {
       this.cols,
       this.heuristic,
       this.diagonal,
-      this.boardType);
+      this.boardType.value);
     time = window.performance.now() - time;
     this.globals.pathExists = path.path !== undefined;
     this.displayPath(path, delay).then(() => {
@@ -430,9 +453,8 @@ export class HomeComponent implements OnInit {
     this.lines = [];
     for (let i = 0; i < this.rows; i++) {
       for (let j = 0; j < this.cols; j++) {
-        const tile = document.getElementById('tile-' + i + ':' + j);
         if (this.tiles[i][j].type === 'searched') {
-          tile.classList.add('noTransition');
+          this.tiles[i][j].animate = false;
           this.tiles[i][j].type = 'blank';
         }
       }
@@ -468,12 +490,8 @@ export class HomeComponent implements OnInit {
       if (this.tiles[tile.row]  [tile.col].type === 'blank' &&
         JSON.stringify(this.startTile) !== JSON.stringify({row: tile.row, col: tile.col}) &&
         JSON.stringify(this.endTile) !== JSON.stringify({row: tile.row, col: tile.col})) {
-        const tileElement = document.getElementById('tile-' + tile.row + ':' + tile.col);
-        tileElement.classList.remove('noTransition');
+        this.tiles[tile.row][tile.col].animate = delay !== 0;
         this.tiles[tile.row][tile.col].type = 'searched';
-        if (delay === 0) {
-          tileElement.classList.add('noTransition');
-        }
         if (delay > 0) {
           await this.sleep(delay);
         }
@@ -504,17 +522,19 @@ export class HomeComponent implements OnInit {
     this.grid = this.showGrid ? 'grid-show' : 'grid-hide';
   }
 
-  changeSpeed(delay: any): void {
-    this.delay = this.delaySliderOptions[parseInt(delay, 10)];
-    localStorage.setItem('delay', delay);
+  changeSpeed(): void {
+    if (this.delay !== this.sliderValue){
+      this.delay = this.sliderValue.delay;
+      console.log(String(this.delayOptions.indexOf(this.sliderValue)));
+      localStorage.setItem('delay', String(this.delayOptions.indexOf(this.sliderValue)));
+    }
   }
 
-  heuristicChanged(value: any): void{
-    localStorage.setItem('heuristic', value);
+  heuristicChanged(): void{
+    localStorage.setItem('heuristic', this.heuristic);
   }
-  algorithmChange(algorithm: any): void {
-    this.algorithm = algorithm;
-    localStorage.setItem('algorithm', algorithm);
+  algorithmChange(): void {
+    localStorage.setItem('algorithm', this.algorithm);
   }
 
   printMatrix(): void {
@@ -533,7 +553,8 @@ export class HomeComponent implements OnInit {
     this.boardLoading = true;
     this.resetPath();
     this.resetTiles();
-    if (this.selectedBoard === 'None') {
+    console.log(this.selectedBoard);
+    if (this.selectedBoard === null) {
       this.resetTiles();
       this.boardLoading = false;
       return;
@@ -548,6 +569,11 @@ export class HomeComponent implements OnInit {
       }
     }
     this.boardLoading = false;
+  }
+
+  changeBoardType(): void {
+    localStorage.setItem('boardType', String(this.boardTypeOptions.indexOf(this.boardType)));
+    window.location.reload();
   }
 
   testSheet(e: any): void {
@@ -565,7 +591,7 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  testSheetClick(e): void {
+  testSheetClick(): void {
     const sheet = document.getElementById('sheet');
     const sheetTop = parseInt(sheet.style.top.slice(0, -2), 10);
     // send to bottom
@@ -600,9 +626,5 @@ export class HomeComponent implements OnInit {
     if (this.globals.finished) {
       this.visualize(0);
     }
-  //   this.cancel();
-  //   const sheet = document.getElementById('sheet');
-  //   sheet.style.transition = 'none';
-  //   this.ngOnInit();
   }
 }

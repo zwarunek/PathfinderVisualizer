@@ -50,3 +50,4 @@ deployment/.elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
 /deployment/
+/.angular
