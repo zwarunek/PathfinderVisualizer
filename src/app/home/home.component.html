@@ -80,34 +80,34 @@
     </tbody>
   </table>
 </div>
-<div class="disable-select" style="padding: 20px; width: fit-content; margin: auto;" appNoRightClick *ngIf="loadedBoardType === 'hex'">
-  <table style="border-spacing: 0;border-collapse: collapse;">
-    <tbody>
-      <tr *ngFor="let row of tiles; let y = index" style=" border: none; ">
-        <td *ngFor="let tile of row; let x = index" class="hex-container"
-            style="position: relative" [ngClass]="{ 'container-even': (x%2)===1}">
-          <div [@.disabled]="!tile.animate" [@gridHex]="tile.type" class="hexagon inline"  [attr.id]="'tile-'+y+':'+x" [ngClass]="{ even: (x%2)===1,
+<div>
+  <svg [attr.viewBox]="'-200 -174 ' + (200 + 150*tiles[0].length + 50) + ' ' + (174 + 174*tiles.length + 87)" class="disable-select" style="padding: 20px; width: 100%; margin: auto;" appNoRightClick *ngIf="loadedBoardType === 'hex'">
+    <g class="grid">
+      <g *ngFor="let row of tiles; let y = index" style=" border: none; " [style.transform]="'translateY(' + (173 * y) + 'px)'">
+        <g [attr.id]="y+':'+x" *ngFor="let tile of row; let x = index" [style.transform]="'translate(' + (150 * x) + 'px, ' + ((x%2===1 ? 87 : 0)) + 'px)'"
+           style="position: relative;">
+          <polygon points="100,0 50,-87 -50,-87 -100,-0 -50,87 50,87" class="svg-hex" [@gridHex]="tile.type" (click)="testClick()" style="
+            /* pointer-events: visiblePainted; */"
+                   [@.disabled]="!tile.animate"  [attr.id]="'tile-'+y+':'+x" [ngClass]="{ even: (x%2)===1,
 
                          start: startTile.row === y && startTile.col === x,
                          end: endTile.row === y && endTile.col === x,
                          wall: tile.type === 'wall',
                          blank: tile.type === 'blank',
-                         searched: tile.type === 'searched',instant: delay === delayOptions[0].delay,
-                         fast: delay === delayOptions[1].delay,
-                         medium: delay === delayOptions[2].delay,
-                         slow: delay === delayOptions[3].delay}"
-                         (mouseenter)="mouseEnter($event, y, x)"
-                         (mouseleave)="mouseLeave($event, y, x)"
-                         (mousedown)="mouseDown($event, y, x)"
-                         (mouseup)="mouseUp()"
-                         (touchstart)="mouseDown($event, y, x)"
-                         (touchend)="mouseUp()">
-          </div>
-
-        </td>
-      </tr>
-    </tbody>
-  </table>
+                         searched: tile.type === 'searched',instant: delay === delayOptions[0],
+                         fast: delay === delayOptions[1],
+                         medium: delay === delayOptions[2],
+                         slow: delay === delayOptions[3]}"
+                   (mouseenter)="mouseEnter($event, y, x)"
+                   (mouseleave)="mouseLeave($event, y, x)"
+                   (mousedown)="mouseDown($event, y, x)"
+                   (mouseup)="mouseUp()"
+                   (touchstart)="mouseDown($event, y, x)"
+                   (touchend)="mouseUp()"/>
+        </g>
+      </g>
+    </g>
+  </svg>
 </div>
 <svg width="100%" height="100%" style="top: 0; left: 0; position:absolute;pointer-events: none">
   <line [id]="lines" *ngFor="let line of lines" class="line"

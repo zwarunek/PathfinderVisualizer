@@ -10,7 +10,7 @@ export const gridSquareTrigger = trigger('gridSquare', [
   },  [
     animate('0.3s', keyframes([
       style({'z-index': 100,
-        transform: 'matrix(.01, 0, 0, .01, 0, 0)',
+        transform: 'scale(01%)',
         'background-color': Colors.wallColor,
         offset: 0}),
       style({'z-index': 100,
@@ -32,7 +32,7 @@ export const gridSquareTrigger = trigger('gridSquare', [
       }),
       style({
         'z-index': 100,
-        transform: 'matrix(.01, 0, 0, .01, 0, 0)',
+        transform: 'scale(01%)',
         'background-color': Colors.wallColor,
         offset: 1
       })
@@ -45,7 +45,7 @@ export const gridSquareTrigger = trigger('gridSquare', [
     animate('0.3s', keyframes([
       style({
         'z-index': 100,
-        transform: 'matrix(.01, 0, 0, .01, 0, 0)',
+        transform: 'scale(01%)',
         'background-color': Colors.wallColor,
         offset: 0
       }),
@@ -137,100 +137,120 @@ export const gridHexTrigger = trigger('gridHex', [
   transition('blank => wall', [
     animate('0.5s', keyframes([
       style({
-        transform: 'matrix(.95, 0, 0, .95, 0, 0) rotate(0deg)',
+        transform: 'scale(95%) ',
         'background-color': Colors.background,
+        fill: Colors.background,
         offset: 0}),
       style({
-        transform: 'matrix(.01, 0, 0, .01, 0, 0) rotate(90deg)',
+        transform: 'scale(01%) ',
         'background-color': Colors.background,
+        fill: Colors.background,
         offset: .5}),
       style({
-        transform: 'matrix(.01, 0, 0, .01, 0, 0) rotate(90deg)',
+        transform: 'scale(01%) ',
         'background-color': Colors.wallColor,
+        fill: Colors.wallColor,
         offset: .51}),
       style({
-        transform: 'matrix(.95, 0, 0, .95, 0, 0) rotate(180deg)',
+        transform: 'scale(95%) ',
         'background-color': Colors.wallColor,
+        fill: Colors.wallColor,
         offset: 1})
     ]))
   ]),
   transition('wall => blank', [
     animate('0.5s', keyframes([
       style({
-        transform: 'matrix(.95, 0, 0, .95, 0, 0) rotate(0deg)',
+        transform: 'scale(95%) ',
         'background-color': Colors.wallColor,
+        fill: Colors.wallColor,
         offset: 0}),
       style({
-        transform: 'matrix(.01, 0, 0, .01, 0, 0) rotate(90deg)',
+        transform: 'scale(01%) ',
         'background-color': Colors.wallColor,
+        fill: Colors.wallColor,
         offset: .5}),
       style({
-        transform: 'matrix(.01, 0, 0, .01, 0, 0) rotate(90deg)',
+        transform: 'scale(01%) ',
         'background-color': Colors.background,
+        fill: Colors.background,
         offset: .51}),
       style({
-        transform: 'matrix(.95, 0, 0, .95, 0, 0) rotate(180deg)',
+        transform: 'scale(95%) ',
         'background-color': Colors.background,
+        fill: Colors.background,
         offset: 1})
     ]))
   ]),
   transition('searched => wall', [
     animate('0.5s', keyframes([
       style({
-        transform: 'matrix(.95, 0, 0, .95, 0, 0) rotate(0deg)',
+        transform: 'scale(95%) ',
         'background-color': Colors.searchColor,
+        fill: Colors.searchColor,
         offset: 0}),
       style({
-        transform: 'matrix(.01, 0, 0, .01, 0, 0) rotate(90deg)',
+        transform: 'scale(01%) ',
         'background-color': Colors.searchColor,
+        fill: Colors.searchColor,
         offset: .5}),
       style({
-        transform: 'matrix(.01, 0, 0, .01, 0, 0) rotate(90deg)',
+        transform: 'scale(01%) ',
         'background-color': Colors.wallColor,
+        fill: Colors.wallColor,
         offset: .51}),
       style({
-        transform: 'matrix(.95, 0, 0, .95, 0, 0) rotate(180deg)',
+        transform: 'scale(95%) ',
         'background-color': Colors.wallColor,
+        fill: Colors.wallColor,
         offset: 1})
     ]))
   ]),
   transition('wall => searched', [
     animate('0.5s', keyframes([
       style({
-        transform: 'matrix(.95, 0, 0, .95, 0, 0) rotate(0deg)',
+        transform: 'scale(95%) ',
         'background-color': Colors.wallColor,
+        fill: Colors.wallColor,
         offset: 0}),
       style({
-        transform: 'matrix(.01, 0, 0, .01, 0, 0) rotate(90deg)',
+        transform: 'scale(01%) ',
         'background-color': Colors.wallColor,
+        fill: Colors.wallColor,
         offset: .5}),
       style({
-        transform: 'matrix(.01, 0, 0, .01, 0, 0) rotate(90deg)',
+        transform: 'scale(01%) ',
         'background-color': Colors.searchColor,
+        fill: Colors.searchColor,
         offset: .51}),
       style({
-        transform: 'matrix(.95, 0, 0, .95, 0, 0) rotate(180deg)',
+        transform: 'scale(95%) ',
         'background-color': Colors.searchColor,
+        fill: Colors.searchColor,
         offset: 1})
     ]))
   ]),
   transition('blank => searched', [
     animate('1s', keyframes([
       style({
-        transform: 'matrix(.95, 0, 0, .95, 0, 0)',
+        transform: 'scale(95%)',
         'background-color': Colors.background,
+        fill: Colors.background,
         offset: 0}),
       style({
-        transform: 'matrix(.01, 0, 0, .01, 0, 0)',
+        transform: 'scale(01%)',
         'background-color': Colors.background,
+        fill: Colors.background,
         offset: .25}),
       style({
-        transform: 'matrix(.01, 0, 0, .01, 0, 0)',
+        transform: 'scale(01%)',
         'background-color': Colors.searchColorDark,
+        fill: Colors.searchColorDark,
         offset: .26}),
       style({
-        transform: 'matrix(.95, 0, 0, .95, 0, 0)',
+        transform: 'scale(95%)',
         'background-color': Colors.searchColor,
+        fill: Colors.searchColor,
         offset: 1})
     ]))
   ])

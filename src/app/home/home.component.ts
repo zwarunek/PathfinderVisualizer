@@ -156,10 +156,10 @@ export class HomeComponent implements OnInit {
           (window.innerHeight - bottomOffset - 104) / 29) -
           (Math.floor((window.innerHeight - bottomOffset - 104) / 29) % 2 === 1 ? 0 : 1);
       } else if (this.boardType.value === 'hex') {
-        this.cols = Math.floor((window.innerWidth - 40) / 32) - (Math.floor((window.innerWidth - 40) / 32) % 2 === 1 ? 0 : 1);
+        this.cols = Math.floor((window.innerWidth - 40) / 30) - (Math.floor((window.innerWidth - 40) / 30) % 2 === 1 ? 0 : 1);
         this.rows = Math.floor(
-          (window.innerHeight - bottomOffset - 104) / 35) -
-          (Math.floor((window.innerHeight - bottomOffset - 104) / 35) % 2 === 1 ? 0 : 1);
+          (window.innerHeight - bottomOffset - 104) / 36) -
+          (Math.floor((window.innerHeight - bottomOffset - 104) / 36) % 2 === 1 ? 0 : 1);
       }
       this.numTiles = this.rows * this.cols;
 
@@ -486,11 +486,11 @@ export class HomeComponent implements OnInit {
       if (this.tiles[tile.row]  [tile.col].type === 'blank' &&
         JSON.stringify(this.startTile) !== JSON.stringify({row: tile.row, col: tile.col}) &&
         JSON.stringify(this.endTile) !== JSON.stringify({row: tile.row, col: tile.col})) {
-        this.tiles[tile.row][tile.col].animate = delay !== 0;
-        this.tiles[tile.row][tile.col].type = 'searched';
         if (delay > 1 || (delay === 1 && path.steps.indexOf(step) % 4 === 0)) {
           await this.sleep(delay);
         }
+        this.tiles[tile.row][tile.col].animate = delay !== 0;
+        this.tiles[tile.row][tile.col].type = 'searched';
       }
     }
     if (this.globals.pathExists) {
@@ -622,5 +622,8 @@ export class HomeComponent implements OnInit {
     if (this.globals.finished) {
       this.visualize(0);
     }
+  }
+  testClick(): any {
+    console.log('clicked');
   }
 }

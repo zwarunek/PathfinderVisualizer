@@ -63,22 +63,27 @@ $searched-color: $secondary-background;
   }
 }
 ::ng-deep .custom-menu {
-  background-color: $background
+  background-color: $background;
 }
 .blank {
   background-color: $background;
+  fill: $background;
 }
 .start {
   background-color: $start-color !important;
+  fill: $start-color !important;
 }
 .end {
   background-color: $end-color !important;
+  fill: $end-color !important;
 }
 .wall{
   background-color: $wall-color;
+  fill: $wall-color;
 }
 .searched {
   background-color: $searched-color;
+  fill: $searched-color;
 }
 .disable-select {
   user-select: none; /* supported by Chrome and Opera */
@@ -118,67 +123,11 @@ $searched-color: $secondary-background;
   height: 100%;
   cursor: pointer
 }
-$hexagon-height: 32px;
-$hexagon-width: $hexagon-height / math.sqrt(3);
-.hex-container{
-  padding-block: $hexagon-height/2;
-  padding-inline: $hexagon-width*(3/4);
+.svg-hex{
+  stroke: #303030;
+  stroke-width: 6px;
+  transform: translate(0px, 0px);
 }
-.hexagon {
-  $hexagon-color-1: #00ffb8;
-  $hexagon-color-2: #13ce9a;
-
-  width: $hexagon-width;
-  height: $hexagon-height;
-  position: absolute;
-  left: $hexagon-width/4;
-  top: 0;
-  box-sizing: border-box;
-  &:before,
-  &:after {
-    content: '';
-    display: block;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: inherit;
-    height: inherit;
-    background: inherit;
-    background-size: inherit;
-    border-radius: inherit;
-    position: inherit;
-    box-sizing: inherit;
-    border: inherit;
-  }
-
-  &:before {
-    transform: rotate(60deg);
-  }
-
-  &:after {
-    transform: rotate(-60deg);
-  }
-}
-.inline{
-  -webkit-transform: scale(.95, .95);
-  -moz-transform: scale(.95, .95);
-  transform: scale(.95, .95);
-}
-.dark{
-  background-color: $surface-content;
-}
-$hex-grid-hide-side-length: 20px;
-$hex-grid-hide-short-leg: math.sqrt(3) * $hex-grid-hide-side-length;
-$hex-grid-hide-before-after-length: math.div($hex-grid-hide-side-length, 2);
-
-$hex-grid-show-side-length: 18px;
-$hex-grid-show-short-leg: math.sqrt(3) * $hex-grid-show-side-length;
-$hex-grid-show-before-after-length: math.div($hex-grid-show-side-length, 2);
-.container-even{
-  top: $hexagon-height/2
-}
-.hexagon.even {}
 .drop-down-menu{
   padding: 10px;
   height: 200%;
