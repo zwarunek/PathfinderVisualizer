@@ -26,13 +26,12 @@ import {MatExpansionModule} from '@angular/material/expansion';
 import {CdkAccordionModule} from '@angular/cdk/accordion';
 import {MatCardModule} from '@angular/material/card';
 import {MatRadioModule} from '@angular/material/radio';
-import {WindowRefService} from './Services/window-ref.service';
 import {SeoService} from './Services/seo-servce.service';
 import {ButtonModule} from 'primeng/button';
 import {RippleModule} from 'primeng/ripple';
 import {MenubarModule} from 'primeng/menubar';
 import {InputTextModule} from 'primeng/inputtext';
-import {SharedModule} from 'primeng/api';
+import {MessageService, SharedModule} from 'primeng/api';
 import {MenuModule} from 'primeng/menu';
 import {OverlayPanelModule} from 'primeng/overlaypanel';
 import {SliderModule} from 'primeng/slider';
@@ -40,6 +39,8 @@ import {DropdownModule} from 'primeng/dropdown';
 import {CheckboxModule} from 'primeng/checkbox';
 import {RadioButtonModule} from 'primeng/radiobutton';
 import {SelectButtonModule} from 'primeng/selectbutton';
+import {ToastModule} from 'primeng/toast';
+import {HttpClientModule } from '@angular/common/http';
 
 
 @NgModule({
@@ -48,46 +49,48 @@ import {SelectButtonModule} from 'primeng/selectbutton';
     HomeComponent,
     NoRightClickDirective
   ],
-  imports: [
-    BrowserModule.withServerTransition({appId: 'serverApp'}),
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    MatSliderModule,
-    MatButtonModule,
-    MatIconModule,
-    MatDividerModule,
-    MatMenuModule,
-    MatToolbarModule,
-    MatGridListModule,
-    DragDropModule,
-    MatInputModule,
-    MatCheckboxModule,
-    FormsModule,
-    MatButtonToggleModule,
-    MatSelectModule,
-    MatSnackBarModule,
-    MatExpansionModule,
-    CdkAccordionModule,
-    MatCardModule,
-    MatRadioModule,
-    ButtonModule,
-    RippleModule,
-    MenubarModule,
-    InputTextModule,
-    SharedModule,
-    MenuModule,
-    OverlayPanelModule,
-    SliderModule,
-    DropdownModule,
-    CheckboxModule,
-    RadioButtonModule,
-    SelectButtonModule
-  ],
+    imports: [
+        BrowserModule.withServerTransition({appId: 'serverApp'}),
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        MatSliderModule,
+        MatButtonModule,
+        MatIconModule,
+        MatDividerModule,
+        MatMenuModule,
+        MatToolbarModule,
+        MatGridListModule,
+        DragDropModule,
+        MatInputModule,
+        MatCheckboxModule,
+        FormsModule,
+        MatButtonToggleModule,
+        MatSelectModule,
+        MatSnackBarModule,
+        MatExpansionModule,
+        CdkAccordionModule,
+        MatCardModule,
+        MatRadioModule,
+        ButtonModule,
+        RippleModule,
+        MenubarModule,
+        InputTextModule,
+        SharedModule,
+        MenuModule,
+        OverlayPanelModule,
+        SliderModule,
+        DropdownModule,
+        CheckboxModule,
+        RadioButtonModule,
+        SelectButtonModule,
+        ToastModule,
+        HttpClientModule
+    ],
   providers: [
     Globals,
-    WindowRefService,
     Colors,
-    SeoService
+    SeoService,
+    MessageService
     ],
   bootstrap: [AppComponent]
 })

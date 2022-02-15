@@ -2,13 +2,11 @@ import {Component, HostListener, Inject, OnInit, PLATFORM_ID} from '@angular/cor
 import {AlgorithmsService} from '../Services/algorithms.service';
 import {Globals} from '../globals';
 import {BoardsService} from '../Services/boards.service';
-import {ActivatedRoute} from '@angular/router';
-import {MatSnackBar, MatSnackBarRef} from '@angular/material/snack-bar';
+import {MatSnackBarRef} from '@angular/material/snack-bar';
 import {GraphUtilsService} from '../Services/graph-utils.service';
-import {WindowRefService} from '../Services/window-ref.service';
 import {isPlatformBrowser} from '@angular/common';
 import {gridHexTrigger, gridSquareTrigger} from '../animations';
-import {MenuItem, PrimeIcons} from 'primeng/api';
+import {MenuItem, MessageService} from 'primeng/api';
 
 export interface Tile {
   type: any;
@@ -96,12 +94,10 @@ export class HomeComponent implements OnInit {
 
   constructor(public globals: Globals,
               @Inject(PLATFORM_ID) private platformId: any,
-              private windowRef: WindowRefService,
               private algorithms: AlgorithmsService,
               private boardService: BoardsService,
-              private route: ActivatedRoute,
-              private snackBar: MatSnackBar,
-              private graphUtils: GraphUtilsService) {
+              private graphUtils: GraphUtilsService,
+              private messageService: MessageService) {
   }
 
   ngOnInit(): void {
@@ -347,7 +343,10 @@ export class HomeComponent implements OnInit {
 
   mouseLeave(e: any, row: any, col: any): void {
     e.preventDefault();
-    if (this.globals.inProgress || (e.type.includes('mouse') && e.sourceCapabilities !== undefined && e.sourceCapabilities.firesTouchEvents)) {
+    if (this.globals.inProgress
+        || (e.type.includes('mouse')
+        && e.sourceCapabilities !== undefined
+        && e.sourceCapabilities.firesTouchEvents)) {
       return;
     }
     if ((this.draggingStart && JSON.stringify(this.endTile) !== JSON.stringify({row, col})) ||
@@ -433,10 +432,12 @@ export class HomeComponent implements OnInit {
     this.globals.pathExists = path.path !== undefined;
     this.displayPath(path, delay).then(() => {
       this.globals.inProgress = false;
+      this.timeStat = parseFloat(String(time)).toFixed(1) + 'ms';
+      this.tilesSearchedStat = path.steps.length;
       if (this.globals.pathExists){
         this.pathLengthStat = path.path.length;
-        this.tilesSearchedStat = path.steps.length;
-        this.timeStat = parseFloat(String(time)).toFixed(1) + 'ms';
+        // TODO print out stats via message service
+        // this.messageService.add({key: 'c', sticky: true, severity: 'warn', summary: 'Are you sure?', detail: 'Confirm to proceed'});
       }
       else {
         this.pathLengthStat = 'No Path Found';
@@ -549,6 +550,7 @@ export class HomeComponent implements OnInit {
     this.resetPath();
     this.resetTiles();
     if (this.selectedBoard === null) {
+      // TODO stop from continuing to draw board if cancelled half way through
       this.resetTiles();
       this.boardLoading = false;
       return;

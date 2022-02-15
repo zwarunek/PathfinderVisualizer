@@ -29,6 +29,7 @@
     "@nguniversal/express-engine": "^12.0.2",
     "domino": "^2.1.6",
     "express": "^4.15.2",
+    "mock-browser": "^0.92.14",
     "primeflex": "^3.1.0",
     "primeicons": "^5.0.0",
     "primeng": "^13.0.0-rc.2",

@@ -120,6 +120,7 @@
         stroke-linecap="round"
         style="z-index: 900"/>
 </svg>
+<!-- TODO fix mobile controls-->
 <div id="sheet" class="bottom-sheet-bg disable-select" draggable="false" (touchmove)="testSheet($event)" (touchend)="testSheetClick()" (touchstart)="touchStart($event)" (mousemove)="testSheet($event)" (mouseup)="testSheetClick()" (mousedown)="touchStart($event)">
 
   <div class="sheet-handle">
@@ -196,18 +197,24 @@
         </mat-radio-button>
       </mat-radio-group>
     </mat-expansion-panel>
-    <div style="display: flex; flex-direction: row; height: 100%; margin: auto; width: 211px;">
-      <div style="display: flex; flex-direction: column; justify-content: space-evenly; height: 100%; margin-right: 10px; font-size: 15px; line-height: 10px;">
-        <span>Time: </span>
-        <span>Tiles Searched: </span>
-        <span>Path Length: </span>
-      </div>
-      <div style="display: flex; flex-direction: column; justify-content: space-evenly; height: 100%; font-weight: lighter; font-size: 15px; line-height: 10px;">
-        <span>{{timeStat}}</span>
-        <span>{{tilesSearchedStat}}</span>
-        <span>{{pathLengthStat}}</span>
-      </div>
-    </div>
 
   </mat-accordion>
 </div>
+<p-toast position="bottom-center" key="c" [baseZIndex]="5000">
+<!--  <ng-template let-message pTemplate="message">-->
+<!--    <div>-->
+<!--      <div style="display: flex; flex-direction: row; height: 100%; margin: auto; width: 211px;">-->
+<!--        <div style="display: flex; flex-direction: column; justify-content: space-evenly; height: 100%; margin-right: 10px; font-size: 15px; line-height: 10px;">-->
+<!--          <span>Time: </span>-->
+<!--          <span>Tiles Searched: </span>-->
+<!--          <span>Path Length: </span>-->
+<!--        </div>-->
+<!--        <div style="display: flex; flex-direction: column; justify-content: space-evenly; height: 100%; font-weight: lighter; font-size: 15px; line-height: 10px;">-->
+<!--          <span>{{timeStat}}</span>-->
+<!--          <span>{{tilesSearchedStat}}</span>-->
+<!--          <span>{{pathLengthStat}}</span>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </ng-template>-->
+</p-toast>

@@ -156,14 +156,14 @@ $message-error-background:#ffcdd2;
 $message-error-border:#E60017;
 $message-error-color:#73000C;
 
-$primary-background: #008081;
+$primary-background: #007777;
 $primary-background-hover:darken($primary-background, 3%);
 $primary-background-focus:0 0 0 1px lighten($primary-background, 5%);
 $primary-background-active:darken($primary-background, 6%);
 $primary-background-outline-hover:transparentize($primary-background, .96);
 $primary-background-outline-active:transparentize($primary-background, .84);
 
-$secondary-background: #d39eff;
+$secondary-background: #9c75bd;
 $secondary-background-hover:darken($secondary-background, 3%);
 $secondary-background-focus:0 0 0 1px lighten($secondary-background, 5%);
 $secondary-background-active:darken($secondary-background, 25%);

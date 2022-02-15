@@ -61,7 +61,7 @@
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "100kb",
-                  "maximumError": "100kb"
+                  "maximumError": "150kb"
                 }
               ]
             },
@@ -82,7 +82,7 @@
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "6kb",
-                  "maximumError": "10kb"
+                  "maximumError": "15kb"
                 }
               ]
             }
@@ -194,9 +194,7 @@
           "builder": "@nguniversal/builders:prerender",
           "options": {
             "routes": [
-              "/",
-              "/board/hex",
-              "/board/square"
+              "/"
             ]
           },
           "configurations": {
